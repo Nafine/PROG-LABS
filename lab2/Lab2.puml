@@ -1,0 +1,136 @@
+@startuml
+skinparam linetype ortho
+package ru.ifmo.se{
+    class Pokemon
+    abstract Move
+    class SpecialMove
+    class PhysicalMove
+    class StatusMove
+}
+package pokemons{
+    class Nuzleaf{
+    + Nuzleaf(name: String, level: int)
+    }
+    class Patrat{
+    + Seedot(name: String, level: int)
+    }
+    class Seedot{
+    + Seedot(name: String, level: int)
+    }
+    class Shiftry{
+    + Shiftry(name: String, level: int)
+    }
+    class Spiritomb{
+    + Spiritomb(name: String, level: int)
+    }
+    class Watchog{
+    + Watchog(name: String, level: int)
+    }
+}
+
+package moves{
+    package physical{
+        class Facade{
+        +Facade()
+        # calcBaseDamage(att: Pokemon, def: Pokemon): double
+        # describe(): String
+        }
+        class FoulPlay{
+        +FoulPlay()
+        # calcBaseDamage(att: Pokemon, def: Pokemon): double
+        # describe(): String
+        }
+        class Pound{
+        +Pound()
+        # describe(): String
+        }
+    }
+    package special{
+        class FocusBlast{
+        +FocusBlast()
+        # applyOppEffects(p: Pokemon): void
+        # describe(): String
+        }
+        class ShadowBall{
+        +ShadowBall()
+        # applyOppEffects(p: Pokemon): void
+        # describe(): String
+        }
+    }
+    package status{
+        class Confide{
+        +Confide()
+        # applyOppEffects(p: Pokemon): void
+        # describe(): String
+        }
+        class DoubleTeam{
+        +DoubleTeam()
+        # applySelfEffects(p: Pokemon): void
+        # describe(): String
+        }
+        class NastyPlot{
+        +NastyPlot()
+        # applySelfEffects(p: Pokemon): void
+        # describe(): String
+        }
+        class Smokescreen{
+        +Pound()
+        # applyOppEffects(p: Pokemon): void
+        # describe(): String
+        }
+        class Swagger{
+        +Swagger()
+        # applyOppEffects(p: Pokemon): void
+        # describe(): String
+        }
+    }
+}
+<style>
+package{
+    LineThickness 3
+}
+</style>
+ru.ifmo.se.Move <|-- ru.ifmo.se.SpecialMove
+ru.ifmo.se.Move <|-- ru.ifmo.se.PhysicalMove
+ru.ifmo.se.Move <|-- ru.ifmo.se.StatusMove
+
+<> connect1
+connect1 --[#blue] Facade
+connect1 ---[#blue] FoulPlay
+connect1 --[#blue] Pound
+ru.ifmo.se.PhysicalMove <|-[thickness=2] connect1
+<> connect2
+connect2 --[#red] FocusBlast
+connect2 --[#red] ShadowBall
+ru.ifmo.se.SpecialMove <|--[thickness=2] connect2
+<> connect3
+connect3 ---[#green] Confide
+connect3 ---[#green] DoubleTeam
+connect3 ---[#green] NastyPlot
+connect3 ---[#green] Smokescreen
+connect3 ---[#green] Swagger
+
+ru.ifmo.se.StatusMove <|-[thickness=2] connect3
+
+Spiritomb o--- Smokescreen
+Spiritomb o--- Facade
+Spiritomb o--- FoulPlay
+Spiritomb o--- ShadowBall
+Patrat o------ Confide
+Patrat o------ ShadowBall
+Patrat o------ Swagger
+Watchog o------ FocusBlast
+Seedot o------ DoubleTeam
+Seedot o------ ShadowBall
+Nuzleaf o------ Pound
+Shiftry o------ NastyPlot
+
+<> connect4
+connect4 -- Seedot
+Seedot -down-|> Nuzleaf
+Nuzleaf -down-|> Shiftry
+connect4 --- Patrat
+Patrat -down-|> Watchog
+connect4 -- Spiritomb
+ru.ifmo.se.Pokemon <|--[thickness=2] connect4
+@enduml
