@@ -1,1 +1,1 @@
-java -jar boy.jar -cp external/Pokemon.jar
+java -jar boy.jar 
