@@ -20,8 +20,8 @@ public class FoulPlay extends PhysicalMove {
 
         double baseDamage = super.calcBaseDamage(att, def);
 
-        att.setStats(att.getStat(Stat.HP), tempAttack, tempSpecAttack,
-                def.getStat(Stat.SPECIAL_ATTACK), att.getStat(Stat.SPECIAL_DEFENSE), att.getStat(Stat.SPEED));
+        att.setStats(att.getStat(Stat.HP), tempAttack, att.getStat(Stat.DEFENSE),
+                tempSpecAttack, att.getStat(Stat.SPECIAL_DEFENSE), att.getStat(Stat.SPEED));
 
         return baseDamage;
     }

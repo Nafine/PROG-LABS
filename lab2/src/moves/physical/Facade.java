@@ -9,10 +9,10 @@ public class Facade extends PhysicalMove {
 
     @Override
     protected double calcBaseDamage(Pokemon att, Pokemon def){
-        this.power *= 2;
-        double baseDamage2 = super.calcBaseDamage(att, def);
-        this.power /= 2;
-        return baseDamage2;
+        power *= 2;
+        double baseDamage = super.calcBaseDamage(att, def);
+        power /= 2;
+        return baseDamage;
     }
 
     @Override
