@@ -1,5 +1,6 @@
 package ru.itmo.persons;
 
+import ru.itmo.RandomStart;
 import ru.itmo.enums.Gender;
 import ru.itmo.enums.LifeQuality;
 import ru.itmo.enums.Mood;
@@ -15,7 +16,7 @@ import java.util.Objects;
 public final class Ponchik extends Person implements Character, CanOwnServants, CanWasteTime, CanEnjoy {
     private final String nickname;
     private Servants servants;
-
+    
     public Ponchik(String name, Gender gender, LifeQuality lifeQuality, Place home) {
         super(name, gender, lifeQuality, home);
         this.nickname = switch (lifeQuality) {
@@ -28,23 +29,36 @@ public final class Ponchik extends Person implements Character, CanOwnServants, 
 
     @Override
     public String getName() {
+        System.out.println(home.toString());
         return nickname;
     }
 
-    @Override
-    public void haveFun(Place place, Place... otherPlaces) {
-        String sentence = name + " повеселился в таких местах, как: " + place.name();
+    private String iterateFunPlaces(Place[] otherPlaces){
+        String iteratedPlaces = "";
         boolean hadFun = false;
-
         for (Place p : otherPlaces) {
-            sentence += ", " + p.name();
+            iteratedPlaces += ", " + p.name();
             if (mood != Mood.EXTRA_GOOD) {
                 mood = Mood.values()[mood.ordinal() + 1];
                 hadFun = true;
             }
         }
 
-        if (hadFun) sentence += ", и поднял себе настроение!";
+        return iteratedPlaces + ", и поднял себе настроение!";
+    }
+
+    private String iteratePlaces(Place[] otherPlaces){
+        String iteratedPlaces = "";
+        for (Place p : otherPlaces)
+            iteratedPlaces += ", " + p.name();
+
+        return iteratedPlaces;
+    }
+
+    @Override
+    public void haveFun(Place place, Place... otherPlaces) {
+        String sentence = name + " повеселился в таких местах, как: " + place.name();
+        if (otherPlaces != null) sentence += " " + iterateFunPlaces(otherPlaces);
         else sentence += ".";
         System.out.println(sentence);
     }
@@ -52,29 +66,14 @@ public final class Ponchik extends Person implements Character, CanOwnServants, 
     @Override
     public void eat(Place place, Place... otherPlaces) {
         String sentence = name + " вкусно покушал в: " + place.name();
-        boolean hadFun = false;
-
-
-        for (Place p : otherPlaces) {
-            sentence += ", " + p.name();
-            if (mood != Mood.EXTRA_GOOD) {
-                mood = Mood.values()[mood.ordinal() + 1];
-                hadFun = true;
-            }
-        }
-
-        if (hadFun) sentence += ", и поднял себе настроение!";
+        if (otherPlaces != null) sentence += " " + iterateFunPlaces(otherPlaces);
         else sentence += ".";
         System.out.println(sentence);
     }
 
     @Override
     public void wasteTime(Place place, Place... otherPlaces) {
-        String sentence = name + " от нечего делать целыми днями просиживал в " + place.name();
-        boolean hadFun = false;
-        for (Place p : otherPlaces)
-            sentence += ", " + p.name();
-
+        String sentence = name + " от нечего делать целыми днями просиживал в " + place.name() + iteratePlaces(otherPlaces);
         sentence += ".";
         System.out.println(sentence);
     }
@@ -140,10 +139,19 @@ public final class Ponchik extends Person implements Character, CanOwnServants, 
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(!super.equals(o)) return false;
+        Ponchik other = (Ponchik) o;
+
+        return Objects.equals(nickname, other.nickname)
+                && Objects.equals(servants, other.servants);
+    }
+
+    @Override
     public String toString() {
         return super.toString() +
                 "[servants=" + servants +
-                ", titulus=" + "\"" + nickname + "\"" +
+                ", titulus=" + nickname +
                 "]";
     }
 }

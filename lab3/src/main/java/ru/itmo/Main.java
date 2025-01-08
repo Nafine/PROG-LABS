@@ -28,10 +28,8 @@ public class Main {
         catch (NoServantsException | NoServantsHomeException e) {
             System.out.println(e.getMessage());
         }
-        ponchik.wasteTime(new Place("берег залива"));
+        ponchik.wasteTime(new Place("берег залива"), new Place("ИТМО"));
         ponchik.eat(new Place("рестораны"), new Place("KFC"));
         ponchik.haveFun(new Place("чертово колесо"), new Place("морской параболоид"));
-        //System.out.println(ponchik.toString());
-        //System.out.println(servants.toString());
     }
 }

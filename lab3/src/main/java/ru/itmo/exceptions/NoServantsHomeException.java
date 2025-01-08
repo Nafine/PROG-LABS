@@ -10,6 +10,6 @@ public class NoServantsHomeException extends Exception {
 
     @Override
     public String getMessage() {
-        return "Слуги не прикреплены к дому:\n" + servants.toString();
+        return "Слуги не прикреплены к дому:\n" + servants;
     }
 }

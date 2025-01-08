@@ -19,11 +19,11 @@ public record Place(String name, String location) {
         return (name + location).hashCode();
     }
 
-    @Override
+    /*@Override
     public String toString() {
         return getClass().getSimpleName() +
                 "[name=" +"\"" + name + "\"" +
                 ", location=" + "\"" + location + "\"" +
                 "]";
-    }
+    }*/
 }

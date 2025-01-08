@@ -39,7 +39,7 @@ public abstract class Person {
         return home;
     }
 
-    final public Mood getMood(){
+    final public Mood getMood() {
         return mood;
     }
 
@@ -49,17 +49,22 @@ public abstract class Person {
     }
 
     @Override
-    final public boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        if (!(o instanceof Person other)) return false;
-        return Objects.equals(name, other.name) && Objects.equals(gender, other.gender);
+        if (o == null || getClass() != o.getClass()) return false;
+        Person other = (Person) o;
+
+        return Objects.equals(name, other.name)
+                && Objects.equals(gender, other.gender)
+                && Objects.equals(lifeQuality, other.lifeQuality)
+                && Objects.equals(home, other.home)
+                && Objects.equals(mood, other.mood);
     }
 
     @Override
     public String toString() {
         return getClass().getName() +
-                "[name=\"" + name + "\"" +
+                "[name=" + name +
                 ", gender=" + gender +
                 ", lifeQuality=" + lifeQuality +
                 ", home=" + home +

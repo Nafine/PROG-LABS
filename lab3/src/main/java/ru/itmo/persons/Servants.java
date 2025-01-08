@@ -79,7 +79,16 @@ public class Servants extends Person implements Servant {
 
     @Override
     public int hashCode(){
-        return Objects.hash(super.hashCode(), serveQuality);
+        return Objects.hash(super.hashCode(), serveQuality, masterName);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (!super.equals(o)) return false;
+        Servants other = (Servants) o;
+
+        return Objects.equals(serveQuality, other.serveQuality)
+                && Objects.equals(masterName, other.masterName);
     }
 
     @Override

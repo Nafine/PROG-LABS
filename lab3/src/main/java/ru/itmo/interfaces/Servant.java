@@ -4,7 +4,7 @@ import ru.itmo.exceptions.NoServantsHomeException;
 import ru.itmo.persons.Servants;
 
 public interface Servant {
-    public void lookAfterHome() throws NoServantsHomeException;
-    public void cleanHome() throws NoServantsHomeException;
-    public void serveMaster() throws NoServantsHomeException;
+    void lookAfterHome() throws NoServantsHomeException;
+    void cleanHome() throws NoServantsHomeException;
+    void serveMaster() throws NoServantsHomeException;
 }
