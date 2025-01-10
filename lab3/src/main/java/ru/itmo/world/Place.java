@@ -1,5 +1,7 @@
 package ru.itmo.world;
 
+import java.util.Objects;
+
 public record Place(String name, String location) {
     public Place(String name) {
         this(name, "неизвестно где");
@@ -10,20 +12,22 @@ public record Place(String name, String location) {
         this.location = location;
     }
 
-    public String getLocation(){
+    public String getLocation() {
         return location;
     }
 
     @Override
     public int hashCode() {
-        return (name + location).hashCode();
+        return Objects.hash(name, location);
     }
 
-    /*@Override
-    public String toString() {
-        return getClass().getSimpleName() +
-                "[name=" +"\"" + name + "\"" +
-                ", location=" + "\"" + location + "\"" +
-                "]";
-    }*/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Place place = (Place) o;
+
+        return Objects.equals(name, place.name) && Objects.equals(location, place.location);
+    }
 }

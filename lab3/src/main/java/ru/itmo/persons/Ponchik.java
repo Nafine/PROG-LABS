@@ -1,6 +1,5 @@
 package ru.itmo.persons;
 
-import ru.itmo.RandomStart;
 import ru.itmo.enums.Gender;
 import ru.itmo.enums.LifeQuality;
 import ru.itmo.enums.Mood;
@@ -16,7 +15,7 @@ import java.util.Objects;
 public final class Ponchik extends Person implements Character, CanOwnServants, CanWasteTime, CanEnjoy {
     private final String nickname;
     private Servants servants;
-    
+
     public Ponchik(String name, Gender gender, LifeQuality lifeQuality, Place home) {
         super(name, gender, lifeQuality, home);
         this.nickname = switch (lifeQuality) {
@@ -33,7 +32,7 @@ public final class Ponchik extends Person implements Character, CanOwnServants, 
         return nickname;
     }
 
-    private String iterateFunPlaces(Place[] otherPlaces){
+    private String iterateFunPlaces(Place[] otherPlaces) {
         String iteratedPlaces = "";
         boolean hadFun = false;
         for (Place p : otherPlaces) {
@@ -47,7 +46,7 @@ public final class Ponchik extends Person implements Character, CanOwnServants, 
         return iteratedPlaces + ", и поднял себе настроение!";
     }
 
-    private String iteratePlaces(Place[] otherPlaces){
+    private String iteratePlaces(Place[] otherPlaces) {
         String iteratedPlaces = "";
         for (Place p : otherPlaces)
             iteratedPlaces += ", " + p.name();
@@ -140,7 +139,7 @@ public final class Ponchik extends Person implements Character, CanOwnServants, 
 
     @Override
     public boolean equals(Object o) {
-        if(!super.equals(o)) return false;
+        if (!super.equals(o)) return false;
         Ponchik other = (Ponchik) o;
 
         return Objects.equals(nickname, other.nickname)

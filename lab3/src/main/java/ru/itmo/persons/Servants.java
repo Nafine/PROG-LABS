@@ -8,18 +8,10 @@ import ru.itmo.world.Place;
 
 import java.util.Objects;
 
-/*
-завел себе слуг, которые одевали его и раздевали, убирали у него в комнатах, смотрели за домом.
- */
+
 public class Servants extends Person implements Servant {
     String masterName;
     ServeQuality serveQuality;
-    public enum ServeQuality {
-        EXTRA_BAD,
-        BAD,
-        GOOD,
-        EXTRA_GOOD
-    }
 
     public Servants() {
         super("Слуги", Gender.PLURAL, LifeQuality.BAD, new Place("улица"));
@@ -27,14 +19,14 @@ public class Servants extends Person implements Servant {
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return name + " мастера с прозвищем " + masterName + ".";
     }
 
     ///
     /// Let servants relax after each move
     ///
-    protected void relax(){
+    protected void relax() {
         if (Math.random() <= 0.5 && serveQuality != ServeQuality.EXTRA_BAD) {
             serveQuality = ServeQuality.values()[serveQuality.ordinal() - 1];
             System.out.println("Щеглы совсем расслабились после работы и, вероятно, их стоит проучить!");
@@ -42,8 +34,8 @@ public class Servants extends Person implements Servant {
     }
 
     @Override
-    public void lookAfterHome() throws NoServantsHomeException{
-        if(home.name().equals("улица")) throw new NoServantsHomeException(this);
+    public void lookAfterHome() throws NoServantsHomeException {
+        if (home.name().equals("улица")) throw new NoServantsHomeException(this);
         System.out.println(name + switch (serveQuality) {
             case EXTRA_GOOD -> " смотрели за домом так, что и муха не могла рядом пролететь!";
             case GOOD -> " смотрели за " + home.name() + ".";
@@ -54,8 +46,8 @@ public class Servants extends Person implements Servant {
     }
 
     @Override
-    public void cleanHome() throws NoServantsHomeException{
-        if(home.name().equals("улица")) throw new NoServantsHomeException(this);
+    public void cleanHome() throws NoServantsHomeException {
+        if (home.name().equals("улица")) throw new NoServantsHomeException(this);
         System.out.println(name + switch (serveQuality) {
             case EXTRA_GOOD -> " вылизали дом дочиста!";
             case GOOD -> " убрались в комнатах мастера " + home.name();
@@ -67,7 +59,7 @@ public class Servants extends Person implements Servant {
 
     @Override
     public void serveMaster() throws NoServantsHomeException {
-        if(home.name().equals("улица")) throw new NoServantsHomeException(this);
+        if (home.name().equals("улица")) throw new NoServantsHomeException(this);
         System.out.println(switch (serveQuality) {
             case EXTRA_GOOD -> "Они одевали, обхаживали и радовали своего хозяина всеми мыслимыми способами!";
             case GOOD -> "Они одевали его и раздевали.";
@@ -78,12 +70,12 @@ public class Servants extends Person implements Servant {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(super.hashCode(), serveQuality, masterName);
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (!super.equals(o)) return false;
         Servants other = (Servants) o;
 
@@ -92,9 +84,16 @@ public class Servants extends Person implements Servant {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return super.toString() +
                 "[serveQuality=" + serveQuality +
                 "]";
+    }
+
+    public enum ServeQuality {
+        EXTRA_BAD,
+        BAD,
+        GOOD,
+        EXTRA_GOOD
     }
 }

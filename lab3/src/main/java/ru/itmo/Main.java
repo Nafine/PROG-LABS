@@ -16,16 +16,15 @@ public class Main {
         ponchik.named();
         ponchik.relocate(new Place("собственный дом"));
         ponchik.ownServants(servants);
-        try{
+        try {
             servants.serveMaster();
             servants.cleanHome();
-            if(ponchik.checkServeQuality() == Servants.ServeQuality.BAD
+            if (ponchik.checkServeQuality() == Servants.ServeQuality.BAD
                     || ponchik.checkServeQuality() == Servants.ServeQuality.EXTRA_BAD) {
                 ponchik.punishServants();
             }
             servants.lookAfterHome();
-        }
-        catch (NoServantsException | NoServantsHomeException e) {
+        } catch (NoServantsException | NoServantsHomeException e) {
             System.out.println(e.getMessage());
         }
         ponchik.wasteTime(new Place("берег залива"), new Place("ИТМО"));
