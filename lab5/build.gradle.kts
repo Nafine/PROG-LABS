@@ -21,8 +21,10 @@ tasks.register<JavaExec>("runApp") {
     mainClass.set("se.ifmo.system.collection.CollectionManager")
 
     environment("LAB5_DATA_PATH", "src/data.xml") // <-- Передаём в процесс
+    environment("INDEX", "src/INDEX")
 
     doFirst {
         println("LAB5_DATA_PATH = ${environment["LAB5_DATA_PATH"]}")
+        println("INDEX = ${environment["INDEX"]}")
     }
 }

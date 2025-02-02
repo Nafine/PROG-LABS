@@ -2,8 +2,10 @@ package se.ifmo.system.collection;
 
 import lombok.Getter;
 import se.ifmo.system.collection.model.Product;
+import se.ifmo.system.collection.util.EnvManager;
 import se.ifmo.system.file.xml.XMLHandler;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.TreeSet;
 
@@ -29,13 +31,23 @@ public class CollectionManager {
     }
 
     public void save() {
-        XMLHandler xmlHandler = new XMLHandler();
-        xmlHandler.write(collection);
+        try(XMLHandler xmlHandler = new XMLHandler(EnvManager.getDataFile())) {
+            xmlHandler.write(collection);
+        }
+        catch(IOException e){
+            System.err.println("Failed to save collection");
+            System.err.println(e.getMessage());
+        }
     }
 
     public void load() {
-        XMLHandler xmlHandler = new XMLHandler();
-        collection.clear();
-        collection.addAll(xmlHandler.read());
+        try(XMLHandler xmlHandler = new XMLHandler(EnvManager.getDataFile())) {
+            collection.clear();
+            collection.addAll(xmlHandler.read());
+        }
+        catch(IOException e){
+            System.err.println("Failed to load collection");
+            System.err.println(e.getMessage());
+        }
     }
 }
