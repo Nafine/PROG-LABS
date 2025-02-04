@@ -28,6 +28,8 @@ public class FileHandler implements IOHandler<String> {
             }
             return String.valueOf(content);
         } catch (IOException e) {
+            System.err.println("Error reading file: " + handlingFilePath);
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -38,7 +40,7 @@ public class FileHandler implements IOHandler<String> {
             fileOutputStream.write(data.getBytes());
         }
         catch (IOException e) {
-            System.err.println("Error writing to file: " + handlingFilePath.toAbsolutePath());
+            System.err.println("Error writing to file: " + handlingFilePath.getFileName());
             System.err.println(e.getMessage());
         }
     }
@@ -48,7 +50,7 @@ public class FileHandler implements IOHandler<String> {
             fileOutputStream.write(data.getBytes());
         }
         catch (IOException e) {
-            System.err.println("Error writing to file: " + handlingFilePath.toAbsolutePath());
+            System.err.println("Error writing to file: " + handlingFilePath.getFileName());
             System.err.println(e.getMessage());
         }
     }

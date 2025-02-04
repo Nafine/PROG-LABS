@@ -1,4 +1,9 @@
 package se.ifmo.client.command;
 
-public class UpdateId {
+import se.ifmo.client.communication.Callback;
+import se.ifmo.client.communication.Request;
+
+public class UpdateId extends Command {
+    @Override
+    public Callback execute(Request req){return Callback.empty();}
 }

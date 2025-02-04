@@ -1,4 +1,4 @@
-<products>
+<vehicles>
     <product>
         <name>Vibrator-ZOV</name>
         <coordinates>
@@ -47,4 +47,4 @@
             <type>TRUST</type>
         </manufacturer>
     </product>
-</products>
+</vehicles>

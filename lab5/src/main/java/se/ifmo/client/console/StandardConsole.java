@@ -1,60 +1,36 @@
 package se.ifmo.client.console;
 
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.io.*;
 
 public class StandardConsole implements Console {
-    public static String P = "$ ";
-    private static Scanner fileScanner;
-    private static final Scanner defScanner = new Scanner(System.in);
+    private static final BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+    private static final BufferedWriter consoleWriter = new BufferedWriter(new OutputStreamWriter(System.out));
 
     @Override
-    public void print(Object obj) {
-        System.out.print(obj);
+    public String read(String prompt){
+        write(prompt);
+        return read();
     }
 
     @Override
-    public void println(Object obj) {
-        System.out.println(obj);
+    public String read() {
+        try {
+            return consoleReader.readLine();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override
-    public void printErr(Object obj) {
-        System.err.println("Error: " + obj);
+    public void write(String text) {
+        try {
+            consoleWriter.append(text).flush();
+        } catch (IOException e) {}
     }
 
     @Override
-    public String readln() throws NoSuchElementException, IllegalStateException {
-        return (fileScanner != null ? fileScanner : defScanner).nextLine();
-    }
-
-    @Override
-    public boolean ready() throws IllegalStateException {
-        return (fileScanner != null ? fileScanner : defScanner).hasNextLine();
-    }
-
-    @Override
-    public void printTable(Object left, Object right) {
-        System.out.printf(" %-35s%-1s%n", left, right);
-    }
-
-    @Override
-    public void prompt() {
-        print(P);
-    }
-
-    @Override
-    public String getPrompt() {
-        return P;
-    }
-
-    @Override
-    public void setFileScanner(Scanner fileScanner) {
-        StandardConsole.fileScanner = fileScanner;
-    }
-
-    @Override
-    public void setConsoleScanner() {
-        fileScanner = null;
+    public void close() throws IOException {
+        consoleReader.close();
+        consoleWriter.close();
     }
 }

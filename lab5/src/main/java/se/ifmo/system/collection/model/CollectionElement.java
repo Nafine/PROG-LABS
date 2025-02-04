@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public abstract class CollectionElement implements Comparable<CollectionElement>, Serializable, Validatable {
-    protected int id;
+    protected long id;
 
     {
         try {

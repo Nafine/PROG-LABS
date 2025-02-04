@@ -4,28 +4,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
-import se.ifmo.system.collection.model.Product;
+import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.collection.util.Validatable;
 import se.ifmo.system.exceptions.InvalidDataException;
 
+import java.util.LinkedHashSet;
 import java.util.TreeSet;
 
 @Data
-@JacksonXmlRootElement(localName = "products")
-public class ProductXmlWrapper implements Validatable {
+@JacksonXmlRootElement(localName = "vehicles")
+public class VehicleXmlWrapper implements Validatable {
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JsonProperty("product")
-    private TreeSet<Product> products;
+    @JsonProperty("vehicle")
+    private LinkedHashSet<Vehicle> vehicles;
 
-    public ProductXmlWrapper() {}
+    public VehicleXmlWrapper() {}
 
-    public ProductXmlWrapper(TreeSet<Product> products) throws InvalidDataException {
-        this.products = products;
+    public VehicleXmlWrapper(LinkedHashSet<Vehicle> vehicles) throws InvalidDataException {
+        this.vehicles = vehicles;
         validate();
     }
 
     @Override
     public void validate() throws InvalidDataException {
-        for (var product : products) product.validate();
+        for (var product : vehicles) product.validate();
     }
 }

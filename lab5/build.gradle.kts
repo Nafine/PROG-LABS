@@ -11,16 +11,18 @@ repositories {
 }
 
 dependencies {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.16.1")
     implementation("io.vertx:vertx-core:4.5.3")
 }
 
 tasks.register<JavaExec>("runApp") {
     classpath = sourceSets.main.get().runtimeClasspath
     //mainClass.set("se.ifmo.Main")
-    mainClass.set("se.ifmo.system.collection.CollectionManager")
+    mainClass.set("se.ifmo.system.file.csv.CSVHandler")
 
-    environment("LAB5_DATA_PATH", "src/data.xml") // <-- Передаём в процесс
+    environment("LAB5_DATA_PATH", "src/data.csv") // <-- Передаём в процесс
     environment("INDEX", "src/INDEX")
 
     doFirst {

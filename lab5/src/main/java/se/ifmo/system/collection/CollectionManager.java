@@ -1,26 +1,24 @@
 package se.ifmo.system.collection;
 
 import lombok.Getter;
-import se.ifmo.system.collection.model.Product;
+import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.collection.util.EnvManager;
 import se.ifmo.system.file.xml.XMLHandler;
 
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.TreeSet;
 
 @Getter
 public class CollectionManager {
     public static void main(String[] args) {
-        CollectionManager manager = CollectionManager.getInstance();
-
-        System.out.println(manager.getCollection());
-        manager.save();
+        System.out.println("CollectionManager");
     }
 
     private static CollectionManager instance;
 
-    private final TreeSet<Product> collection = new TreeSet<>();
+    private final LinkedHashSet<Vehicle> collection = new LinkedHashSet<>();
 
     private CollectionManager() {
         load();

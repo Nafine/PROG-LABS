@@ -2,7 +2,7 @@ package se.ifmo.system.file.xml;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import se.ifmo.system.collection.model.Product;
+import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.exceptions.InvalidDataException;
 import se.ifmo.system.file.handler.IOHandler;
 
@@ -12,9 +12,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.TreeSet;
+import java.util.LinkedHashSet;
 
-public class XMLHandler implements IOHandler<TreeSet<Product>> {
+public class XMLHandler implements IOHandler<LinkedHashSet<Vehicle>> {
     private final Path xmlFilePath;
     private final FileReader fileReader;
 
@@ -30,43 +30,48 @@ public class XMLHandler implements IOHandler<TreeSet<Product>> {
     }
 
     @Override
-    public TreeSet<Product> read() throws IOException {
+    public LinkedHashSet<Vehicle> read() {
         if (!Files.isReadable(xmlFilePath)) {
             System.err.println("File " + xmlFilePath.getFileName() + "is not readable");
-            return new TreeSet<>();
+            return new LinkedHashSet<>();
         }
 
         try {
             XmlMapper mapper = new XmlMapper();
-            ProductXmlWrapper products = new ProductXmlWrapper(mapper.readValue(fileReader, new TypeReference<>() {
+            VehicleXmlWrapper vehicles = new VehicleXmlWrapper(mapper.readValue(fileReader, new TypeReference<>() {
             }));
 
-            if (products.getProducts().isEmpty()) System.out.println("No products found. Collection will be empty.");
+            if (vehicles.getVehicles().isEmpty()) System.out.println("No vehicles found. Collection will be empty.");
 
-            return products.getProducts();
-        } catch (InvalidDataException e) {
-            System.err.println("Invalid XML file");
+            return vehicles.getVehicles();
+        } catch (IOException e) {
+            System.err.println("Error reading file " + xmlFilePath.getFileName());
             System.err.println(e.getMessage());
-            System.exit(1);
+        } catch (InvalidDataException e) {
+            System.err.println("Error during serializing. Invalid xml file.");
+            System.err.println(e.getMessage());
         }
-        return new TreeSet<>();
+
+        return new LinkedHashSet<>();
     }
 
     @Override
-    public void write(TreeSet<Product> products) throws IOException {
+    public void write(LinkedHashSet<Vehicle> vehicles) {
         if (!Files.isWritable(xmlFilePath)) {
             System.err.println("File " + xmlFilePath.getFileName() + "is not writable");
-            throw new IOException();
+            return;
         }
 
         try (FileOutputStream fStream = new FileOutputStream(xmlFilePath.toFile())) {
-            ProductXmlWrapper productXmlWrapper = new ProductXmlWrapper(products);
+            VehicleXmlWrapper vehicleXmlWrapper = new VehicleXmlWrapper(vehicles);
             XmlMapper xmlMapper = new XmlMapper();
-            xmlMapper.writer().withDefaultPrettyPrinter().writeValue(fStream, productXmlWrapper);
-        } catch (InvalidDataException e) {
-            System.err.println("Invalid collection data. Can't deserialize");
+            xmlMapper.writer().withDefaultPrettyPrinter().writeValue(fStream, vehicleXmlWrapper);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + xmlFilePath.getFileName());
             System.err.println(e.getMessage());
-            System.exit(1);
+        } catch (InvalidDataException e) {
+            System.err.println("Error during deserializing. Invalid collection data.");
+            System.err.println(e.getMessage());
         }
     }
 
