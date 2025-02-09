@@ -3,41 +3,18 @@ package se.ifmo.system.file.csv;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import se.ifmo.system.collection.enums.FuelType;
-import se.ifmo.system.collection.model.Coordinates;
 import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.file.handler.IOHandler;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.TreeSet;
 
 public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
     private final Path csvFilePath;
     private final BufferedInputStream fileInputStream;
     private final BufferedWriter bufferedWriter;
 
-    public static void main(String[] args) {
-        try (CSVHandler csvHandler = new CSVHandler(Path.of(System.getenv("LAB5_DATA_PATH")))) {
-            Vehicle vehicle = new Vehicle();
-            vehicle.setCapacity(1);
-            vehicle.setCoordinates(new Coordinates());
-            vehicle.getCoordinates().setX(1);
-            vehicle.getCoordinates().setY(2.0);
-            vehicle.setName("Aboba");
-            vehicle.setFuelType(FuelType.ALCOHOL);
-            vehicle.setDistanceTraveled(123.0f);
-            vehicle.setEnginePower(5);
-
-            csvHandler.write(new LinkedHashSet<>(List.of(vehicle)));
-            System.out.println(csvHandler.read());
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-    }
 
     public CSVHandler(Path csvFilePath) throws IOException {
         this.csvFilePath = csvFilePath;

@@ -22,17 +22,12 @@ public class Router {
     }
 
     public Callback route(Request request) {
-        if (request == null || request.command() == null | request.command().isBlank()) return Callback.empty();
-        if (request.command().equals("help")) return getHelp();
+        if (request == null || request.command() == null || request.command().isBlank()) return Callback.empty();
 
         return Active.LIST.stream()
                 .filter(temp -> temp.getName().equalsIgnoreCase(request.command()))
                 .findFirst()
                 .map(temp -> temp.execute(request))
                 .orElse(new Callback("command not found, type 'help' for help"));
-    }
-
-    public Callback getHelp() {
-        return Callback.empty();
     }
 }

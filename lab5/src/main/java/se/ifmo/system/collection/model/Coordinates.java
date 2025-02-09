@@ -10,5 +10,7 @@ import lombok.*;
 @JsonPropertyOrder({"x", "y"})
 public class Coordinates {
     private long x;
-    private @NonNull Double y;
+
+    @NonNull
+    private Double y;
 }

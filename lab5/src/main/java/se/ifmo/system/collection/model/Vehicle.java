@@ -12,16 +12,24 @@ import se.ifmo.system.exceptions.InvalidDataException;
 //Идет расчет на использование библиотеки jackson, поэтому чтобы не городить миллион DTO там, где это и не нужно, я оставлю это здесь
 @JsonPropertyOrder({"name", "coordinates", "enginePower", "enginePower", "capacity", "distanceTraveled", "fuelType"})
 public class Vehicle extends CollectionElement {
-    private @NonNull String name;
+    @NonNull
+    private String name;
+
+    @NonNull
     @JsonUnwrapped
-    private @NonNull Coordinates coordinates;
-    private @NonNull
+    private Coordinates coordinates;
+
+    @NonNull
     @JsonIgnore
-    @Setter(AccessLevel.NONE) java.util.Date creationDate;
+    @Setter(AccessLevel.NONE)
+    private java.util.Date creationDate;
+
     private int enginePower;
     private double capacity;
     private Float distanceTraveled;
-    private @NonNull FuelType fuelType;
+
+    @NonNull
+    private FuelType fuelType;
 
     public Vehicle() {
         creationDate = new java.util.Date();

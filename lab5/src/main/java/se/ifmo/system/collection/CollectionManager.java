@@ -3,6 +3,7 @@ package se.ifmo.system.collection;
 import lombok.Getter;
 import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.collection.util.EnvManager;
+import se.ifmo.system.file.csv.CSVHandler;
 import se.ifmo.system.file.xml.XMLHandler;
 
 import java.io.IOException;
@@ -12,10 +13,6 @@ import java.util.TreeSet;
 
 @Getter
 public class CollectionManager {
-    public static void main(String[] args) {
-        System.out.println("CollectionManager");
-    }
-
     private static CollectionManager instance;
 
     private final LinkedHashSet<Vehicle> collection = new LinkedHashSet<>();
@@ -29,8 +26,8 @@ public class CollectionManager {
     }
 
     public void save() {
-        try(XMLHandler xmlHandler = new XMLHandler(EnvManager.getDataFile())) {
-            xmlHandler.write(collection);
+        try(CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile())) {
+            csvHandler.write(collection);
         }
         catch(IOException e){
             System.err.println("Failed to save collection");
@@ -39,9 +36,9 @@ public class CollectionManager {
     }
 
     public void load() {
-        try(XMLHandler xmlHandler = new XMLHandler(EnvManager.getDataFile())) {
+        try(CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile())) {
             collection.clear();
-            collection.addAll(xmlHandler.read());
+            collection.addAll(csvHandler.read());
         }
         catch(IOException e){
             System.err.println("Failed to load collection");

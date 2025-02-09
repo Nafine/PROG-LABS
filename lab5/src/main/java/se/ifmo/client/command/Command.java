@@ -11,13 +11,6 @@ public abstract class Command {
     private final String help;
     private final int elementsRequired;
 
-    protected Command(){
-        name = null;
-        args = null;
-        help = null;
-        elementsRequired = 0;
-    }
-
     protected Command(
             final String name,
             final String[] args,

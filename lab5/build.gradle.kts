@@ -10,6 +10,7 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
@@ -19,8 +20,9 @@ dependencies {
 
 tasks.register<JavaExec>("runApp") {
     classpath = sourceSets.main.get().runtimeClasspath
-    //mainClass.set("se.ifmo.Main")
-    mainClass.set("se.ifmo.system.file.csv.CSVHandler")
+    mainClass.set("se.ifmo.Main")
+    standardInput = System.`in`
+    //mainClass.set("se.ifmo.system.file.csv.CSVHandler")
 
     environment("LAB5_DATA_PATH", "src/data.csv") // <-- Передаём в процесс
     environment("INDEX", "src/INDEX")
