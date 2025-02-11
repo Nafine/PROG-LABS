@@ -8,9 +8,10 @@ import se.ifmo.system.collection.enums.FuelType;
 import se.ifmo.system.exceptions.InvalidDataException;
 
 @Data
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 //Идет расчет на использование библиотеки jackson, поэтому чтобы не городить миллион DTO там, где это и не нужно, я оставлю это здесь
-@JsonPropertyOrder({"name", "coordinates", "enginePower", "enginePower", "capacity", "distanceTraveled", "fuelType"})
+@JsonPropertyOrder({"name", "coordinates", "enginePower", "capacity", "distanceTraveled", "fuelType"})
 public class Vehicle extends CollectionElement {
     @NonNull
     private String name;

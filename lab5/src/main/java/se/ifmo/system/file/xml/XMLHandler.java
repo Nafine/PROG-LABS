@@ -4,48 +4,46 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.exceptions.InvalidDataException;
+import se.ifmo.system.file.FileHandler;
 import se.ifmo.system.file.handler.IOHandler;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 
 public class XMLHandler implements IOHandler<LinkedHashSet<Vehicle>> {
-    private final Path xmlFilePath;
-    private final FileReader fileReader;
+    private final Path filePath;
 
-    public XMLHandler(Path xmlFilePath) throws IOException {
-        this.xmlFilePath = xmlFilePath;
+    private final FileHandler fileHandler;
 
-        if (Files.notExists(xmlFilePath)) {
-            System.err.println("File " + xmlFilePath.getFileName() + "is not found");
-            throw new FileNotFoundException();
-        }
+    public XMLHandler(Path filePath) throws IOException {
+        this.filePath = filePath;
+        fileHandler = new FileHandler(filePath);
+    }
 
-        fileReader = new FileReader(xmlFilePath.toFile());
+    public XMLHandler(Path filePath, boolean append) throws IOException {
+        this.filePath = filePath;
+        fileHandler = new FileHandler(filePath, append);
     }
 
     @Override
     public LinkedHashSet<Vehicle> read() {
-        if (!Files.isReadable(xmlFilePath)) {
-            System.err.println("File " + xmlFilePath.getFileName() + "is not readable");
+        if (!Files.isReadable(filePath)) {
+            System.err.println("File " + filePath.getFileName() + "is not readable");
             return new LinkedHashSet<>();
         }
 
         try {
             XmlMapper mapper = new XmlMapper();
-            VehicleXmlWrapper vehicles = new VehicleXmlWrapper(mapper.readValue(fileReader, new TypeReference<>() {
+            VehicleXmlWrapper vehicles = new VehicleXmlWrapper(mapper.readValue(fileHandler.getBufferedInputStream(), new TypeReference<>() {
             }));
 
             if (vehicles.getVehicles().isEmpty()) System.out.println("No vehicles found. Collection will be empty.");
 
             return vehicles.getVehicles();
         } catch (IOException e) {
-            System.err.println("Error reading file " + xmlFilePath.getFileName());
+            System.err.println("Error reading file " + filePath.getFileName());
             System.err.println(e.getMessage());
         } catch (InvalidDataException e) {
             System.err.println("Error during serializing. Invalid xml file.");
@@ -57,17 +55,17 @@ public class XMLHandler implements IOHandler<LinkedHashSet<Vehicle>> {
 
     @Override
     public void write(LinkedHashSet<Vehicle> vehicles) {
-        if (!Files.isWritable(xmlFilePath)) {
-            System.err.println("File " + xmlFilePath.getFileName() + "is not writable");
+        if (!Files.isWritable(filePath)) {
+            System.err.println("File " + filePath.getFileName() + "is not writable");
             return;
         }
 
-        try (FileOutputStream fStream = new FileOutputStream(xmlFilePath.toFile())) {
+        try {
             VehicleXmlWrapper vehicleXmlWrapper = new VehicleXmlWrapper(vehicles);
             XmlMapper xmlMapper = new XmlMapper();
-            xmlMapper.writer().withDefaultPrettyPrinter().writeValue(fStream, vehicleXmlWrapper);
+            xmlMapper.writer().withDefaultPrettyPrinter().writeValue(fileHandler.getBufferedWriter(), vehicleXmlWrapper);
         } catch (IOException e) {
-            System.err.println("Error writing to file: " + xmlFilePath.getFileName());
+            System.err.println("Error writing to file: " + filePath.getFileName());
             System.err.println(e.getMessage());
         } catch (InvalidDataException e) {
             System.err.println("Error during deserializing. Invalid collection data.");
@@ -77,6 +75,6 @@ public class XMLHandler implements IOHandler<LinkedHashSet<Vehicle>> {
 
     @Override
     public void close() throws IOException {
-        fileReader.close();
+        fileHandler.close();
     }
 }

@@ -33,12 +33,13 @@ public class IdGenerator {
     public int generateId() throws IOException {
         currentId.incrementAndGet();
         synchronized (fileHandler) {
-            fileHandler.write(Long.toString(currentId.get()) + System.lineSeparator());
+            fileHandler.write(Long.toString(currentId.get()));
         }
         return currentId.get();
     }
 
     public void close() throws Exception {
+        fileHandler.write("");
         fileHandler.close();
     }
 }

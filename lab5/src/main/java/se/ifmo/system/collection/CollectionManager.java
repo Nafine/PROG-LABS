@@ -4,12 +4,10 @@ import lombok.Getter;
 import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.collection.util.EnvManager;
 import se.ifmo.system.file.csv.CSVHandler;
-import se.ifmo.system.file.xml.XMLHandler;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.TreeSet;
 
 @Getter
 public class CollectionManager {
@@ -22,25 +20,23 @@ public class CollectionManager {
     }
 
     public static CollectionManager getInstance() {
-        return Objects.isNull(instance) ? instance = new CollectionManager() : instance;
+        return instance == null ? instance = new CollectionManager() : instance;
     }
 
     public void save() {
-        try(CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile())) {
+        try (CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile(), false)) {
             csvHandler.write(collection);
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             System.err.println("Failed to save collection");
             System.err.println(e.getMessage());
         }
     }
 
     public void load() {
-        try(CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile())) {
+        try (CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile())) {
             collection.clear();
             collection.addAll(csvHandler.read());
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             System.err.println("Failed to load collection");
             System.err.println(e.getMessage());
         }

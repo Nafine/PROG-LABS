@@ -1,16 +1,17 @@
-package se.ifmo.system.collection.util;
+package se.ifmo.client.command.util;
 
 import se.ifmo.client.console.Console;
 import se.ifmo.system.collection.enums.FuelType;
 import se.ifmo.system.collection.model.Coordinates;
 import se.ifmo.system.collection.model.Vehicle;
+import se.ifmo.system.exceptions.InvalidDataException;
 
 import java.util.Arrays;
 import java.util.function.Function;
 
 public class VehicleReader {
 
-    public static Vehicle readElement(Console console) throws InterruptedException {
+    public static Vehicle readElement(Console console) throws InterruptedException, InvalidDataException {
         Vehicle vehicle = new Vehicle();
 
         vehicle.setCapacity(readField(console, "capacity", Double::valueOf));
@@ -24,6 +25,8 @@ public class VehicleReader {
         coordinates.setY(readField(console, "coordinate y", Double::valueOf));
 
         vehicle.setCoordinates(coordinates);
+        vehicle.validate();
+
         return vehicle;
     }
 

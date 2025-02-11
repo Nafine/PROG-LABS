@@ -8,7 +8,7 @@ public class StandardConsole implements Console {
 
     @Override
     public String read(String prompt) {
-        write(prompt);
+        writeln(prompt);
         return read();
     }
 
