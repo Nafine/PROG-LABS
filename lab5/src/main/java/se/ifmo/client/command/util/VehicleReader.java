@@ -1,41 +1,22 @@
 package se.ifmo.client.command.util;
 
-import se.ifmo.client.console.Console;
 import se.ifmo.system.collection.enums.FuelType;
-import se.ifmo.system.collection.model.Coordinates;
 import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.exceptions.InvalidDataException;
 
-import java.util.Arrays;
-import java.util.function.Function;
+import java.util.List;
 
 public class VehicleReader {
 
-    public static Vehicle readElement(Console console) throws InterruptedException, InvalidDataException {
-        Vehicle vehicle = new Vehicle();
+    public static Vehicle readElement(List<String> args) throws IndexOutOfBoundsException, InvalidDataException {
+        String name = args.get(0);
+        long x = Long.parseLong(args.get(1));
+        Double y = Double.parseDouble(args.get(2));
+        int enginePower = Integer.parseInt(args.get(3));
+        double capacity = Double.parseDouble(args.get(4));
+        Float distanceTraveled = Float.parseFloat(args.get(5));
+        FuelType fuelType = FuelType.valueOf(args.get(6));
 
-        vehicle.setCapacity(readField(console, "capacity", Double::valueOf));
-        vehicle.setDistanceTraveled(readField(console, "distanceTraveled", Float::valueOf));
-        vehicle.setName(readField(console, "name", String::valueOf));
-        vehicle.setFuelType(readField(console, "fuelType: " + Arrays.toString(FuelType.values()), FuelType::valueOf));
-        vehicle.setEnginePower(readField(console, "enginePower", Integer::valueOf));
-
-        Coordinates coordinates = new Coordinates();
-        coordinates.setX(readField(console, "coordinate x", Long::valueOf));
-        coordinates.setY(readField(console, "coordinate y", Double::valueOf));
-
-        vehicle.setCoordinates(coordinates);
-        vehicle.validate();
-
-        return vehicle;
-    }
-
-
-    private static <T> T readField(Console console, String fieldName, Function<String, T> parser) throws InterruptedException {
-        String input = console.read(fieldName + ":");
-
-        if (input == null || input.isBlank()) throw new InterruptedException("empty input");
-
-        return parser.apply(input);
+        return new Vehicle(name, x, y, enginePower, capacity, distanceTraveled, fuelType);
     }
 }

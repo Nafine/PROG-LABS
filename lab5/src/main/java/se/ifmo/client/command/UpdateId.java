@@ -12,7 +12,7 @@ import java.util.LinkedHashSet;
 public class UpdateId extends Command {
 
     public UpdateId() {
-        super("update_id", new String[]{"id"}, "update the value of the collection item whose id is equal to the given one");
+        super("update_id", new String[]{"name", "coordinate_x", "coordinate_y", "engine_power", "capacity", "distance_traveled", "fuel_type"}, "Update the value of the collection item whose id is equal to the given one");
     }
 
     @Override
@@ -20,7 +20,7 @@ public class UpdateId extends Command {
         try {
             int id = Integer.parseInt(req.args().get(0));
 
-            Vehicle vehicle = VehicleReader.readElement(req.console());
+            Vehicle vehicle = VehicleReader.readElement(req.args());
             vehicle.setId(id);
 
             LinkedHashSet<Vehicle> collection = CollectionManager.getInstance().getCollection();
@@ -28,12 +28,12 @@ public class UpdateId extends Command {
             collection.add(vehicle);
 
             return new Callback("Successfully updated an element by id " + req.args().get(0));
-        } catch (InterruptedException e) {
-            return new Callback("Command got interrupted.");
+        } catch (IndexOutOfBoundsException e) {
+            return new Callback("Wrong arguments (must be at least" + this.getArgs().length + ")");
         } catch (InvalidDataException e) {
-            return new Callback("You've input an invalid data.");
+            return new Callback("You've input an invalid data: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            return new Callback("Wrong command arguments.");
+            return new Callback("Wrong arguments: " + e.getMessage());
         }
     }
 }

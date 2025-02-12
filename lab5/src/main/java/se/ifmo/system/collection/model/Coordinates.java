@@ -13,4 +13,11 @@ public class Coordinates {
 
     @NonNull
     private Double y;
+
+    public Coordinates() {}
+
+    public Coordinates(long x, Double y) {
+        this.x = x;
+        this.y = y;
+    }
 }

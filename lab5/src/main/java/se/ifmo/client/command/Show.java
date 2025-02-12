@@ -10,5 +10,5 @@ public class Show extends Command{
     }
 
     @Override
-    public Callback execute(Request req){return new Callback("Collection:\n", CollectionManager.getInstance().getCollection().stream().toList());}
+    public Callback execute(Request req){return new Callback("Collection:", CollectionManager.getInstance().getCollection().stream().toList());}
 }

@@ -17,7 +17,7 @@ public class AddIfMin extends Command {
     @Override
     public Callback execute(Request req) {
         try {
-            Vehicle vehicle = VehicleReader.readElement(req.console());
+            Vehicle vehicle = VehicleReader.readElement(req.args());
 
             var minVehicle = CollectionManager.getInstance().getCollection().stream().min(Comparator.naturalOrder());
             if (minVehicle.isPresent() && vehicle.compareTo(minVehicle.get()) < 0) {
@@ -25,10 +25,12 @@ public class AddIfMin extends Command {
                 return new Callback("Successfully added new element to the collection");
             }
             return new Callback("Failed to add new element to the collection, it's not the smallest element");
-        } catch (InterruptedException e) {
-            return new Callback("Command interrupted");
+        } catch (IndexOutOfBoundsException e) {
+            return new Callback("Wrong arguments (must be at least" + this.getArgs().length + ")");
         } catch (InvalidDataException e) {
-            return new Callback("You've input an invalid data");
+            return new Callback("You've unput an invalid data: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new Callback("Wrong arguments: " + e.getMessage());
         }
     }
 }

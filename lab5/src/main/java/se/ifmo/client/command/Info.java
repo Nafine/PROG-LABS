@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 
 public class Info extends Command{
     public Info(){
-        super("info", "shows information about collection (size, type and e.t.c)");
+        super("info", "Shows information about collection (size, type and e.t.c)");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package se.ifmo;
 
 import se.ifmo.client.communication.Handler;
+import se.ifmo.client.communication.exceptions.ProgramFinishedException;
 import se.ifmo.client.console.Console;
 import se.ifmo.client.console.StandardConsole;
 import se.ifmo.system.collection.util.IdGenerator;
@@ -10,6 +11,8 @@ public class Main {
         try (Console console = new StandardConsole()) {
             new Handler(console).run();
             IdGenerator.getInstance().close();
+        } catch (ProgramFinishedException e) {
+            System.out.println("Program finished");
         } catch (Exception e) {
             System.err.println("Error occurred.");
             System.err.println(e.getMessage());

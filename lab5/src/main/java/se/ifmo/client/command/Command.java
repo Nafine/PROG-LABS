@@ -12,11 +12,6 @@ public abstract class Command {
     private final String[] args;
     private final String description;
 
-    protected Command() {
-        this.name = "";
-        this.args = EMPTY_ARGS;
-        this.description = "";
-    }
 
     protected Command(String name, String description) {
         this.name = name;

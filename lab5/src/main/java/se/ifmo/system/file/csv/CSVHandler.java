@@ -8,7 +8,7 @@ import se.ifmo.system.exceptions.InvalidDataException;
 import se.ifmo.system.file.FileHandler;
 import se.ifmo.system.file.handler.IOHandler;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -40,7 +40,8 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
                     .readerFor(Vehicle.class)
                     .with(mapper.schemaFor(Vehicle.class))
                     .readValues(fileHandler.getBufferedInputStream());
-            LinkedHashSet<Vehicle> vehicles= new LinkedHashSet<>(it.readAll());
+            LinkedHashSet<Vehicle> vehicles = new LinkedHashSet<>(it.readAll());
+
             for (Vehicle vehicle : vehicles) {
                 vehicle.validate();
             }
@@ -48,8 +49,7 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
         } catch (IOException e) {
             System.err.println("Error reading CSV file: " + e.getMessage());
             System.out.println(e.getMessage());
-        }
-        catch (InvalidDataException e) {
+        } catch (InvalidDataException e) {
             System.err.println("Error during deserializing. Invalid collection data.");
             System.err.println(e.getMessage());
         }
@@ -64,7 +64,7 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
             return;
         }
 
-        try{
+        try {
             CsvMapper csvMapper = new CsvMapper();
             SequenceWriter seqW = csvMapper.writerWithSchemaFor(Vehicle.class).writeValues(fileHandler.getBufferedWriter());
             for (var vehicle : vehicles) {
@@ -74,8 +74,7 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
         } catch (IOException e) {
             System.out.println("Error writing to CSV file: " + filePath.getFileName());
             System.out.println(e.getMessage());
-        }
-        catch (InvalidDataException e) {
+        } catch (InvalidDataException e) {
             System.err.println("Error during deserializing. Invalid collection data.");
             System.err.println(e.getMessage());
         }

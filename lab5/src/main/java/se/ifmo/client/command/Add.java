@@ -9,19 +9,20 @@ import se.ifmo.system.exceptions.InvalidDataException;
 public class Add extends Command {
 
     public Add() {
-        super("add", Command.EMPTY_ARGS, "Adds new element to the collection");
+        super("add", new String[]{"name", "coordinate_x", "coordinate_y", "engine_power", "capacity", "distance_traveled", "fuel_type"}, "Adds new element to the collection");
     }
 
     @Override
     public Callback execute(Request req) {
         try {
-            CollectionManager.getInstance().getCollection().add(VehicleReader.readElement(req.console()));
-            return new Callback("Successfully added element to the collection");
-        } catch (InterruptedException e) {
-            return new Callback("Command got interrupted.");
-        }
-        catch (InvalidDataException e) {
-            return new Callback("You've inputed an invalid data.");
+            CollectionManager.getInstance().getCollection().add(VehicleReader.readElement(req.args()));
+            return new Callback("Successfully added new element to the collection");
+        } catch (IndexOutOfBoundsException e) {
+            return new Callback("Wrong arguments (must be at least" + this.getArgs().length + ")");
+        } catch (InvalidDataException e) {
+            return new Callback("You've input an invalid data: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new Callback("Wrong arguments: " + e.getMessage());
         }
     }
 }

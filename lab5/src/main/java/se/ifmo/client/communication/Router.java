@@ -1,6 +1,5 @@
 package se.ifmo.client.communication;
 
-import se.ifmo.client.command.History;
 import se.ifmo.client.command.RegisteredCommands;
 import se.ifmo.client.command.util.HistoryManager;
 

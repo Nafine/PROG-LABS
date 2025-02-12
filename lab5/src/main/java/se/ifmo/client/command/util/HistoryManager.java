@@ -4,11 +4,11 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
-class LastNineElements {
+class LastElements {
     private final Deque<String> deque;
     private final int maxSize;
 
-    public LastNineElements(int maxSize) {
+    public LastElements(int maxSize) {
         this.maxSize = maxSize;
         this.deque = new ArrayDeque<>(maxSize);
     }
@@ -26,7 +26,7 @@ class LastNineElements {
 
 public class HistoryManager {
     private static HistoryManager instance;
-    private final LastNineElements lastNineElements = new LastNineElements(9);
+    private final LastElements lastElements = new LastElements(9);
 
     private HistoryManager() {
     }
@@ -36,10 +36,10 @@ public class HistoryManager {
     }
 
     public void addCommand(String command) {
-        lastNineElements.add(command);
+        lastElements.add(command);
     }
 
     public List<String> getHistory() {
-        return lastNineElements.toList();
+        return lastElements.toList();
     }
 }
