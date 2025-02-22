@@ -4,11 +4,22 @@ import se.ifmo.client.communication.Callback;
 import se.ifmo.client.communication.Request;
 import se.ifmo.system.collection.CollectionManager;
 
+/**
+ * Removes element by its id.
+ */
 public class RemoveById extends Command {
+    /**
+     * Constructs a new {@link RemoveById} command.
+     */
     public RemoveById() {
         super("remove_by_id", new String[]{"id"}, "Remove element by its id");
     }
 
+    /**
+     * Calls removeIf() on collection comparing element's id.
+     * @param req {@link Request}
+     * @return {@link Callback}
+     */
     @Override
     public Callback execute(Request req) {
         try {

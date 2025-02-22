@@ -1,12 +1,16 @@
 package se.ifmo.system.file;
 
 import lombok.Getter;
+import se.ifmo.client.command.Add;
 import se.ifmo.system.file.handler.IOHandler;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Class which used for convenient handling of files.
+ */
 public class FileHandler implements IOHandler<String> {
     protected final Path filePath;
 
@@ -15,6 +19,16 @@ public class FileHandler implements IOHandler<String> {
     @Getter
     protected final BufferedWriter bufferedWriter;
 
+    /**
+     * Constructs a new {@link FileHandler} class.
+     * <p>
+     * Checks file existence and throws an {@link IOException} on fail.
+     * Creates instances of {@link BufferedInputStream} and {@link BufferedWriter}.
+     * </p>
+     * @param filePath of handling file
+     * @param append parameter of {@link FileWriter}
+     * @throws IOException if some {@link IOException} occurred
+     */
     public FileHandler(Path filePath, boolean append) throws IOException {
         this.filePath = filePath;
 
@@ -27,16 +41,13 @@ public class FileHandler implements IOHandler<String> {
         bufferedWriter = new BufferedWriter(new FileWriter(filePath.toFile(), append));
     }
 
+    /**
+     * Calls {@link FileHandler#FileHandler(Path, boolean)} with true parameter.
+     * @param filePath of handling file
+     * @throws IOException if some {@link IOException} occurred
+     */
     public FileHandler(Path filePath) throws IOException {
-        this.filePath = filePath;
-
-        if (Files.notExists(filePath)) {
-            System.err.println("File " + filePath.getFileName() + "is not found");
-            throw new FileNotFoundException();
-        }
-
-        bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath.toFile()));
-        bufferedWriter = new BufferedWriter(new FileWriter(filePath.toFile(), true));
+        this(filePath, true);
     }
 
     @Override

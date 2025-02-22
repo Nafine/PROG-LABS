@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.*;
+import se.ifmo.client.command.Add;
 import se.ifmo.system.collection.enums.FuelType;
 import se.ifmo.system.exceptions.InvalidDataException;
 
+/**
+ * Collection element.
+ */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
@@ -32,10 +36,27 @@ public class Vehicle extends CollectionElement implements Comparable<Vehicle> {
     @NonNull
     private FuelType fuelType;
 
+    /**
+     * Constructs a new {@link Vehicle} class.
+     * <p>
+     * Automatically sets creation date.
+     * </p>
+     */
     public Vehicle() {
         creationDate = new java.util.Date();
     }
 
+    /**
+     * Constructs a new {@link Vehicle} class.
+     * @param name of vehicle
+     * @param x coordinate x
+     * @param y coordinate y
+     * @param enginePower of vehicle
+     * @param capacity of vehicle
+     * @param distanceTraveled of vehicle
+     * @param fuelType of vehicle
+     * @throws InvalidDataException if some of the arguments were invalid
+     */
     public Vehicle(String name, long x, Double y, int enginePower, double capacity, Float distanceTraveled, FuelType fuelType) throws InvalidDataException {
         this();
         this.name = name;
@@ -47,6 +68,10 @@ public class Vehicle extends CollectionElement implements Comparable<Vehicle> {
         validate();
     }
 
+    /**
+     * Used to validate all fields.
+     * @throws InvalidDataException if validation wasn't successful
+     */
     @Override
     public void validate() throws InvalidDataException {
         if (id <= 0) throw new InvalidDataException(this, "Invalid ID");

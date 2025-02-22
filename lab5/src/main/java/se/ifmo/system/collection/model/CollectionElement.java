@@ -10,6 +10,9 @@ import se.ifmo.system.collection.util.Validatable;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Abstract class for representing collection element.
+ */
 @Getter
 @Setter
 @ToString

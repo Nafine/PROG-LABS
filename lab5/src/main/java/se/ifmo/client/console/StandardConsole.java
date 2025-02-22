@@ -2,6 +2,9 @@ package se.ifmo.client.console;
 
 import java.io.*;
 
+/**
+ * Class which defines console which user will use to communicate with program.
+ */
 public class StandardConsole implements Console {
     private final BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
     private final BufferedWriter consoleWriter = new BufferedWriter(new OutputStreamWriter(System.out));
@@ -21,6 +24,10 @@ public class StandardConsole implements Console {
         }
     }
 
+    /**
+     * Prompts to console without placing \n at the end of prompt.
+     * @param text to prompt to user
+     */
     @Override
     public void write(String text) {
         try {

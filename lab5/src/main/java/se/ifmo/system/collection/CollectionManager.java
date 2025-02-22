@@ -7,8 +7,13 @@ import se.ifmo.system.file.csv.CSVHandler;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 
+/**
+ * Singleton
+ * <p>
+ * Works with the collection. Stores it, loads from file and saves to file.
+ * </p>
+ */
 @Getter
 public class CollectionManager {
     private static CollectionManager instance;
@@ -19,10 +24,20 @@ public class CollectionManager {
         load();
     }
 
+    /**
+     * Returns instance of {@link CollectionManager}
+     * @return {@link CollectionManager}
+     */
     public static CollectionManager getInstance() {
         return instance == null ? instance = new CollectionManager() : instance;
     }
 
+    /**
+     * Writes collection to the file.
+     * <p>
+     * Handles {@link IOException}.
+     * </p>
+     */
     public void save() {
         try (CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile(), false)) {
             csvHandler.write(collection);
@@ -32,6 +47,12 @@ public class CollectionManager {
         }
     }
 
+    /**
+     * Reads collection from file.
+     * <p>
+     * Handles {@link IOException}.
+     * </p>
+     */
     public void load() {
         try (CSVHandler csvHandler = new CSVHandler(EnvManager.getDataFile())) {
             collection.clear();

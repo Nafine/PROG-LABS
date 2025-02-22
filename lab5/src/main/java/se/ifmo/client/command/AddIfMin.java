@@ -9,11 +9,25 @@ import se.ifmo.system.exceptions.InvalidDataException;
 
 import java.util.Comparator;
 
+/**
+ * Reads element using {@link VehicleReader} and adds it to the collection if it's lesser than all elements of collection.
+ */
 public class AddIfMin extends Command {
+    /**
+     * Constructs a new {@link AddIfMin} command.
+     */
     public AddIfMin() {
         super("add_if_min", "Add a new element to a collection if its value is less than the smallest element of this collection");
     }
 
+    /**
+     * Executes the command to add an element.
+     * <p>
+     * Asks user to enter exactly one {@link Vehicle}
+     * </p>
+     * @param req {@link Request}
+     * @return {@link Callback}
+     */
     @Override
     public Callback execute(Request req) {
         try {

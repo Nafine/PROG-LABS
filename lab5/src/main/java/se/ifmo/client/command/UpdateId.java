@@ -9,12 +9,28 @@ import se.ifmo.system.exceptions.InvalidDataException;
 
 import java.util.LinkedHashSet;
 
+/**
+ * Reads and updates element by specified id.
+ */
 public class UpdateId extends Command {
 
+    /**
+     * Constructs a new {@link RemoveById} command.
+     */
     public UpdateId() {
         super("update_id", new String[]{"name", "coordinate_x", "coordinate_y", "engine_power", "capacity", "distance_traveled", "fuel_type"}, "Update the value of the collection item whose id is equal to the given one");
     }
 
+    /**
+     * Reads element, updates its id and replaces existing element with a new one.
+     * <p>
+     * Asks user to enter exactly one {@link se.ifmo.system.collection.model.Vehicle} using {@link VehicleReader}.
+     * Removes element which have specified id.
+     * Adds new element.
+     * </p>
+     * @param req {@link Request}
+     * @return {@link Callback}
+     */
     @Override
     public Callback execute(Request req) {
         try {

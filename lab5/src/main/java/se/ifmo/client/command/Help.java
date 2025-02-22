@@ -3,11 +3,22 @@ package se.ifmo.client.command;
 import se.ifmo.client.communication.Callback;
 import se.ifmo.client.communication.Request;
 
+/**
+ * Shows description of all commands.
+ */
 public class Help extends Command {
+    /**
+     * Constructs a new {@link Help} command.
+     */
     public Help() {
         super("help", "List all available commands");
     }
 
+    /**
+     * Shows description all {@link Command} listed in class {@link RegisteredCommands}.
+     * @param req {@link Request}
+     * @return {@link Callback}
+     */
     @Override
     public Callback execute(Request req) {
         StringBuilder stringBuilder = new StringBuilder();

@@ -6,8 +6,18 @@ import se.ifmo.system.exceptions.InvalidDataException;
 
 import java.util.List;
 
+/**
+ * A utility class for reading element type of {@link Vehicle}.
+ */
 public class VehicleReader {
 
+    /**
+     *
+     * @param args 7 which represent fields of {@link Vehicle}.
+     * @return {@link Vehicle}
+     * @throws IndexOutOfBoundsException if method received less than 7 arguments
+     * @throws InvalidDataException if input data was invalid
+     */
     public static Vehicle readElement(List<String> args) throws IndexOutOfBoundsException, InvalidDataException {
         String name = args.get(0);
         long x = Long.parseLong(args.get(1));

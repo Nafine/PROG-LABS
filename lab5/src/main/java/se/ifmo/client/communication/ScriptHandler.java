@@ -12,11 +12,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 
+/**
+ * Subclass of {@link Handler} and used to handle scripts specific way.
+ */
 public class ScriptHandler extends Handler implements AutoCloseable {
-    private static HashSet<String> runningScripts = new HashSet<>();
+    private static final HashSet<String> runningScripts = new HashSet<>();
     Path scriptPath;
     BufferedReader bufferedReader;
 
+    /**
+     * Constructs a new {@link ScriptHandler} class.
+     *
+     * @param scriptPath file path to a script
+     * @param console    console to output command's {@link Callback}
+     * @throws IOException                   if some {@link IOException} occurred during reading script file
+     * @throws AlreadyRunningScriptException if script endless recursion detected
+     */
     public ScriptHandler(Path scriptPath, Console console) throws IOException, AlreadyRunningScriptException {
         super(console);
         this.scriptPath = scriptPath;
@@ -33,6 +44,9 @@ public class ScriptHandler extends Handler implements AutoCloseable {
         runningScripts.add(scriptPath.getFileName().toString());
     }
 
+    /**
+     * Handles input the same way as {@link Handler#run()}, but reads lines from file.
+     */
     @Override
     public void run() {
         CollectionManager.getInstance();

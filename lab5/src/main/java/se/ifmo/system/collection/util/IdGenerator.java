@@ -5,7 +5,13 @@ import se.ifmo.system.file.FileHandler;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class IdGenerator {
+/**
+ * Singleton.
+ * <p>
+ * Class which user for generating unique id even after restart.
+ * </p>
+ */
+public class IdGenerator implements AutoCloseable {
     private static IdGenerator instance = null;
 
     private final FileHandler fileHandler;
@@ -16,6 +22,11 @@ public class IdGenerator {
         initialize();
     }
 
+    /**
+     * Returns instance of {@link IdGenerator}
+     * @return {@link IdGenerator}
+     * @throws IOException if failed to open index file
+     */
     public static synchronized IdGenerator getInstance() throws IOException {
         return instance == null ? instance = new IdGenerator() : instance;
     }
@@ -30,6 +41,11 @@ public class IdGenerator {
         }
     }
 
+    /**
+     * Generates unique if for a collection element.
+     * @return int
+     * @throws IOException if failed to read/write from index file
+     */
     public int generateId() throws IOException {
         currentId.incrementAndGet();
         synchronized (fileHandler) {
@@ -38,6 +54,7 @@ public class IdGenerator {
         return currentId.get();
     }
 
+    @Override
     public void close() throws Exception {
         fileHandler.write("");
         fileHandler.close();
