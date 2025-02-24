@@ -22,7 +22,7 @@ public class FilterLessThanFuelType extends Command {
     /**
      * Filters all elements comparing them by fuel type.
      * <p>
-     * Asks user to enter exactly one {@link Vehicle} using {@link se.ifmo.client.command.util.VehicleReader}.
+     * Asks user to enter exactly one {@link FuelType}
      * </p>
      * @param request {@link Request}
      * @return {@link Callback}

@@ -1,6 +1,6 @@
 package se.ifmo.client.command;
 
-import se.ifmo.client.command.util.VehicleReader;
+import se.ifmo.client.builders.VehicleDirector;
 import se.ifmo.client.communication.Callback;
 import se.ifmo.client.communication.Request;
 import se.ifmo.system.collection.CollectionManager;
@@ -19,23 +19,14 @@ public class RemoveGreater extends Command {
     }
 
     /**
-     *
      * @param req {@link Request}
      * @return {@link Callback}
      */
     @Override
-    public Callback execute(Request req) {
-        try {
-            Vehicle vehicle = VehicleReader.readElement(req.args());
+    public Callback execute(Request req) throws InvalidDataException, InterruptedException {
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.console());
 
-            CollectionManager.getInstance().getCollection().removeIf(temp -> temp.compareTo(vehicle) < 0);
-            return new Callback("Successfully deleted all matching elements");
-        } catch (IndexOutOfBoundsException e) {
-            return new Callback("Wrong arguments (must be at least" + this.getArgs().length + ")");
-        } catch (InvalidDataException e) {
-            return new Callback("You've input an invalid data: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return new Callback("Wrong arguments: " + e.getMessage());
-        }
+        CollectionManager.getInstance().getCollection().removeIf(temp -> temp.compareTo(vehicle) < 0);
+        return new Callback("Successfully deleted all matching elements");
     }
 }
