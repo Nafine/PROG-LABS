@@ -1,6 +1,6 @@
 package se.ifmo.client.command;
 
-import se.ifmo.client.command.util.VehicleReader;
+import se.ifmo.client.builders.VehicleDirector;
 import se.ifmo.client.communication.Callback;
 import se.ifmo.client.communication.Request;
 import se.ifmo.system.collection.CollectionManager;
@@ -21,22 +21,15 @@ public class Add extends Command {
     /**
      * Executes the command to add an element.
      * <p>
-     * Asks user to enter exactly one {@link se.ifmo.system.collection.model.Vehicle} using {@link VehicleReader}.
+     * Asks user to enter exactly one {@link se.ifmo.system.collection.model.Vehicle} using {@link VehicleDirector}.
      * </p>
+     *
      * @param req {@link Request}
      * @return {@link Callback}
      */
     @Override
-    public Callback execute(Request req) {
-        try {
-            CollectionManager.getInstance().getCollection().add(VehicleReader.readElement(req.args()));
-            return new Callback("Successfully added new element to the collection");
-        } catch (IndexOutOfBoundsException e) {
-            return new Callback("Wrong arguments (must be at least" + this.getArgs().length + ")");
-        } catch (InvalidDataException e) {
-            return new Callback("You've input an invalid data: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return new Callback("Wrong arguments: " + e.getMessage());
-        }
+    public Callback execute(Request req) throws InvalidDataException {
+        CollectionManager.getInstance().getCollection().add(VehicleDirector.constructAndGetVehicle(req.args()));
+        return new Callback("Successfully added new element to the collection");
     }
 }

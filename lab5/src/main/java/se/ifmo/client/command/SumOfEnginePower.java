@@ -18,6 +18,7 @@ public class SumOfEnginePower extends Command {
 
     /**
      * Summarizes all engine power from all elements.
+     *
      * @param req {@link Request}
      * @return {@link Callback}
      */

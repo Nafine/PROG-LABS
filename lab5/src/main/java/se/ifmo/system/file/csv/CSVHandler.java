@@ -3,7 +3,6 @@ package se.ifmo.system.file.csv;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import se.ifmo.client.command.Add;
 import se.ifmo.system.collection.model.Vehicle;
 import se.ifmo.system.exceptions.InvalidDataException;
 import se.ifmo.system.file.FileHandler;
@@ -23,6 +22,7 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
 
     /**
      * Constructs a new {@link CSVHandler} class.
+     *
      * @param filePath of handling file
      * @throws IOException if some {@link IOException} occurred
      */
@@ -33,8 +33,9 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
 
     /**
      * Constructs a new {@link CSVHandler} class.
+     *
      * @param filePath of handling file
-     * @param append parameter of {@link FileHandler} class
+     * @param append   parameter of {@link FileHandler} class
      * @throws IOException if some {@link IOException} occurred
      */
     public CSVHandler(Path filePath, boolean append) throws IOException {
@@ -48,6 +49,7 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
      * Adds element only if line which represents collection element was valid.
      * Handles all {@link IOException}s.
      * </p>
+     *
      * @return {@link LinkedHashSet} with elements type of {@link Vehicle}
      */
     @Override
@@ -57,26 +59,29 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
             return new LinkedHashSet<>();
         }
 
-        try {
-            CsvMapper mapper = new CsvMapper();
-            MappingIterator<Vehicle> it = mapper
-                    .readerFor(Vehicle.class)
-                    .with(mapper.schemaFor(Vehicle.class))
-                    .readValues(fileHandler.getBufferedInputStream());
-            LinkedHashSet<Vehicle> vehicles = new LinkedHashSet<>(it.readAll());
+        CsvMapper mapper = new CsvMapper();
+        try (MappingIterator<Vehicle> it = mapper
+                .readerFor(Vehicle.class)
+                .with(mapper.schemaFor(Vehicle.class))
+                .readValues(fileHandler.getBufferedInputStream())) {
 
-            for (Vehicle vehicle : vehicles) {
-                vehicle.validate();
+            LinkedHashSet<Vehicle> vehicles = new LinkedHashSet<>();
+
+            while (it.hasNext()) {
+                try {
+                    Vehicle vehicle = it.next();
+                    vehicle.validate();
+                    vehicles.add(vehicle);
+                } catch (InvalidDataException e) {
+                    System.out.println("Invalid vehicle data: " + e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Error processing CSV line: " + e.getMessage());
+                }
             }
             return vehicles;
         } catch (IOException e) {
-            System.err.println("Error reading CSV file: " + e.getMessage());
-            System.out.println(e.getMessage());
-        } catch (InvalidDataException e) {
-            System.err.println("Error during deserializing. Invalid collection data.");
-            System.err.println(e.getMessage());
+            System.err.println("Something went wrong: " + e.getMessage());
         }
-
         return new LinkedHashSet<>();
     }
 
@@ -101,8 +106,8 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
                 vehicle.validate();
             }
         } catch (IOException e) {
-            System.out.println("Error writing to CSV file: " + filePath.getFileName());
-            System.out.println(e.getMessage());
+            System.err.println("Error writing to CSV file: " + filePath.getFileName());
+            System.err.println(e.getMessage());
         } catch (InvalidDataException e) {
             System.err.println("Error during deserializing. Invalid collection data.");
             System.err.println(e.getMessage());

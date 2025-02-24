@@ -7,7 +7,7 @@ import se.ifmo.system.collection.CollectionManager;
 /**
  * Shows elements of whole collction.
  */
-public class Show extends Command{
+public class Show extends Command {
     /**
      * Constructs a new {@link RemoveById} command.
      */
@@ -17,9 +17,12 @@ public class Show extends Command{
 
     /**
      * Gets collection using {@link CollectionManager}, casts it to list and returns it.
+     *
      * @param req {@link Request}
      * @return {@link Callback}
      */
     @Override
-    public Callback execute(Request req){return new Callback("Collection:", CollectionManager.getInstance().getCollection().stream().toList());}
+    public Callback execute(Request req) {
+        return new Callback("Collection:", CollectionManager.getInstance().getCollection().stream().toList());
+    }
 }

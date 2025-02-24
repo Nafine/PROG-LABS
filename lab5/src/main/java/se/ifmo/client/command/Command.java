@@ -3,6 +3,7 @@ package se.ifmo.client.command;
 import lombok.Getter;
 import se.ifmo.client.communication.Callback;
 import se.ifmo.client.communication.Request;
+import se.ifmo.system.exceptions.InvalidDataException;
 
 
 /**
@@ -50,5 +51,5 @@ public abstract class Command {
      * @param request {@link Request}
      * @return callback
      */
-    public abstract Callback execute(Request request);
+    public abstract Callback execute(Request request) throws InvalidDataException;
 }

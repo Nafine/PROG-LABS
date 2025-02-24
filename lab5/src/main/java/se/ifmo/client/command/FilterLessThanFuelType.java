@@ -22,8 +22,9 @@ public class FilterLessThanFuelType extends Command {
     /**
      * Filters all elements comparing them by fuel type.
      * <p>
-     * Asks user to enter exactly one {@link Vehicle} using {@link se.ifmo.client.command.util.VehicleReader}.
+     * Asks user to enter exactly one {@link FuelType}.
      * </p>
+     *
      * @param request {@link Request}
      * @return {@link Callback}
      */
@@ -34,7 +35,7 @@ public class FilterLessThanFuelType extends Command {
 
         return new Callback("Found %d items:".formatted(collection.size()),
                 collection.stream().filter(
-                vehicle -> vehicle.getFuelType().ordinal() < FuelType.valueOf(request.args().get(0)).ordinal())
-                .toList());
+                                vehicle -> vehicle.getFuelType().ordinal() < FuelType.valueOf(request.args().get(0)).ordinal())
+                        .toList());
     }
 }

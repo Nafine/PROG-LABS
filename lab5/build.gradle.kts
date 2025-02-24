@@ -21,14 +21,8 @@ dependencies {
 tasks.register<JavaExec>("runApp") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("se.ifmo.Main")
-    //mainClass.set("se.ifmo.tests.CollectionManagerTest")
     standardInput = System.`in`
 
-    environment("LAB5_DATA_PATH", "src/data.csv") // <-- Передаём в процесс
-    environment("INDEX", "src/INDEX")
-
-//    doFirst {
-//        println("LAB5_DATA_PATH = ${environment["LAB5_DATA_PATH"]}")
-//        println("INDEX = ${environment["INDEX"]}")
-//    }
+    environment("LAB5_DATA_PATH", "ext/data.csv") // <-- Передаём в процесс
+    environment("INDEX", "ext/INDEX")
 }

@@ -32,9 +32,7 @@ public class ExecuteScript extends Command {
             return new Callback("Script executed successfully");
         } catch (IOException e) {
             return new Callback("IO error: " + e.getMessage());
-        } catch (IndexOutOfBoundsException e) {
-            return new Callback("Wrong arguments (must be at least" + this.getArgs().length + ")");
-        } catch (AlreadyRunningScriptException e) {
+        }  catch (AlreadyRunningScriptException e) {
             return new Callback("Script already running: " + e.getMessage());
         }
     }

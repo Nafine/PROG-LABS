@@ -1,6 +1,5 @@
 package se.ifmo.client.communication;
 
-import se.ifmo.client.command.Add;
 import se.ifmo.client.communication.exceptions.ProgramFinishedException;
 import se.ifmo.client.console.Console;
 import se.ifmo.system.collection.CollectionManager;
@@ -20,6 +19,7 @@ public class Handler implements Runnable {
 
     /**
      * Constructs a new {@link Handler} class.
+     *
      * @param console to read from
      */
     public Handler(Console console) {
@@ -29,11 +29,12 @@ public class Handler implements Runnable {
 
     /**
      * Method which handles exactly one prompt and calls {@link Router#route(Request)} method.
+     *
      * @param prompt user's prompt
-     * @throws InterruptedException if something went wrong
+     * @throws InterruptedException     if something went wrong
      * @throws ProgramFinishedException if program needs to be finished
      */
-    protected void handle(String prompt) throws InterruptedException, ProgramFinishedException{
+    protected void handle(String prompt) throws InterruptedException {
         if (prompt == null) return;
         Callback callback = router.route(parse(prompt));
 
@@ -47,6 +48,7 @@ public class Handler implements Runnable {
 
     /**
      * Parse exactly one prompt.
+     *
      * @param prompt user's prompt
      * @return {@link Request}
      */
@@ -79,6 +81,8 @@ public class Handler implements Runnable {
             }
         } catch (InterruptedException e) {
             console.writeln("Closing program.");
+        } catch (ProgramFinishedException e) {
+            throw e;
         } catch (Exception e) {
             console.writeln("Some error occurred:" + e.getMessage());
         }
