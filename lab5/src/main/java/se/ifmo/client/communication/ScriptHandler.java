@@ -1,14 +1,11 @@
 package se.ifmo.client.communication;
 
+import se.ifmo.client.command.util.ScriptFileHandler;
 import se.ifmo.client.communication.exceptions.AlreadyRunningScriptException;
 import se.ifmo.client.console.Console;
 import se.ifmo.system.collection.CollectionManager;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 
@@ -17,26 +14,22 @@ import java.util.HashSet;
  */
 public class ScriptHandler extends Handler implements AutoCloseable {
     private static final HashSet<String> runningScripts = new HashSet<>();
+    private final ScriptFileHandler scriptFileHandler;
     Path scriptPath;
-    BufferedReader bufferedReader;
+
 
     /**
      * Constructs a new {@link ScriptHandler} class.
      *
      * @param scriptPath file path to a script
-     * @param console    console to output command's {@link Callback}
+     * @param console    io to output command's {@link Callback}
      * @throws IOException                   if some {@link IOException} occurred during reading script file
      * @throws AlreadyRunningScriptException if script endless recursion detected
      */
     public ScriptHandler(Path scriptPath, Console console) throws IOException, AlreadyRunningScriptException {
-        super(console);
+        super(new ScriptFileHandler(scriptPath, console));
         this.scriptPath = scriptPath;
-
-        if (Files.notExists(scriptPath)) {
-            System.err.println("File " + scriptPath.getFileName() + "is not found");
-            throw new FileNotFoundException();
-        }
-        bufferedReader = new BufferedReader(new FileReader(scriptPath.toFile()));
+        this.scriptFileHandler = new ScriptFileHandler(scriptPath, console);
 
         if (runningScripts.contains(scriptPath.getFileName().toString()))
             throw new AlreadyRunningScriptException(scriptPath.getFileName().toString());
@@ -52,19 +45,19 @@ public class ScriptHandler extends Handler implements AutoCloseable {
         CollectionManager.getInstance();
         try {
             String line;
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = scriptFileHandler.read()) != null) {
                 handle(line);
             }
         } catch (InterruptedException e) {
-            console.writeln("Closing file");
+            io.write("Closing file");
         } catch (Exception e) {
-            console.writeln("Some error occurred:" + e.getMessage());
+            io.write("Some error occurred:" + e.getMessage());
         }
     }
 
     @Override
     public void close() throws IOException {
-        bufferedReader.close();
+        scriptFileHandler.close();
         runningScripts.remove(scriptPath.getFileName().toString());
     }
 }

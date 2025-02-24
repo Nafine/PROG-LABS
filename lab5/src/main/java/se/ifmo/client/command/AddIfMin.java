@@ -31,7 +31,7 @@ public class AddIfMin extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException, InterruptedException {
-        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.console());
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.io());
 
         var minVehicle = CollectionManager.getInstance().getCollection().stream().min(Comparator.naturalOrder());
         if (minVehicle.isPresent() && vehicle.compareTo(minVehicle.get()) < 0) {

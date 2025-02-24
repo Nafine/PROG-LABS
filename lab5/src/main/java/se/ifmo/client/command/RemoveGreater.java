@@ -24,7 +24,7 @@ public class RemoveGreater extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException, InterruptedException {
-        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.console());
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.io());
 
         CollectionManager.getInstance().getCollection().removeIf(temp -> temp.compareTo(vehicle) < 0);
         return new Callback("Successfully deleted all matching elements");

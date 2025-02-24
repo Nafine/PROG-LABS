@@ -1,10 +1,10 @@
 package se.ifmo.client.communication;
 
-import se.ifmo.client.command.Add;
 import se.ifmo.client.communication.exceptions.ProgramFinishedException;
 import se.ifmo.client.console.Console;
 import se.ifmo.system.collection.CollectionManager;
 import se.ifmo.system.collection.model.Vehicle;
+import se.ifmo.system.file.handler.IOHandler;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,15 +15,15 @@ import java.util.List;
  * Class, which handles user's input and transfers it to the {@link Router} class.
  */
 public class Handler implements Runnable {
-    protected final Console console;
+    protected final IOHandler<String> io;
     protected final Router router;
 
     /**
      * Constructs a new {@link Handler} class.
-     * @param console to read from
+     * @param io to read from
      */
-    public Handler(Console console) {
-        this.console = console;
+    public Handler(IOHandler<String> io) {
+        this.io = io;
         this.router = Router.getInstance();
     }
 
@@ -39,9 +39,9 @@ public class Handler implements Runnable {
 
         if (callback.message() != null && callback.message().equals("exit")) throw new ProgramFinishedException();
 
-        if (callback.message() != null && !callback.message().isBlank()) console.writeln(callback.message());
+        if (callback.message() != null && !callback.message().isBlank()) io.write(callback.message());
         if (callback.vehicles() != null && !callback.vehicles().isEmpty()) callback.vehicles().forEach(vehicle -> {
-            console.writeln(vehicle.toString());
+            io.write(vehicle.toString());
         });
     }
 
@@ -57,7 +57,7 @@ public class Handler implements Runnable {
         final List<String> args = parts.length > 1 ? Arrays.asList(parts[1].split(" ")) : Collections.emptyList();
         final List<Vehicle> vehicles = new LinkedList<>();
 
-        return new Request(command, args, vehicles, console);
+        return new Request(command, args, vehicles, io);
     }
 
     /**
@@ -69,18 +69,18 @@ public class Handler implements Runnable {
      */
     @Override
     public void run() {
-        console.writeln("Daite 100 ballov");
+        io.write("Daite 100 ballov");
         //load collection
         CollectionManager.getInstance();
         try {
             String line;
-            while ((line = console.read("")) != null) {
+            while ((line = io.read("")) != null) {
                 handle(line);
             }
         } catch (InterruptedException e) {
-            console.writeln("Closing program.");
+            io.write("Closing program.");
         } catch (Exception e) {
-            console.writeln("Some error occurred:" + e.getMessage());
+            io.write("Some error occurred:" + e.getMessage());
         }
     }
 }

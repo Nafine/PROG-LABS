@@ -36,7 +36,7 @@ public class UpdateId extends Command {
     public Callback execute(Request req) throws InvalidDataException, InterruptedException {
         int id = Integer.parseInt(req.args().get(0));
 
-        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.console());
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.io());
         vehicle.setId(id);
 
         LinkedHashSet<Vehicle> collection = CollectionManager.getInstance().getCollection();

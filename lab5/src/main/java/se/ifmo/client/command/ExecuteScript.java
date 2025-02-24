@@ -4,6 +4,7 @@ import se.ifmo.client.communication.Callback;
 import se.ifmo.client.communication.Request;
 import se.ifmo.client.communication.ScriptHandler;
 import se.ifmo.client.communication.exceptions.AlreadyRunningScriptException;
+import se.ifmo.client.console.Console;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,7 +28,7 @@ public class ExecuteScript extends Command {
      */
     @Override
     public Callback execute(Request req) {
-        try (ScriptHandler scriptHandler = new ScriptHandler(Path.of(req.args().get(0)), req.console())) {
+        try (ScriptHandler scriptHandler = new ScriptHandler(Path.of(req.args().get(0)), (Console)req.io())) {
             scriptHandler.run();
             return new Callback("Script executed successfully");
         } catch (IOException e) {

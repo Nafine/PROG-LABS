@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Class which contains all registered commands of the program.
  * <p>
- * All registered command can be used in console by user, they handle all type of exceptions that
+ * All registered command can be used in io by user, they handle all type of exceptions that
  * can occur during their execution time.
  * </p>
  */

@@ -1,24 +1,24 @@
 package se.ifmo.client.builders;
 
-import se.ifmo.client.console.Console;
 import se.ifmo.system.collection.model.Vehicle;
+import se.ifmo.system.file.handler.IOHandler;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class VehicleDirector {
-    public static Vehicle constructAndGetVehicle(Console console) throws InterruptedException {
+    public static Vehicle constructAndGetVehicle(IOHandler<String> io) throws InterruptedException {
         VehicleBuilder vehicleBuilder = new ConcreteVehicleBuilder();
-        while (!input("name", vehicleBuilder::setName, Function.identity(), console)) ;
+        while (!input("name", vehicleBuilder::setName, Function.identity(), io)) ;
 
         CoordinatesBuilder coordinatesBuilder = new ConcreteCoordinatesBuilder();
-        while (!input("x coordinate", coordinatesBuilder::setX, Long::valueOf, console)) ;
-        while (!input("y coordinate", coordinatesBuilder::setY, Double::valueOf, console)) ;
+        while (!input("x coordinate", coordinatesBuilder::setX, Long::valueOf, io)) ;
+        while (!input("y coordinate", coordinatesBuilder::setY, Double::valueOf, io)) ;
         vehicleBuilder.setCoordinates(coordinatesBuilder.getResult());
 
-        while (!input("engine power", vehicleBuilder::setEnginePower, Integer::valueOf, console)) ;
-        while (!input("capacity", vehicleBuilder::setCapacity, Double::valueOf, console)) ;
-        while (!input("distance travelled", vehicleBuilder::setDistanceTravelled, Float::valueOf, console)) ;
+        while (!input("engine power", vehicleBuilder::setEnginePower, Integer::valueOf, io)) ;
+        while (!input("capacity", vehicleBuilder::setCapacity, Double::valueOf, io)) ;
+        while (!input("distance travelled", vehicleBuilder::setDistanceTravelled, Float::valueOf, io)) ;
         return vehicleBuilder.getResult();
     }
 
@@ -26,10 +26,10 @@ public class VehicleDirector {
             final String fieldName,
             final Consumer<K> setter,
             final Function<String, K> parser,
-            final Console console
+            final IOHandler<String> io
     ) throws InterruptedException {
         try {
-            String line = console.read("Input next elements: " + fieldName);
+            String line = io.read("Input next elements: " + fieldName);
 
             if (line == null) throw new InterruptedException("Input interrupted");
             else if (line.isBlank()) setter.accept(null);
@@ -39,7 +39,8 @@ public class VehicleDirector {
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
-            console.writeln(e.getMessage());
+            io.write(e.getMessage());
+            io.write(System.lineSeparator());
             return false;
         }
     }

@@ -29,7 +29,7 @@ public class Add extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException, InterruptedException {
-        CollectionManager.getInstance().getCollection().add(VehicleDirector.constructAndGetVehicle(req.console()));
+        CollectionManager.getInstance().getCollection().add(VehicleDirector.constructAndGetVehicle(req.io()));
         return new Callback("Successfully added new element to the collection");
     }
 }
