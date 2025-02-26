@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashSet;
 
 /**
- * Class which used for reading/writing CSV file.
+ * Class which used for reading/writing CSV files.
  */
 public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
     private final Path filePath;

@@ -12,21 +12,46 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 
+/**
+ * Class which used for reading/writing XML files.
+ */
 public class XMLHandler implements IOHandler<LinkedHashSet<Vehicle>> {
     private final Path filePath;
 
     private final FileHandler fileHandler;
 
+    /**
+     * Constructs a new {@link XMLHandler} class.
+     *
+     * @param filePath of handling file
+     * @throws IOException if some {@link IOException} occurred
+     */
     public XMLHandler(Path filePath) throws IOException {
         this.filePath = filePath;
         fileHandler = new FileHandler(filePath);
     }
 
+    /**
+     * Constructs a new {@link XMLHandler} class.
+     *
+     * @param filePath of handling file
+     * @param append parameter of {@link FileHandler} class
+     * @throws IOException if some {@link IOException} occurred
+     */
     public XMLHandler(Path filePath, boolean append) throws IOException {
         this.filePath = filePath;
         fileHandler = new FileHandler(filePath, append);
     }
 
+    /**
+     * Reads collection elements from file by lines.
+     * <p>
+     * Adds element only if line which represents collection element was valid.
+     * Handles all {@link IOException}s.
+     * </p>
+     *
+     * @return {@link LinkedHashSet} with elements type of {@link Vehicle}
+     */
     @Override
     public LinkedHashSet<Vehicle> read() {
         if (!Files.isReadable(filePath)) {
@@ -53,6 +78,12 @@ public class XMLHandler implements IOHandler<LinkedHashSet<Vehicle>> {
         return new LinkedHashSet<>();
     }
 
+    /**
+     * Writes collection elements to the file.
+     * <p>
+     * Handles all {@link IOException}s.
+     * </p>
+     */
     @Override
     public void write(LinkedHashSet<Vehicle> vehicles) {
         if (!Files.isWritable(filePath)) {

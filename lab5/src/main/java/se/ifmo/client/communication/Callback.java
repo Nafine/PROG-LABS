@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Record which represents callback from a command.
  * @param message command output
- * @param vehicles List<{@link Vehicle}> if command interacts with collection.
+ * @param vehicles List of {@link Vehicle} if command interacts with collection.
  */
 public record Callback(String message, List<Vehicle> vehicles) {
 

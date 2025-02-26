@@ -2,6 +2,9 @@ package se.ifmo.client.builders;
 
 import se.ifmo.system.collection.model.Coordinates;
 
+/**
+ * Fluent coordinates builder interface.
+ */
 public interface CoordinatesBuilder {
     /**
      * Sets x param.

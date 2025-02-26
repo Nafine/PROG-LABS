@@ -15,7 +15,7 @@ public class Add extends Command {
      * Constructs a new {@link Add} command.
      */
     public Add() {
-        super("add", Command.EMPTY_ARGS, "Adds new element to the collection");
+        super("add", new String[]{"name", "coordinate_x", "coordinate_y", "engine_power", "capacity", "distance_traveled", "fuel_type"}, "Adds new element to the collection");
     }
 
     /**

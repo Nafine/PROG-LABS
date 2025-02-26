@@ -9,8 +9,10 @@ import se.ifmo.system.collection.util.Validatable;
 import se.ifmo.system.exceptions.InvalidDataException;
 
 import java.util.LinkedHashSet;
-import java.util.TreeSet;
 
+/**
+ * Wrapper for proper serialization of XML data.
+ */
 @Data
 @JacksonXmlRootElement(localName = "vehicles")
 public class VehicleXmlWrapper implements Validatable {
@@ -18,13 +20,28 @@ public class VehicleXmlWrapper implements Validatable {
     @JsonProperty("vehicle")
     private LinkedHashSet<Vehicle> vehicles;
 
-    public VehicleXmlWrapper() {}
+    public VehicleXmlWrapper() {
+    }
 
+    /**
+     * Constructs a new {@link VehicleXmlWrapper} class.
+     *
+     * @param vehicles
+     * @throws InvalidDataException
+     */
     public VehicleXmlWrapper(LinkedHashSet<Vehicle> vehicles) throws InvalidDataException {
         this.vehicles = vehicles;
         validate();
     }
 
+    /**
+     * Validates whole collection.
+     * <p>
+     * Calls {@link Vehicle#validate()} on each element of collection.
+     * </p>
+     *
+     * @throws InvalidDataException if collection data was invalid
+     */
     @Override
     public void validate() throws InvalidDataException {
         for (var product : vehicles) product.validate();

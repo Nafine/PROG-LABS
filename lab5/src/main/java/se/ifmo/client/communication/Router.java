@@ -45,7 +45,7 @@ public class Router {
                         HistoryManager.getInstance().addCommand(temp.getName());
                         try{return temp.execute(req);}
                         catch (IndexOutOfBoundsException e) {
-                            return new Callback("Wrong arguments (must be at least" + req.args().size() + ")");
+                            return new Callback("Wrong arguments (must be at least " + temp.getArgs().length + ")");
                         } catch (InvalidDataException e) {
                             return new Callback("You've input an invalid data: " + e.getMessage());
                         } catch (IllegalArgumentException e) {
