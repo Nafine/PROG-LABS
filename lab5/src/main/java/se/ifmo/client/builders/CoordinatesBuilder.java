@@ -1,6 +1,7 @@
 package se.ifmo.client.builders;
 
 import se.ifmo.system.collection.model.Coordinates;
+import se.ifmo.system.exceptions.InvalidDataException;
 
 /**
  * Fluent coordinates builder interface.
@@ -21,7 +22,7 @@ public interface CoordinatesBuilder {
     /**
      * Clear state of coordinates (creates new {@link Coordinates} object).
      */
-    public void build();
+    public void build() throws InvalidDataException;
     /**
      * Getter for built coordinates.
      * @return {@link Coordinates}

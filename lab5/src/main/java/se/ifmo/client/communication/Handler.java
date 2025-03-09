@@ -53,10 +53,10 @@ public class Handler implements Runnable {
      * @return {@link Request}
      */
     protected Request parse(String prompt) {
-        final String[] parts = prompt.split(" ", 2);
+        final String[] parts = prompt.split("\s+", 2);
 
         final String command = parts[0];
-        final List<String> args = parts.length > 1 ? Arrays.asList(parts[1].split(" ")) : Collections.emptyList();
+        final List<String> args = parts.length > 1 ? Arrays.asList(parts[1].split("\s+")) : Collections.emptyList();
         final List<Vehicle> vehicles = new LinkedList<>();
 
         return new Request(command, args, vehicles, console);

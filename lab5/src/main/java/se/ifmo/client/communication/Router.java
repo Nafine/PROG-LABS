@@ -20,6 +20,7 @@ public class Router {
 
     /**
      * Returns instance of {@link Router}
+     *
      * @return {@link Router}
      */
     public static Router getInstance() {
@@ -31,6 +32,7 @@ public class Router {
      * <p>
      * If command was not found returns specific {@link Callback} with only message.
      * </p>
+     *
      * @param req to a command
      * @return {@link Callback}
      */
@@ -43,9 +45,10 @@ public class Router {
                     .findFirst()
                     .map(temp -> {
                         HistoryManager.getInstance().addCommand(temp.getName());
-                        try{return temp.execute(req);}
-                        catch (IndexOutOfBoundsException e) {
-                            return new Callback("Wrong arguments (must be at least " + temp.getArgs().length + ")");
+                        try {
+                            return temp.execute(req);
+                        } catch (IndexOutOfBoundsException e) {
+                            return new Callback("Wrong amount of arguments (must be at least " + temp.getArgs().length + ")");
                         } catch (InvalidDataException e) {
                             return new Callback("You've input an invalid data: " + e.getMessage());
                         } catch (IllegalArgumentException e) {

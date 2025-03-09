@@ -26,6 +26,7 @@ public class CollectionManager {
 
     /**
      * Returns instance of {@link CollectionManager}
+     *
      * @return {@link CollectionManager}
      */
     public static CollectionManager getInstance() {

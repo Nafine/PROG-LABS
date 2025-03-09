@@ -15,6 +15,7 @@ public class RegisteredCommands {
      */
     public static final List<Command> LIST = List.of(
             new Add(),
+            new AddRandom(),
             new AddIfMin(),
             new Clear(),
             new ExecuteScript(),

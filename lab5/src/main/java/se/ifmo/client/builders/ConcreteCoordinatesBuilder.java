@@ -1,6 +1,7 @@
 package se.ifmo.client.builders;
 
 import se.ifmo.system.collection.model.Coordinates;
+import se.ifmo.system.exceptions.InvalidDataException;
 
 /**
  * Concrete builder for a coordinates.
@@ -28,7 +29,7 @@ public class ConcreteCoordinatesBuilder implements CoordinatesBuilder {
     }
 
     @Override
-    public void build() {
+    public void build() throws InvalidDataException {
         coordinates = new Coordinates();
     }
 

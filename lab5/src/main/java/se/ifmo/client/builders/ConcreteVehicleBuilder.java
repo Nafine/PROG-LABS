@@ -3,6 +3,7 @@ package se.ifmo.client.builders;
 import se.ifmo.system.collection.enums.FuelType;
 import se.ifmo.system.collection.model.Coordinates;
 import se.ifmo.system.collection.model.Vehicle;
+import se.ifmo.system.exceptions.InvalidDataException;
 
 /**
  * Concrete builder for a vehicle.
@@ -13,7 +14,7 @@ public class ConcreteVehicleBuilder implements VehicleBuilder {
     /**
      * Creates an empty {@link Vehicle} element.
      */
-    public ConcreteVehicleBuilder() {
+    public ConcreteVehicleBuilder() throws InvalidDataException {
         vehicle = new Vehicle();
     }
 
@@ -54,7 +55,7 @@ public class ConcreteVehicleBuilder implements VehicleBuilder {
     }
 
     @Override
-    public void build() {
+    public void build() throws InvalidDataException {
         vehicle = new Vehicle();
     }
 

@@ -40,3 +40,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Data ###
+ext/data.csv
+ext/data.xml

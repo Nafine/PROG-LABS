@@ -13,17 +13,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class IdGenerator implements AutoCloseable {
     private static IdGenerator instance = null;
-
-    private final FileHandler fileHandler;
     private final AtomicInteger currentId = new AtomicInteger(0);
+    private final FileHandler idFile;
 
     private IdGenerator() throws IOException {
-        this.fileHandler = new FileHandler(EnvManager.getIndexFile());
+        idFile = new FileHandler(EnvManager.getIndexFile(), true);
         initialize();
     }
 
     /**
      * Returns instance of {@link IdGenerator}
+     *
      * @return {@link IdGenerator}
      * @throws IOException if failed to open index file
      */
@@ -33,30 +33,27 @@ public class IdGenerator implements AutoCloseable {
 
     private void initialize() {
         try {
-            String lastIdStr = fileHandler.read();
+            String lastIdStr = idFile.read();
             if (lastIdStr != null) currentId.set(Integer.parseInt(lastIdStr));
             else currentId.set(0);
         } catch (NumberFormatException e) {
-            fileHandler.write(Long.toString(currentId.getAndSet(0)));
+            idFile.write(Long.toString(currentId.getAndSet(0)));
         }
     }
 
     /**
      * Generates unique if for a collection element.
+     *
      * @return int
      * @throws IOException if failed to read/write from index file
      */
     public int generateId() throws IOException {
-        currentId.incrementAndGet();
-        synchronized (fileHandler) {
-            fileHandler.write(Long.toString(currentId.get()));
-        }
-        return currentId.get();
+        idFile.write(currentId.get() + System.lineSeparator());
+        return currentId.incrementAndGet();
     }
 
     @Override
-    public void close() throws Exception {
-        fileHandler.write("");
-        fileHandler.close();
+    public void close() throws IOException {
+        idFile.close();
     }
 }

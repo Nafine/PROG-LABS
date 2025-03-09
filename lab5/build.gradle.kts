@@ -25,4 +25,5 @@ tasks.register<JavaExec>("runApp") {
 
     environment("LAB5_DATA_PATH", "ext/data.csv") // <-- Передаём в процесс
     environment("INDEX", "ext/INDEX")
+    environment("ERROR_LOG", "ext/ERROR_LOG")
 }

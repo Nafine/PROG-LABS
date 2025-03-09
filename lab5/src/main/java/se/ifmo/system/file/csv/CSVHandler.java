@@ -66,17 +66,22 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
                 .readValues(fileHandler.getBufferedInputStream())) {
 
             LinkedHashSet<Vehicle> vehicles = new LinkedHashSet<>();
-
+        int failedToRead = 0;
             while (it.hasNext()) {
                 try {
                     Vehicle vehicle = it.next();
                     vehicle.validate();
                     vehicles.add(vehicle);
                 } catch (InvalidDataException e) {
-                    System.out.println("Invalid vehicle data: " + e.getMessage());
+                    failedToRead++;
+                    System.err.println("Invalid data: " + e.getMessage());
+                    System.err.println(" at line " + it.getCurrentLocation());
                 } catch (Exception e) {
-                    System.out.println("Error processing CSV line: " + e.getMessage());
+                    System.err.println("Error processing CSV line: " + e.getMessage());
                 }
+            }
+            if (failedToRead > 0) {
+                System.out.println(failedToRead + " lines with invalid data skipped, check ERROR_LOG file.");
             }
             return vehicles;
         } catch (IOException e) {
@@ -98,18 +103,12 @@ public class CSVHandler implements IOHandler<LinkedHashSet<Vehicle>> {
             return;
         }
 
+        CsvMapper mapper = new CsvMapper();
         try {
-            CsvMapper csvMapper = new CsvMapper();
-            SequenceWriter seqW = csvMapper.writerWithSchemaFor(Vehicle.class).writeValues(fileHandler.getBufferedWriter());
-            for (var vehicle : vehicles) {
-                seqW.write(vehicle);
-                vehicle.validate();
-            }
+            SequenceWriter seqW = mapper.writerWithSchemaFor(Vehicle.class).writeValues(fileHandler.getBufferedWriter());
+            for (var vehicle : vehicles) seqW.write(vehicle);
         } catch (IOException e) {
             System.err.println("Error writing to CSV file: " + filePath.getFileName());
-            System.err.println(e.getMessage());
-        } catch (InvalidDataException e) {
-            System.err.println("Error during deserializing. Invalid collection data.");
             System.err.println(e.getMessage());
         }
     }

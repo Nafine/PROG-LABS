@@ -3,6 +3,7 @@ package se.ifmo.client.builders;
 import se.ifmo.system.collection.enums.FuelType;
 import se.ifmo.system.collection.model.Coordinates;
 import se.ifmo.system.collection.model.Vehicle;
+import se.ifmo.system.exceptions.InvalidDataException;
 
 /**
  * Fluent vehicle builder interface.
@@ -59,7 +60,7 @@ public interface VehicleBuilder {
     /**
      * Clear state of a vehicle (creates new {@link Vehicle} object).
      */
-    public void build();
+    public void build() throws InvalidDataException;
 
     /**
      * Getter for built vehicle.
