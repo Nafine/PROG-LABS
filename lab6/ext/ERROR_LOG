@@ -1,0 +1,6 @@
+Error processing CSV line: class java.lang.Long:Id must be unique
+ at [Source: (BufferedInputStream); line: 8, column: 30] (through reference chain: se.ifmo.system.collection.model.Vehicle["id"])
+Error processing CSV line: class java.lang.Long:Id must be unique
+ at [Source: (BufferedInputStream); line: 9, column: 30] (through reference chain: se.ifmo.system.collection.model.Vehicle["id"])
+Error processing CSV line: class java.lang.Long:Id must be unique
+ at [Source: (BufferedInputStream); line: 10, column: 30] (through reference chain: se.ifmo.system.collection.model.Vehicle["id"])
