@@ -4,7 +4,6 @@ plugins {
 }
 
 group = "se.ifmo"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -25,8 +24,44 @@ tasks.register<JavaExec>("runApp") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("se.ifmo.Main")
     standardInput = System.`in`
+}
 
-    environment("LAB5_DATA_PATH", "ext/data.csv") // <-- Передаём в процесс
-    environment("INDEX", "ext/INDEX")
-    environment("ERROR_LOG", "ext/ERROR_LOG")
+tasks.register<Jar>("serverFatJar") {
+
+    archiveClassifier.set("server")
+    manifest {
+        attributes["Main-Class"] = "server.MainServer"
+    }
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<Jar>("clientFatJar") {
+    archiveClassifier.set("client")
+    manifest {
+        attributes["Main-Class"] = "client.Client"
+    }
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<Jar>("tempJar") {
+    archiveClassifier.set("temp")
+    manifest {
+        attributes["Main-Class"] = "se.ifmo.Main"
+    }
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

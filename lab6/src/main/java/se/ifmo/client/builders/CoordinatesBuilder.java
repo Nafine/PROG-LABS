@@ -1,7 +1,7 @@
 package se.ifmo.client.builders;
 
-import se.ifmo.system.collection.model.Coordinates;
-import se.ifmo.system.exceptions.InvalidDataException;
+import se.ifmo.shared.model.Coordinates;
+import se.ifmo.shared.exceptions.InvalidDataException;
 
 /**
  * Fluent coordinates builder interface.

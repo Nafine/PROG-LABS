@@ -1,8 +1,8 @@
 package se.ifmo.client.builders;
 
-import se.ifmo.system.collection.enums.FuelType;
-import se.ifmo.system.collection.model.Vehicle;
-import se.ifmo.system.exceptions.InvalidDataException;
+import se.ifmo.shared.enums.FuelType;
+import se.ifmo.shared.model.Vehicle;
+import se.ifmo.shared.exceptions.InvalidDataException;
 
 import java.util.LinkedList;
 import java.util.List;
