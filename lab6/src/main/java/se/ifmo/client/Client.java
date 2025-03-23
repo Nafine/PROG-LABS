@@ -1,62 +1,45 @@
 package se.ifmo.client;
 
-import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
-import se.ifmo.client.console.Console;
-import se.ifmo.client.console.StandardConsole;
-import se.ifmo.server.file.FileHandler;
+import se.ifmo.client.command.ClientSideCommands;
+import se.ifmo.client.io.console.Console;
+import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.command.ExecuteScript;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.shared.io.IOHandler;
+import se.ifmo.shared.communication.Router;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Client implements AutoCloseable {
+    public static final int BUFFER_SIZE = 1024;
+    public static final int PACKET_SIZE = BUFFER_SIZE - 5;
+    InetAddress host;
     int serverPort;
     DatagramSocket socket;
     ByteBuffer buffer = ByteBuffer.allocate(65536);
-    Console console = new StandardConsole();
-    IOHandler<String> scriptHandler;
+    Console console;
 
     {
         try {
             socket = new DatagramSocket();
             socket.setSoTimeout(3000);
-
-            Path errorFile = Path.of(System.getenv("ERROR_LOG"));
-            System.setErr(new PrintStream(new FileOutputStream(errorFile.toFile())));
         } catch (SocketException e) {
             System.out.println("Unable to create socket");
             System.out.println(e.getMessage());
-        } catch (IOException e) {
-            System.err.close();
-            System.out.println("ERROR_LOG file was not found, error logging will not be performed.");
-        } catch (NullPointerException e) {
-            System.err.println("Check ERROR_LOG environment variable, it was not defined.");
         }
     }
 
-    public Client(int serverPort) {
+    public Client(Console console, InetAddress host, int serverPort) {
+        this.console = console;
+        this.host = host;
         this.serverPort = serverPort;
-    }
-
-    public static void main(String[] args) {
-        try (Client client = new Client(8080)) {
-            System.out.println("Client initialized");
-            client.run();
-        } catch (Exception e) {
-            System.out.println("Caught exception: " + e.getMessage());
-        }
     }
 
     public void run() {
@@ -64,33 +47,26 @@ public class Client implements AutoCloseable {
 
         while ((input = console.read()) != null) {
             handle(input);
-            if (scriptHandler != null) handle(scriptHandler.read());
         }
     }
 
-    private void handle(String input) {
+    protected void handle(String input) {
         if (input == null || input.isBlank()) return;
 
-        printCallback(handleRequest(parse(input)));
+        try {
+            printCallback(handleRequest(parse(input)));
+        } catch (IOException e) {
+            System.err.println("Error during handling request: " + e.getMessage());
+        }
     }
 
-    private Callback handleRequest(Request request) {
-        if (new ExecuteScript().getName().equals(request.command())) {
-            File file = Path.of(request.args().get(0)).toFile();
+    private Callback handleRequest(Request request) throws IOException {
+        if (new ExecuteScript().getName().equals(request.command()))
+            return (new ScriptHandler(this)).handleScript(request);
 
-            if (!file.exists()) return new Callback("File not found.");
-            if (!file.isFile()) return new Callback("Path is not a file.");
-            if (!file.canRead()) return new Callback("Not enough rights to read file.");
+        else if (ClientSideCommands.MAP.containsKey(request.command())) return Router.getInstance().route(request);
 
-            try{
-                scriptHandler = new FileHandler(file.toPath(), true);
-            } catch (Exception e) {
-                System.err.println("Error closing console: " + e.getMessage());
-                return new Callback("Can't close console");
-            }
-        }
-
-        sendRequest(request);
+        splitSendRequest(request);
         return receiveCallback();
     }
 
@@ -110,36 +86,36 @@ public class Client implements AutoCloseable {
             callback.vehicles().forEach(vehicle -> console.writeln(vehicle.toString()));
     }
 
-    public void sendRequest(Request request) {
-        try {
-            buffer.clear().put(SerializationUtils.serialize(request)).flip();
-            DatagramPacket packet = new DatagramPacket(buffer.array(), buffer.remaining(), InetAddress.getByName("localhost"), serverPort);
-            socket.send(packet);
-            buffer.clear();
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("IOException during sending request: " + e.getMessage());
-        } catch (SerializationException e) {
-            System.out.println("Failed to deserialize packet: " + e.getMessage());
+    private void splitSendRequest(Request request) throws IOException {
+        byte[] data = SerializationUtils.serialize(request);
+        int numPackets = (int) Math.ceil((double) data.length / (PACKET_SIZE));
+        for (int i = 0; i < numPackets; i++) {
+            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+            buffer.put((byte) i);
+            buffer.putInt(numPackets);
+            buffer.put(data, i * PACKET_SIZE, Math.min(PACKET_SIZE, data.length - i * PACKET_SIZE));
+            buffer.flip();
+            socket.send(new DatagramPacket(buffer.array(), buffer.remaining(), host, serverPort));
         }
     }
 
-    public Callback receiveCallback() {
-        try {
-            DatagramPacket packet = new DatagramPacket(buffer.array(), buffer.remaining(), InetAddress.getByName("localhost"), serverPort);
+    public Callback receiveCallback() throws IOException {
+        Map<Integer, byte[]> receivedPackets = new HashMap<>();
+        byte[] receivedData;
 
+        while (true) {
+            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+            DatagramPacket packet = new DatagramPacket(buffer.array(), buffer.remaining(), host, serverPort);
             socket.receive(packet);
-            return SerializationUtils.deserialize(packet.getData());
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + e.getMessage());
-            return new Callback("Unknown host.");
-        } catch (IOException e) {
-            System.err.println("IOException during sending request: " + e.getMessage());
-            return new Callback("Error receiving callback.");
-        } catch (SerializationException e) {
-            System.err.println("Can't deserialize packet: " + e.getMessage());
-            return new Callback("Error receiving callback.");
+            int seqNum = buffer.get();
+            int totalPackets = buffer.getInt();
+            byte[] data = new byte[buffer.remaining()];
+            buffer.get(data);
+            receivedPackets.put(seqNum, data);
+            if (receivedPackets.size() == totalPackets) {
+                receivedData = PacketManager.assemblePackets(receivedPackets);
+                return SerializationUtils.deserialize(receivedData);
+            }
         }
     }
 

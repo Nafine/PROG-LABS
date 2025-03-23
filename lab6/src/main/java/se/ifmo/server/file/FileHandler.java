@@ -24,8 +24,9 @@ public class FileHandler implements IOHandler<String> {
      * Checks file existence and throws an {@link IOException} on fail.
      * Creates instances of {@link BufferedInputStream} and {@link BufferedWriter}.
      * </p>
+     *
      * @param filePath of handling file
-     * @param append parameter of {@link FileWriter}
+     * @param append   parameter of {@link FileWriter}
      * @throws IOException if some {@link IOException} occurred
      */
     public FileHandler(Path filePath, boolean append) throws IOException {
@@ -42,6 +43,7 @@ public class FileHandler implements IOHandler<String> {
 
     /**
      * Calls {@link FileHandler#FileHandler(Path, boolean)} with true parameter.
+     *
      * @param filePath of handling file
      * @throws IOException if some {@link IOException} occurred
      */
@@ -49,8 +51,37 @@ public class FileHandler implements IOHandler<String> {
         this(filePath, true);
     }
 
+    /**
+     * Retrieves 1000 lines from the file.
+     *
+     * @return lines
+     */
     @Override
     public String read() {
+        StringBuilder content = new StringBuilder();
+        int nextChar;
+        int lineCount = 0;
+        try {
+            while ((nextChar = bufferedInputStream.read()) != -1 && lineCount < 1000) {
+                content.append((char) nextChar);
+                if (nextChar == '\n') {
+                    lineCount++;
+                }
+            }
+            return String.valueOf(content);
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + filePath);
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Reads whole file as a {@link String}.
+     *
+     * @return file content
+     */
+    public String readAll() {
         StringBuilder content = new StringBuilder();
         int nextChar;
         try {

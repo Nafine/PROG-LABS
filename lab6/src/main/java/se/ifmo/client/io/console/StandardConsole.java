@@ -1,4 +1,4 @@
-package se.ifmo.client.console;
+package se.ifmo.client.io.console;
 
 import lombok.Setter;
 

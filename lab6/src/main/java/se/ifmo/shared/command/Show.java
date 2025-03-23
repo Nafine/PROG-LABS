@@ -28,9 +28,9 @@ public class Show extends Command {
     public Callback execute(Request req) {
         List<Vehicle> list = CollectionManager.getInstance().getCollection().stream().toList();
 
-        if (list.size() > 100)
+        if (list.size() > 1000)
             // .stream.toList() needs because subList() returns list which do not implement Serializable interface
-            return new Callback("Collection is too big, show only first 100 elements:", list.subList(0, 100).stream().toList());
+            return new Callback("Collection is too big, show only first 1000 elements:", list.subList(0, 1000).stream().toList());
 
         return new Callback("Collection:", list);
     }

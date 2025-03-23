@@ -1,6 +1,6 @@
 package se.ifmo.shared.command;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Class which contains all registered commands of the program.
@@ -13,25 +13,31 @@ public class RegisteredCommands {
     /**
      * Public static final field with list of all available commands.
      */
-    public static final List<Command> LIST = List.of(
-            new Add(),
-            new AddRandom(),
-            new AddIfMin(),
-            new Clear(),
-            new ExecuteScript(),
-            new Exit(),
-            new FilterLessThanFuelType(),
-            new Help(),
-            new History(),
-            new Info(),
-            new MinByCreationDate(),
-            new RemoveById(),
-            new RemoveGreater(),
-            new Save(),
-            new Show(),
-            new SumOfEnginePower(),
-            new UpdateId()
-    );
+    public static final HashMap<String, Command> MAP = new HashMap<>();
 
-    private RegisteredCommands() {}
+    static {
+        RegisteredCommands.registerCommand(new Add());
+        RegisteredCommands.registerCommand(new AddIfMin());
+        RegisteredCommands.registerCommand(new AddRandom());
+        RegisteredCommands.registerCommand(new Clear());
+        RegisteredCommands.registerCommand(new ExecuteScript());
+        RegisteredCommands.registerCommand(new Exit());
+        RegisteredCommands.registerCommand(new FilterLessThanFuelType());
+        RegisteredCommands.registerCommand(new Help());
+        RegisteredCommands.registerCommand(new History());
+        RegisteredCommands.registerCommand(new Info());
+        RegisteredCommands.registerCommand(new MinByCreationDate());
+        RegisteredCommands.registerCommand(new RemoveById());
+        RegisteredCommands.registerCommand(new RemoveGreater());
+        RegisteredCommands.registerCommand(new Show());
+        RegisteredCommands.registerCommand(new SumOfEnginePower());
+        RegisteredCommands.registerCommand(new UpdateId());
+    }
+
+    private RegisteredCommands() {
+    }
+
+    private static void registerCommand(Command command) {
+        MAP.put(command.getName(), command);
+    }
 }

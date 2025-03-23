@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import se.ifmo.server.file.CollectionParser;
-import se.ifmo.shared.model.Vehicle;
-import se.ifmo.shared.exceptions.InvalidDataException;
 import se.ifmo.server.file.FileHandler;
-import se.ifmo.shared.io.IOHandler;
+import se.ifmo.shared.exceptions.InvalidDataException;
+import se.ifmo.shared.model.Vehicle;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -67,7 +66,7 @@ public class CSVHandler implements CollectionParser<Vehicle> {
                 .readValues(fileHandler.getBufferedInputStream())) {
 
             LinkedHashSet<Vehicle> vehicles = new LinkedHashSet<>();
-        int failedToRead = 0;
+            int failedToRead = 0;
             while (it.hasNext()) {
                 try {
                     Vehicle vehicle = it.next();

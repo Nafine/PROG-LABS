@@ -1,9 +1,9 @@
 package se.ifmo.server.collection;
 
 import lombok.Getter;
-import se.ifmo.shared.model.Vehicle;
-import se.ifmo.server.collection.util.EnvManager;
 import se.ifmo.server.file.csv.CSVHandler;
+import se.ifmo.server.util.EnvManager;
+import se.ifmo.shared.model.Vehicle;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;

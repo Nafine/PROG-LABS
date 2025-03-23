@@ -16,6 +16,7 @@ public class Help extends Command {
 
     /**
      * Shows description all {@link Command} listed in class {@link RegisteredCommands}.
+     *
      * @param req {@link Request}
      * @return {@link Callback}
      */
@@ -23,14 +24,13 @@ public class Help extends Command {
     public Callback execute(Request req) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (Command command : RegisteredCommands.LIST) {
+        for (Command command : RegisteredCommands.MAP.values()) {
             stringBuilder.append(command.getName()).append(" - ").append(command.getDescription()).append("\n");
             if (command.getArgs() != Command.EMPTY_ARGS) {
                 stringBuilder.append("args: (").append(String.join(", ", command.getArgs())).append(")\n");
             }
             stringBuilder.append("\n");
         }
-
 
         return new Callback(stringBuilder.toString());
     }

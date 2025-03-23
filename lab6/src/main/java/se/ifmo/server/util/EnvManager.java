@@ -1,4 +1,4 @@
-package se.ifmo.server.collection.util;
+package se.ifmo.server.util;
 
 import lombok.Getter;
 

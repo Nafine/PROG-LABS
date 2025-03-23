@@ -1,5 +1,6 @@
 package se.ifmo.server.collection.util;
 
+import se.ifmo.server.util.EnvManager;
 import se.ifmo.server.file.FileHandler;
 
 import java.io.IOException;

@@ -22,6 +22,6 @@ public class ExecuteScript extends Command {
      */
     @Override
     public Callback execute(Request req) {
-        return new Callback("Begin script execution");
+        return new Callback(String.format("Script %s has been successfully executed", req.args().get(0)));
     }
 }

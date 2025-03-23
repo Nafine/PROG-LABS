@@ -19,6 +19,7 @@ public class Exit extends Command {
      */
     @Override
     public Callback execute(Request req) {
-        return new Callback("You can't shutdown server while being client");
+        System.exit(0);
+        return new Callback("How did you manage to see this callback?");
     }
 }

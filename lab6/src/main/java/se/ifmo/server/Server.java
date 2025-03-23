@@ -1,26 +1,31 @@
 package se.ifmo.server;
 
-import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.communication.Router;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import java.util.logging.Level;
 
 public class Server implements AutoCloseable {
+    public static final int BUFFER_SIZE = 1024;
+    public static final int PACKET_SIZE = BUFFER_SIZE - 5;
+    private static final Map<InetSocketAddress, Map<Integer, byte[]>> clientMessages = new HashMap<>();
     final int PORT = 8080;
     DatagramChannel channel;
     Selector selector;
-    ByteBuffer buffer = ByteBuffer.allocate(65536);
 
     {
         try {
@@ -40,78 +45,66 @@ public class Server implements AutoCloseable {
         }
     }
 
-    public static void main(String[] args) {
-        try (Server server = new Server()) {
-            System.out.println("Server is ready for handling requests");
-            server.run();
+    public void run() {
+        try {
+            while (true) {
+                select();
+            }
         } catch (IOException e) {
+            System.err.println("Error during selection");
             System.err.println(e.getMessage());
         }
     }
 
-    public void run() {
-        while (true) {
+    private void select() throws IOException {
+        if (selector.select() == 0) return;
+        Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
+        while (keyIterator.hasNext()) {
+            SelectionKey key = keyIterator.next();
+
             try {
-                if (selector.select() != 0) {
-                    for (SelectionKey key : selector.selectedKeys()) {
-                        if (key.isReadable()) {
-                            processRequest();
-                        }
-                    }
-                    selector.selectedKeys().clear();
-                }
+                if (key.isReadable()) receiveRequest();
             } catch (IOException e) {
-                System.err.println("Unable to select");
+                System.err.println("Error reading key");
                 System.err.println(e.getMessage());
             }
+
+            keyIterator.remove();
         }
     }
 
-    private void processRequest() {
-        SocketAddress clientAddress = receiveRequest();
+    private void receiveRequest() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        InetSocketAddress clientAddress = (InetSocketAddress) channel.receive(buffer);
 
-        Request request = SerializationUtils.deserialize(buffer.array());
+        if (clientAddress == null) return;
+        buffer.flip();
 
-        System.out.println("Server received remain: " + buffer.remaining());
+        int packetId = buffer.get();
+        int totalPackets = buffer.getInt();
+        byte[] data = new byte[buffer.remaining()];
+        buffer.get(data);
 
-        Callback callback = Router.getInstance().route(request);
-        sendCallback(clientAddress, callback);
+        clientMessages.computeIfAbsent(clientAddress, k -> new HashMap<>()).put(packetId, data);
+        if (clientMessages.get(clientAddress).size() == totalPackets) {
+            Request request = SerializationUtils.deserialize(PacketManager.assemblePackets(clientMessages.remove(clientAddress)));
+            Callback response = Router.getInstance().route(request);
+            splitSendCallback(response, clientAddress);
+        }
     }
 
-    private SocketAddress receiveRequest() {
-        try {
-            buffer.clear();
-            SocketAddress clientAddress = channel.receive(buffer);
+    private void splitSendCallback(Callback callback, InetSocketAddress clientAddress) throws IOException {
+        byte[] data = SerializationUtils.serialize(callback);
+        int numPackets = (int) Math.ceil((double) data.length / (PACKET_SIZE));
+        for (int i = 0; i < numPackets; i++) {
+            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+            buffer.put((byte) i);
+            buffer.putInt(numPackets);
+            buffer.put(data, i * PACKET_SIZE, Math.min(PACKET_SIZE, data.length - i * PACKET_SIZE));
             buffer.flip();
-
-            return clientAddress;
-        } catch (IOException e) {
-            System.err.println("Could not receive request");
-            System.err.println(e.getMessage());
-            return null;
+            channel.send(buffer, clientAddress);
         }
     }
-
-    private void sendCallback(SocketAddress remoteAddress, Callback callback) {
-        try {
-            buffer.clear().put(SerializationUtils.serialize(callback)).flip();
-
-            System.out.println("Sent Buffer remain: " + buffer.remaining());
-
-            channel.send(buffer, remoteAddress);
-            buffer.clear();
-        } catch (IOException e) {
-            System.err.println("Could not send callback");
-            System.err.println(e.getMessage());
-        } catch (BufferOverflowException e) {
-            System.err.println("Buffer overflow");
-            System.err.println(e.getMessage());
-        }catch (SerializationException e){
-            System.err.println("Could not serialize callback");
-            System.out.println(e.getMessage());
-        }
-    }
-
 
     @Override
     public void close() throws IOException {
