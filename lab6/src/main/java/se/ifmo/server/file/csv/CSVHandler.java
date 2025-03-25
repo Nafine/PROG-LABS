@@ -3,6 +3,7 @@ package se.ifmo.server.file.csv;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import se.ifmo.server.Server;
 import se.ifmo.server.file.CollectionParser;
 import se.ifmo.server.file.FileHandler;
 import se.ifmo.shared.exceptions.InvalidDataException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.logging.Level;
 
 /**
  * Class which used for reading/writing CSV files.
@@ -55,7 +57,7 @@ public class CSVHandler implements CollectionParser<Vehicle> {
     @Override
     public LinkedHashSet<Vehicle> read() {
         if (!Files.isReadable(filePath)) {
-            System.err.println("File " + filePath.getFileName() + "is not readable");
+            Server.logger.severe(String.format("File %s is not readable", filePath.getFileName()));
             return new LinkedHashSet<>();
         }
 
@@ -74,18 +76,17 @@ public class CSVHandler implements CollectionParser<Vehicle> {
                     vehicles.add(vehicle);
                 } catch (InvalidDataException e) {
                     failedToRead++;
-                    System.err.println("Invalid data: " + e.getMessage());
-                    System.err.println(" at line " + it.getCurrentLocation());
+                    Server.logger.log(Level.INFO, String.format("Invalid data at line %s", it.getCurrentLocation()), e);
                 } catch (Exception e) {
-                    System.err.println("Error processing CSV line: " + e.getMessage());
+                    Server.logger.log(Level.INFO, "Error processing CSV line: ", e);
                 }
             }
-            if (failedToRead > 0) {
-                System.out.println(failedToRead + " lines with invalid data skipped, check ERROR_LOG file.");
-            }
+            if (failedToRead > 0)
+                Server.logger.info(String.format("%d lines with invalid data skipped", failedToRead));
+            Server.logger.fine(String.format("Read %d vehicles", vehicles.size()));
             return vehicles;
         } catch (IOException e) {
-            System.err.println("Something went wrong: " + e.getMessage());
+            Server.logger.log(Level.WARNING, "Something went wrong: ", e);
         }
         return new LinkedHashSet<>();
     }
@@ -99,7 +100,7 @@ public class CSVHandler implements CollectionParser<Vehicle> {
     @Override
     public void write(LinkedHashSet<Vehicle> vehicles) {
         if (!Files.isWritable(filePath)) {
-            System.err.println("File " + filePath.getFileName() + "is not writable");
+            Server.logger.severe(String.format("File %s is not writable", filePath.getFileName()));
             return;
         }
 
@@ -108,9 +109,9 @@ public class CSVHandler implements CollectionParser<Vehicle> {
             SequenceWriter seqW = mapper.writerWithSchemaFor(Vehicle.class).writeValues(fileHandler.getBufferedWriter());
             for (var vehicle : vehicles) seqW.write(vehicle);
         } catch (IOException e) {
-            System.err.println("Error writing to CSV file: " + filePath.getFileName());
-            System.err.println(e.getMessage());
+            Server.logger.log(Level.SEVERE, String.format("Error writing to CSV file %s", filePath.getFileName()), e);
         }
+        Server.logger.fine("Successfully written to CSV file");
     }
 
 

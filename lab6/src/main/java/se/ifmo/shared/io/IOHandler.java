@@ -1,5 +1,11 @@
 package se.ifmo.shared.io;
 
+/**
+ * Interface which defines how all I/O entities must behave.
+ * It is desirable not to override the method {@link IOHandler#read(T prompt)}.
+ *
+ * @param <T>
+ */
 public interface IOHandler<T> extends AutoCloseable {
 
     /**

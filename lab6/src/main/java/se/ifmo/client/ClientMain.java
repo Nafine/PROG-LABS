@@ -8,6 +8,10 @@ import se.ifmo.shared.command.ExecuteScript;
 import se.ifmo.shared.command.Exit;
 import se.ifmo.shared.command.Help;
 
+/**
+ * Class which used as an entry point for server side of the program.
+ * Registers client-side commands, creates console for user and launches client.
+ */
 public class ClientMain {
     static {
         ClientSideCommands.registerCommand(new Exit());
@@ -17,8 +21,8 @@ public class ClientMain {
 
     public static void main(String[] args) {
         try (Console console = new StandardConsole();
-             Client client = new Client(console, EnvManager.getHost(),EnvManager.getPort())) {
-            System.out.println("Client initiated");
+             Client client = new Client(console, EnvManager.getHost(), EnvManager.getPort())) {
+            System.out.printf("Client initiated, destination %s:%s%n",EnvManager.getHost().getHostAddress(), EnvManager.getPort());
             client.run();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());

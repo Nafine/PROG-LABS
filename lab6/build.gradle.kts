@@ -20,17 +20,11 @@ dependencies {
     implementation("io.vertx:vertx-core:4.5.3")
 }
 
-tasks.register<JavaExec>("runApp") {
-    classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("se.ifmo.Main")
-    standardInput = System.`in`
-}
-
 tasks.register<Jar>("serverFatJar") {
 
     archiveClassifier.set("server")
     manifest {
-        attributes["Main-Class"] = "server.MainServer"
+        attributes["Main-Class"] = "se.ifmo.server.ServerMain"
     }
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
@@ -43,20 +37,7 @@ tasks.register<Jar>("serverFatJar") {
 tasks.register<Jar>("clientFatJar") {
     archiveClassifier.set("client")
     manifest {
-        attributes["Main-Class"] = "client.Client"
-    }
-    from(sourceSets.main.get().output)
-    dependsOn(configurations.runtimeClasspath)
-    from({
-        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-    })
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-tasks.register<Jar>("tempJar") {
-    archiveClassifier.set("temp")
-    manifest {
-        attributes["Main-Class"] = "se.ifmo.Main"
+        attributes["Main-Class"] = "se.ifmo.client.ClientMain"
     }
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)

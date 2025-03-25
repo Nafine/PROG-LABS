@@ -1,6 +1,7 @@
 package se.ifmo.server;
 
 import org.apache.commons.lang3.SerializationUtils;
+import se.ifmo.client.util.EnvManager;
 import se.ifmo.server.collection.CollectionManager;
 import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.communication.Callback;
@@ -16,14 +17,49 @@ import java.nio.channels.Selector;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
+/**
+ * UDP server implementation using non-blocking I/O.
+ *
+ * <p>Key features:
+ * <ul>
+ *   <li>Fixed-size packet handling ({@value #BUFFER_SIZE} bytes)</li>
+ *   <li>Fragmented message assembly</li>
+ *   <li>Selector-based I/O multiplexing</li>
+ *   <li>Integrated routing system through {@link Router}</li>
+ *   <li>Thread-safe packet reassembly</li>
+ * </ul>
+ */
 public class Server implements AutoCloseable {
-    public static final int BUFFER_SIZE = 1024;
+    // Network buffer size optimized for Ethernet MTU (1500 bytes).
+    public static final int BUFFER_SIZE = 1500;
+    /*
+     * Maximum payload size per packet.
+     * Calculated as BUFFER_SIZE - 5 (1 byte packet ID + 4 bytes total packet count).
+     */
     public static final int PACKET_SIZE = BUFFER_SIZE - 5;
+    public static final Logger logger = Logger.getLogger("se.ifmo.server.Server");
+    //Partial message cache for client transmissions.
     private static final Map<InetSocketAddress, Map<Integer, byte[]>> clientMessages = new HashMap<>();
-    final int PORT = 8080;
+    private static FileHandler fh;
+
+    static {
+        try {
+            fh = new FileHandler("ext/log.txt");
+        } catch (IOException e) {
+            System.out.println("Was not able to open log file. " + e.getMessage());
+        }
+
+        logger.setUseParentHandlers(false);
+        logger.addHandler(fh);
+        logger.setLevel(Level.ALL);
+        logger.info("Logger initialized");
+    }
+
+    final int PORT = EnvManager.getPort();
     DatagramChannel channel;
     Selector selector;
 
@@ -36,25 +72,35 @@ public class Server implements AutoCloseable {
                 selector = Selector.open();
                 channel.register(selector, SelectionKey.OP_READ);
             } catch (IOException e) {
-                System.err.println("Could not open selector");
-                System.err.println(e.getMessage());
+                logger.log(Level.SEVERE, "Could not open selector", e);
+                System.out.println("Failed to launch server.");
             }
         } catch (IOException e) {
-            System.err.println("Could not open channel");
-            System.err.println(e.getMessage());
+            logger.log(Level.SEVERE, "Could not open selector", e);
+            System.out.println("Failed to launch server.");
+        }
+
+        logger.fine(String.format("Server launched, listening on port %d", PORT));
+    }
+
+    /**
+     * Starts the server's event processing loop.
+     *
+     * <p>Implementation notes:
+     * <ul>
+     *   <li>Infinite selector polling loop</li>
+     *   <li>Graceful error handling maintains server availability</li>
+     * </ul>
+     */
+    public void run() {
+        try {
+            while (true) select();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error during selection", e);
+            System.out.println("Error while running.");
         }
     }
 
-    public void run() {
-        try {
-            while (true) {
-                select();
-            }
-        } catch (IOException e) {
-            System.err.println("Error during selection");
-            System.err.println(e.getMessage());
-        }
-    }
 
     private void select() throws IOException {
         if (selector.select() == 0) return;
@@ -65,8 +111,7 @@ public class Server implements AutoCloseable {
             try {
                 if (key.isReadable()) receiveRequest();
             } catch (IOException e) {
-                System.err.println("Error reading key");
-                System.err.println(e.getMessage());
+                logger.log(Level.INFO, "Error reading key", e);
             }
 
             keyIterator.remove();
@@ -78,6 +123,7 @@ public class Server implements AutoCloseable {
         InetSocketAddress clientAddress = (InetSocketAddress) channel.receive(buffer);
 
         if (clientAddress == null) return;
+
         buffer.flip();
 
         int packetId = buffer.get();
@@ -87,9 +133,11 @@ public class Server implements AutoCloseable {
 
         clientMessages.computeIfAbsent(clientAddress, k -> new HashMap<>()).put(packetId, data);
         if (clientMessages.get(clientAddress).size() == totalPackets) {
+            //System.out.printf("Packet has been acquired: %d of %d%n", packetId, totalPackets);
             Request request = SerializationUtils.deserialize(PacketManager.assemblePackets(clientMessages.remove(clientAddress)));
             Callback response = Router.getInstance().route(request);
             splitSendCallback(response, clientAddress);
+            logger.fine(String.format("Received message from %s:%s%nWhich contains %n%s", clientAddress.getHostString(), clientAddress.getPort(), request));
         }
     }
 
@@ -108,6 +156,7 @@ public class Server implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        logger.fine("Closing server");
         CollectionManager.getInstance().save();
         channel.close();
         selector.close();
