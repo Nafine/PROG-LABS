@@ -1,2 +1,0 @@
-Error processing CSV line: Cannot deserialize value of type `java.lang.Double` from String "1.0598573174524062E": not a valid `Double` value
- at [Source: (BufferedInputStream); line: 10, column: 42] (through reference chain: se.ifmo.shared.model.Coordinates["y"])

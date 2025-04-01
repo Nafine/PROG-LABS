@@ -15,7 +15,7 @@ public class StandardConsole implements Console {
 
     @Override
     public String read(String prompt) {
-        writeln(prompt);
+        write(prompt);
         return read();
     }
 
@@ -32,7 +32,16 @@ public class StandardConsole implements Console {
     public void write(String text) {
         try {
             consoleWriter.append(text).flush();
+        } catch (IOException ignored) {
+        }
+    }
+
+    @Override
+    public boolean ready() {
+        try {
+            return consoleReader.ready();
         } catch (IOException e) {
+            return false;
         }
     }
 

@@ -1,12 +1,19 @@
 plugins {
     id("java")
     id("io.freefair.lombok") version "8.12"
+    java
 }
 
 group = "se.ifmo"
 
 repositories {
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 

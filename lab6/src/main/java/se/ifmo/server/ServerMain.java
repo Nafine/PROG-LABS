@@ -1,7 +1,7 @@
 package se.ifmo.server;
 
-import se.ifmo.client.util.EnvManager;
 import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.util.EnvManager;
 
 import java.io.IOException;
 

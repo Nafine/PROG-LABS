@@ -2,9 +2,9 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2025-03-25T21:28:53.467792600Z</date>
-  <millis>1742938133467</millis>
-  <nanos>792600</nanos>
+  <date>2025-03-26T15:23:10.873377Z</date>
+  <millis>1743002590873</millis>
+  <nanos>377000</nanos>
   <sequence>0</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>INFO</level>
@@ -14,9 +14,9 @@
   <message>Logger initialized</message>
 </record>
 <record>
-  <date>2025-03-25T21:28:53.700128Z</date>
-  <millis>1742938133700</millis>
-  <nanos>128000</nanos>
+  <date>2025-03-26T15:23:10.920322Z</date>
+  <millis>1743002590920</millis>
+  <nanos>322000</nanos>
   <sequence>1</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>FINE</level>
@@ -25,3 +25,16 @@
   <thread>1</thread>
   <message>Server launched, listening on port 8080</message>
 </record>
+<record>
+  <date>2025-03-26T15:23:11.196849Z</date>
+  <millis>1743002591196</millis>
+  <nanos>849000</nanos>
+  <sequence>2</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.file.csv.CSVHandler</class>
+  <method>read</method>
+  <thread>1</thread>
+  <message>Read 9 vehicles</message>
+</record>
+</log>

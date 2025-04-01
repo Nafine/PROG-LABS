@@ -1,8 +1,10 @@
 package se.ifmo.server;
 
 import org.apache.commons.lang3.SerializationUtils;
-import se.ifmo.client.util.EnvManager;
+import se.ifmo.client.io.console.Console;
+import se.ifmo.client.io.console.StandardConsole;
 import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.util.EnvManager;
 import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
@@ -17,6 +19,7 @@ import java.nio.channels.Selector;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,8 +63,10 @@ public class Server implements AutoCloseable {
     }
 
     final int PORT = EnvManager.getPort();
+    boolean isRunning = true;
     DatagramChannel channel;
     Selector selector;
+    Console console = new StandardConsole();
 
     {
         try {
@@ -94,16 +99,43 @@ public class Server implements AutoCloseable {
      */
     public void run() {
         try {
-            while (true) select();
+            while (isRunning) {
+                select();
+                if (console.ready()) handleInput(console.read());
+                try {
+                    TimeUnit.MILLISECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    logger.log(Level.WARNING, "Thread has been interrupted", e);
+                }
+            }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error during selection", e);
             System.out.println("Error while running.");
         }
+        try {
+            close();
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Error during shutting down server", e);
+        }
     }
 
+    private void handleInput(String input) {
+        switch (input) {
+            case "exit":
+                isRunning = false;
+                break;
+            case "save":
+                CollectionManager.getInstance().save();
+                System.out.println("Collection was saved");
+                logger.fine("Collection was saved");
+                break;
+            default:
+                console.write(String.format("Unknown command: %s", input));
+        }
+    }
 
     private void select() throws IOException {
-        if (selector.select() == 0) return;
+        if (selector.selectNow() == 0) return;
         Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
         while (keyIterator.hasNext()) {
             SelectionKey key = keyIterator.next();
@@ -156,6 +188,7 @@ public class Server implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        System.out.println("Closing server");
         logger.fine("Closing server");
         CollectionManager.getInstance().save();
         channel.close();

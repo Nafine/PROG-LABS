@@ -44,3 +44,4 @@ bin/
 ### Data ###
 ext/data.csv
 ext/data.xml
+ext/huge_dump.csv

@@ -69,8 +69,8 @@ public class Client implements AutoCloseable {
     public void run() {
         String input;
 
-        while ((input = console.read()) != null) {
-            handle(input);
+        while ((input = console.read("> ")) != null) {
+            handle(input.trim());
         }
     }
 

@@ -28,4 +28,9 @@ public interface Console extends IOHandler<String> {
     default void writef(String format, Object... args) {
         write(String.format(format, args));
     }
+
+    /**
+     * @return true if ready to read
+     */
+    boolean ready();
 }
