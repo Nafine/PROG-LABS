@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2025-04-06T10:29:12.669243200Z</date>
+  <millis>1743935352669</millis>
+  <nanos>243200</nanos>
+  <sequence>0</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>INFO</level>
+  <class>se.ifmo.server.Server</class>
+  <method>&lt;clinit&gt;</method>
+  <thread>1</thread>
+  <message>Logger initialized</message>
+</record>
+<record>
+  <date>2025-04-06T10:29:12.757629Z</date>
+  <millis>1743935352757</millis>
+  <nanos>629000</nanos>
+  <sequence>1</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>SEVERE</level>
+  <class>se.ifmo.server.db.DatabaseManager</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Unable to connect to database</message>
+  <exception>
+    <message>java.sql.SQLException: No suitable driver found for jdbc:postgresql:lab6</message>
+    <frame>
+      <class>java.sql.DriverManager</class>
+      <method>getConnection</method>
+      <line>706</line>
+    </frame>
+    <frame>
+      <class>java.sql.DriverManager</class>
+      <method>getConnection</method>
+      <line>190</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.db.DatabaseManager</class>
+      <method>&lt;init&gt;</method>
+      <line>21</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.db.DatabaseManager</class>
+      <method>main</method>
+      <line>32</line>
+    </frame>
+  </exception>
+</record>
+</log>
