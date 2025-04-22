@@ -18,12 +18,13 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 
+import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
+
 /**
  * UDP client implementation using blocking I/O.
  *
  * <p>Key features:
  * <ul>
- *   <li>Fixed-size packet handling ({@value #BUFFER_SIZE} bytes)</li>
  *   <li>Fragmented message assembly</li>
  *   <li>Socket-based implementation</li>
  *   <li>Integrated routing system through {@link Router}</li>
@@ -31,14 +32,6 @@ import java.util.*;
  * </ul>
  */
 public class Client implements AutoCloseable {
-    // Network buffer size optimized for Ethernet MTU (1500 bytes).
-    public static final int BUFFER_SIZE = 1500;
-
-    /*
-     * Maximum payload size per packet.
-     * Calculated as {@code BUFFER_SIZE - 5} (1 byte packet ID + 4 bytes total packet count).
-     */
-    public static final int PACKET_SIZE = BUFFER_SIZE - 5;
     InetAddress host;
     int serverPort;
     DatagramSocket socket;
@@ -47,7 +40,7 @@ public class Client implements AutoCloseable {
     {
         try {
             socket = new DatagramSocket();
-            socket.setSoTimeout(3000);
+            socket.setSoTimeout(4500);
         } catch (SocketException e) {
             System.out.println("Unable to create socket");
             System.out.println(e.getMessage());
@@ -122,16 +115,8 @@ public class Client implements AutoCloseable {
     }
 
     private void splitSendRequest(Request request) throws IOException {
-        byte[] data = SerializationUtils.serialize(request);
-        int numPackets = (int) Math.ceil((double) data.length / (PACKET_SIZE));
-        for (int i = 0; i < numPackets; i++) {
-            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-            buffer.put((byte) i);
-            buffer.putInt(numPackets);
-            buffer.put(data, i * PACKET_SIZE, Math.min(PACKET_SIZE, data.length - i * PACKET_SIZE));
-            buffer.flip();
-            socket.send(new DatagramPacket(buffer.array(), buffer.remaining(), host, serverPort));
-        }
+        for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(request)))
+            socket.send(new DatagramPacket(packet, packet.length, host, serverPort));
     }
 
     private Callback receiveCallback() throws IOException {
@@ -143,7 +128,7 @@ public class Client implements AutoCloseable {
                 ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
                 DatagramPacket packet = new DatagramPacket(buffer.array(), buffer.remaining(), host, serverPort);
                 socket.receive(packet);
-                int seqNum = buffer.get();
+                int seqNum = buffer.getInt();
                 int totalPackets = buffer.getInt();
                 byte[] data = new byte[buffer.remaining()];
                 buffer.get(data);
@@ -154,7 +139,6 @@ public class Client implements AutoCloseable {
                 }
             }
         } catch (SocketTimeoutException e) {
-            System.err.println("The server response time has been exceeded");
             return new Callback("Server did not respond");
         }
     }
@@ -176,7 +160,7 @@ class ScriptHandler {
     protected Callback handleScript(Request request) {
         File file;
         try {
-            file = Path.of(request.args().get(0)).toFile();
+            file = Path.of(request.args().getFirst()).toFile();
         } catch (InvalidPathException e) {
             return new Callback("String is not a path.");
         }

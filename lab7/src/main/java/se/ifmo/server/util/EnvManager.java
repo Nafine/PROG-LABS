@@ -15,10 +15,6 @@ public final class EnvManager {
     @Getter
     static int port;
     @Getter
-    private static Path dataFile;
-    @Getter
-    private static Path indexFile;
-    @Getter
     private static String databaseURL;
     @Getter
     private static String databaseUser;
@@ -28,8 +24,6 @@ public final class EnvManager {
     static {
         try {
             port = Integer.parseInt(System.getenv("SERVER_PORT"));
-            dataFile = Path.of(System.getenv("LAB6_DATA_PATH"));
-            indexFile = Path.of(System.getenv("INDEX"));
             databaseURL = System.getenv("DATABASE_URL");
             databaseUser = System.getenv("DATABASE_USER");
             databasePassword = System.getenv("DATABASE_PASSWORD");

@@ -16,8 +16,14 @@ public class ConcreteVehicleBuilder implements VehicleBuilder {
     /**
      * Creates an empty {@link Vehicle} element.
      */
-    public ConcreteVehicleBuilder()  {
+    public ConcreteVehicleBuilder() {
         vehicle = new Vehicle();
+    }
+
+    @Override
+    public VehicleBuilder setId(long id) {
+        vehicle.setId(id);
+        return this;
     }
 
     @Override

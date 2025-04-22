@@ -1,9 +1,10 @@
 package se.ifmo.shared.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
+import se.ifmo.server.collection.util.Validatable;
 import se.ifmo.shared.enums.FuelType;
 import se.ifmo.shared.exceptions.InvalidDataException;
 
@@ -15,18 +16,17 @@ import java.io.Serializable;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-//Идет расчет на использование библиотеки jackson, поэтому чтобы не городить миллион DTO там, где это и не нужно, я оставлю это здесь
-@JsonPropertyOrder({"name", "coordinates", "enginePower", "capacity", "distanceTraveled", "fuelType", "id"})
-public class Vehicle extends CollectionElement implements Comparable<Vehicle>, Serializable {
+public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
+    private long id;
+    private long ownerId;
+
     @NonNull
     private String name;
 
     @NonNull
-    @JsonUnwrapped
     private Coordinates coordinates;
 
     @NonNull
-    @JsonIgnore
     private java.util.Date creationDate;
 
     private int enginePower;
@@ -48,19 +48,20 @@ public class Vehicle extends CollectionElement implements Comparable<Vehicle>, S
 
     /**
      * Constructs a new {@link Vehicle} class.
-     * @param name of vehicle
-     * @param x coordinate x
-     * @param y coordinate y
-     * @param enginePower of vehicle
-     * @param capacity of vehicle
+     *
+     * @param name             of vehicle
+     * @param x                coordinate x
+     * @param y                coordinate y
+     * @param enginePower      of vehicle
+     * @param capacity         of vehicle
      * @param distanceTraveled of vehicle
-     * @param fuelType of vehicle
+     * @param fuelType         of vehicle
      * @throws InvalidDataException if some of the arguments were invalid
      */
     public Vehicle(String name, long x, Double y, int enginePower, double capacity, Float distanceTraveled, FuelType fuelType) throws InvalidDataException {
         this();
         this.name = name;
-        this.coordinates = new Coordinates(x,y);
+        this.coordinates = new Coordinates(x, y);
         this.enginePower = enginePower;
         this.capacity = capacity;
         this.distanceTraveled = distanceTraveled;
@@ -70,6 +71,7 @@ public class Vehicle extends CollectionElement implements Comparable<Vehicle>, S
 
     /**
      * Used to validate all fields.
+     *
      * @throws InvalidDataException if validation wasn't successful
      */
     @Override

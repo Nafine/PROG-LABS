@@ -12,8 +12,15 @@ import java.util.Date;
  */
 public interface VehicleBuilder {
     /**
-     * Sets owner id
+     * Sets vehicle id
      *
+     * @param id of vehicle
+     * @return {@link VehicleBuilder}
+     */
+    VehicleBuilder setId(long id);
+
+    /**
+     * Sets owner id
      *
      * @param id of owner
      * @return {@link VehicleBuilder}

@@ -2,9 +2,9 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2025-04-06T10:29:12.669243200Z</date>
-  <millis>1743935352669</millis>
-  <nanos>243200</nanos>
+  <date>2025-04-22T21:11:24.472708100Z</date>
+  <millis>1745356284472</millis>
+  <nanos>708100</nanos>
   <sequence>0</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>INFO</level>
@@ -14,38 +14,84 @@
   <message>Logger initialized</message>
 </record>
 <record>
-  <date>2025-04-06T10:29:12.757629Z</date>
-  <millis>1743935352757</millis>
-  <nanos>629000</nanos>
+  <date>2025-04-22T21:11:25.073673500Z</date>
+  <millis>1745356285073</millis>
+  <nanos>673500</nanos>
   <sequence>1</sequence>
   <logger>se.ifmo.server.Server</logger>
-  <level>SEVERE</level>
-  <class>se.ifmo.server.db.DatabaseManager</class>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
   <method>&lt;init&gt;</method>
   <thread>1</thread>
-  <message>Unable to connect to database</message>
-  <exception>
-    <message>java.sql.SQLException: No suitable driver found for jdbc:postgresql:lab6</message>
-    <frame>
-      <class>java.sql.DriverManager</class>
-      <method>getConnection</method>
-      <line>706</line>
-    </frame>
-    <frame>
-      <class>java.sql.DriverManager</class>
-      <method>getConnection</method>
-      <line>190</line>
-    </frame>
-    <frame>
-      <class>se.ifmo.server.db.DatabaseManager</class>
-      <method>&lt;init&gt;</method>
-      <line>21</line>
-    </frame>
-    <frame>
-      <class>se.ifmo.server.db.DatabaseManager</class>
-      <method>main</method>
-      <line>32</line>
-    </frame>
-  </exception>
+  <message>Server launched, listening on port 8080</message>
 </record>
-</log>
+<record>
+  <date>2025-04-22T21:11:33.927765700Z</date>
+  <millis>1745356293927</millis>
+  <nanos>765700</nanos>
+  <sequence>2</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>25</thread>
+  <message>Received message from 127.0.0.1:64183
+Contains:
+Request[command=show, args=[]]</message>
+</record>
+<record>
+  <date>2025-04-22T21:11:46.286769900Z</date>
+  <millis>1745356306286</millis>
+  <nanos>769900</nanos>
+  <sequence>3</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>31</thread>
+  <message>Received message from 127.0.0.1:64183
+Contains:
+Request[command=show, args=[]]</message>
+</record>
+<record>
+  <date>2025-04-22T21:11:49.129123100Z</date>
+  <millis>1745356309129</millis>
+  <nanos>123100</nanos>
+  <sequence>4</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>33</thread>
+  <message>Received message from 127.0.0.1:64183
+Contains:
+Request[command=12, args=[]]</message>
+</record>
+<record>
+  <date>2025-04-22T21:11:51.986823200Z</date>
+  <millis>1745356311986</millis>
+  <nanos>823200</nanos>
+  <sequence>5</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>35</thread>
+  <message>Received message from 127.0.0.1:64183
+Contains:
+Request[command=sshow, args=[]]</message>
+</record>
+<record>
+  <date>2025-04-22T21:11:53.149682500Z</date>
+  <millis>1745356313149</millis>
+  <nanos>682500</nanos>
+  <sequence>6</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>37</thread>
+  <message>Received message from 127.0.0.1:64183
+Contains:
+Request[command=show, args=[]]</message>
+</record>

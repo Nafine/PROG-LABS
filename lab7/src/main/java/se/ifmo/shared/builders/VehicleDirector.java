@@ -23,7 +23,9 @@ public class VehicleDirector {
     public static Vehicle constructAndGetVehicle(ResultSet set) throws SQLException {
         VehicleBuilder vehicleBuilder = new ConcreteVehicleBuilder();
 
+        vehicleBuilder.setId(set.getLong("vehicle_id"));
         vehicleBuilder.setName(set.getString("name"));
+        vehicleBuilder.setCreationDate(set.getTimestamp("creation_date"));
 
         CoordinatesBuilder coordinatesBuilder = new ConcreteCoordinatesBuilder();
         coordinatesBuilder.setX(set.getLong("coord_x"));
@@ -34,7 +36,7 @@ public class VehicleDirector {
         vehicleBuilder.setCapacity(set.getInt("capacity"));
         vehicleBuilder.setDistanceTravelled(set.getFloat("distance_travelled"));
         vehicleBuilder.setFuelType(FuelType.valueOf(set.getString("fuel_type")));
-        vehicleBuilder.setOwnerId(set.getLong("owner_id"));
+        vehicleBuilder.setOwnerId(set.getLong("uid"));
 
         return vehicleBuilder.getResult();
     }
