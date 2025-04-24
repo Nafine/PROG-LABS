@@ -36,7 +36,7 @@ public class UpdateId extends Command {
     @Override
     public Callback execute(Request req) throws InvalidDataException {
         int id = Integer.parseInt(req.args().get(0));
-        long uid = UserService.getInstance().getUserID(req.login());
+        long uid = UserService.getInstance().getUserID(req.credentials().username());
 
         Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args(), uid);
         vehicle.setId(id);

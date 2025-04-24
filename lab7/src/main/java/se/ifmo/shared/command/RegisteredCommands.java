@@ -26,7 +26,9 @@ public class RegisteredCommands {
         RegisteredCommands.registerCommand(new Help());
         RegisteredCommands.registerCommand(new History());
         RegisteredCommands.registerCommand(new Info());
+        RegisteredCommands.registerCommand(new Login());
         RegisteredCommands.registerCommand(new MinByCreationDate());
+        RegisteredCommands.registerCommand(new Register());
         RegisteredCommands.registerCommand(new RemoveById());
         RegisteredCommands.registerCommand(new RemoveGreater());
         RegisteredCommands.registerCommand(new Show());

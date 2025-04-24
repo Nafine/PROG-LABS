@@ -24,7 +24,7 @@ public class Clear extends Command {
      */
     @Override
     public Callback execute(Request req) {
-        long uid = UserService.getInstance().getUserID(req.login());
+        long uid = UserService.getInstance().getUserID(req.credentials().username());
         CollectionManager.getInstance().clearByUser(uid);
         CollectionManager.getInstance().getCollection().removeIf(vehicle -> vehicle.getOwnerId() == uid);
         return new Callback("Collection successfully cleared");

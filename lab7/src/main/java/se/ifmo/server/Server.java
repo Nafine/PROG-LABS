@@ -5,6 +5,8 @@ import se.ifmo.server.collection.CollectionManager;
 import se.ifmo.server.db.UserService;
 import se.ifmo.server.util.EnvManager;
 import se.ifmo.shared.PacketManager;
+import se.ifmo.shared.command.Login;
+import se.ifmo.shared.command.Register;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.communication.Router;
@@ -43,16 +45,16 @@ public class Server implements AutoCloseable {
     private static FileHandler fh;
 
     static {
-//        try {
-//            fh = new FileHandler("ext/log.txt");
-//        } catch (IOException e) {
-//            System.out.println("Was not able to open log file: " + e.getMessage());
-//        }
-//
-//        logger.setUseParentHandlers(false);
-//        logger.addHandler(fh);
-//        logger.setLevel(Level.ALL);
-//        logger.info("Logger initialized");
+        try {
+            fh = new FileHandler("ext/log.txt");
+        } catch (IOException e) {
+            System.out.println("Was not able to open log file: " + e.getMessage());
+        }
+
+        logger.setUseParentHandlers(false);
+        logger.addHandler(fh);
+        logger.setLevel(Level.ALL);
+        logger.info("Logger initialized");
     }
 
     final int PORT = EnvManager.getPort();
@@ -74,7 +76,7 @@ public class Server implements AutoCloseable {
             CollectionManager.getInstance();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Could not initialize server", e);
-            System.out.println("Failed to launch server.");
+            console.writeln("Failed to launch server.");
         }
         logger.fine(String.format("Server launched, listening on port %d", PORT));
     }
@@ -143,16 +145,16 @@ public class Server implements AutoCloseable {
             if (clientMessages.get(clientAddress).size() == totalPackets) {
                 Request request = SerializationUtils.deserialize(PacketManager.assemblePackets(clientMessages.remove(clientAddress)));
 
-                long uid = UserService.getInstance().getUserID(request.login());
-                if (uid == -1) UserService.getInstance().addUser(request.login(), request.password());
-                else if (!UserService.getInstance().comparePassword(request.login(), request.password())) {
-                    splitSendCallback(PacketManager.WRONG_PASSWORD_CALLBACK, clientAddress);
-                    return;
+                if (request.command().equals(new Login().getName()) && request.command().equals(new Register().getName())
+                        && !UserService.getInstance().comparePassword(request.credentials())) {
+                    splitSendCallback(Callback.wrongCredentials(), clientAddress);
+                    logger.info(String.format("Wrong credentials from: %s:%s\ncredentials: [%s, %s]", clientAddress.getHostString(), clientAddress.getPort(),
+                            request.credentials().username(), request.credentials().password()));
+                } else {
+                    Callback response = Router.getInstance().route(request);
+                    splitSendCallback(response, clientAddress);
+                    logger.fine(String.format("Received message from %s:%s\nContains:\n%s", clientAddress.getHostString(), clientAddress.getPort(), request));
                 }
-
-                Callback response = Router.getInstance().route(request);
-                splitSendCallback(response, clientAddress);
-                logger.fine(String.format("Received message from %s:%s\nContains:\n%s", clientAddress.getHostString(), clientAddress.getPort(), request));
             }
         });
     }
@@ -171,7 +173,6 @@ public class Server implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        System.out.println("Closing server");
         logger.fine("Closing server");
         executor.close();
         channel.close();

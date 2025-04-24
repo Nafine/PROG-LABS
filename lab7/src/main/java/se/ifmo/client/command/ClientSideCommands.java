@@ -17,8 +17,7 @@ public class ClientSideCommands {
      */
     public static final HashMap<String, Command> MAP = new HashMap<>();
 
-    private ClientSideCommands() {
-    }
+    private ClientSideCommands() {}
 
     public static void registerCommand(Command command) {
         MAP.put(command.getName(), command);

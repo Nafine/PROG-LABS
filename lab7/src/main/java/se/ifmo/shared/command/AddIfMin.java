@@ -32,7 +32,7 @@ public class AddIfMin extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException {
-        long uid = UserService.getInstance().getUserID(req.login());
+        long uid = UserService.getInstance().getUserID(req.credentials().username());
         Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args(), uid);
 
         var minVehicle = CollectionManager.getInstance().getCollection().stream().min(Comparator.naturalOrder());

@@ -5,7 +5,10 @@ import se.ifmo.client.command.ClientSideCommands;
 import se.ifmo.server.file.FileHandler;
 import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.command.ExecuteScript;
+import se.ifmo.shared.command.Login;
+import se.ifmo.shared.command.Register;
 import se.ifmo.shared.communication.Callback;
+import se.ifmo.shared.communication.Credentials;
 import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.communication.Router;
 import se.ifmo.shared.io.console.Console;
@@ -18,7 +21,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 
-import static org.apache.commons.codec.digest.DigestUtils.sha1Hex;
 import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
 
 /**
@@ -32,11 +34,8 @@ import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
  *   <li>Thread-safe packet reassembly</li>
  * </ul>
  */
-public class Client implements AutoCloseable {
-    private static final Callback SERVER_DID_NOT_RESPOND_CALLBACK = new Callback("Server did not respond");
+public class Client implements AutoCloseable, Runnable {
 
-    private final String login;
-    private final String password;
     private final InetAddress host;
     private final int serverPort;
     private final Console console;
@@ -48,7 +47,7 @@ public class Client implements AutoCloseable {
             socket = new DatagramSocket();
             socket.setSoTimeout(4500);
         } catch (SocketException e) {
-            System.out.println("Unable to create socket");
+            System.out.println("Unable to initiate client:");
             System.out.println(e.getMessage());
         }
     }
@@ -57,26 +56,40 @@ public class Client implements AutoCloseable {
         this.console = console;
         this.host = host;
         this.serverPort = serverPort;
+    }
 
-        String login, password;
+    private Credentials login() {
+        Credentials credentials = new Credentials(console.read("Insert your login\n"), console.read("Insert your password\n"));
 
-        while (true) {
-            login = console.read("Insert your login\n");
-            password = sha1Hex(console.read("Insert your password\n"));
-            try {
-                splitSendRequest(new Request("", Collections.emptyList(), login, password));
-                Callback callback = receiveCallback();
-                if (callback.equals(SERVER_DID_NOT_RESPOND_CALLBACK))
-                    console.writeln("Server did not respond, try again");
-                else if (callback.equals(PacketManager.WRONG_PASSWORD_CALLBACK))
-                    console.writeln("Wrong password");
-                else break;
-            } catch (IOException ignored) {
-            }
+        try {
+            Callback callback = handleRequest(new Request(new Login(), Collections.emptyList(), credentials));
+            printCallback(callback);
+            if (callback.equals(Callback.successfulLogin())) return credentials;
+            return Credentials.empty();
+        } catch (IOException e) {
+            return Credentials.empty();
         }
+    }
 
-        this.login = login;
-        this.password = password;
+    private Credentials register() {
+        Credentials credentials = new Credentials(console.read("Insert your login\n"), console.read("Insert your password\n"));
+
+        try {
+            Callback callback = handleRequest(new Request(new Register(), Collections.emptyList(), credentials));
+            printCallback(callback);
+            if (callback.equals(Callback.successfulLogin())) return credentials;
+            return Credentials.empty();
+        } catch (IOException e) {
+            return Credentials.empty();
+        }
+    }
+
+    private Credentials initUser() {
+        return switch (console.read("Enter 'login' if you have account or 'register' otherwise:\n")) {
+            case "login" -> login();
+            case "register" -> register();
+            default -> Credentials.empty();
+        };
     }
 
     /**
@@ -85,12 +98,14 @@ public class Client implements AutoCloseable {
      * Infinite input handling loop.
      * </p>
      */
+    @Override
     public void run() {
+        Credentials credentials;
+        while ((credentials = initUser()).equals(Credentials.empty())) ;
+
         String input;
 
-        while ((input = console.read("> ")) != null) {
-            handle(input.trim());
-        }
+        while ((input = console.read("> ")) != null) handleInput(input.trim(), credentials);
     }
 
 
@@ -104,13 +119,13 @@ public class Client implements AutoCloseable {
      *
      * @param input user's prompt to console
      */
-    protected void handle(String input) {
+    protected void handleInput(String input, Credentials credentials) {
         if (input == null || input.isBlank()) return;
 
         try {
-            printCallback(handleRequest(parse(input)));
+            printCallback(handleRequest(makeRequest(input, credentials)));
         } catch (IOException e) {
-            System.err.println("Error during handling request: " + e.getMessage());
+            System.err.println("Error during handling request:\n" + e.getMessage());
         }
     }
 
@@ -124,14 +139,14 @@ public class Client implements AutoCloseable {
         return receiveCallback();
     }
 
-    private Request parse(String prompt) {
+    private Request makeRequest(String prompt, Credentials credentials) {
         String[] parts = prompt.split("\\s+", 2);
 
         String command = parts[0];
 
         List<String> args = parts.length > 1 ? Arrays.asList(parts[1].split("\\s+")) : Collections.emptyList();
 
-        return new Request(command, args, login, password);
+        return new Request(command, args, credentials);
     }
 
     private void printCallback(Callback callback) {
@@ -165,7 +180,7 @@ public class Client implements AutoCloseable {
                 }
             }
         } catch (SocketTimeoutException e) {
-            return SERVER_DID_NOT_RESPOND_CALLBACK;
+            return Callback.serverDidNotRespond();
         }
     }
 
@@ -203,7 +218,7 @@ class ScriptHandler {
             String token;
             while (!(token = fileHandler.read()).isEmpty())
                 Collections.addAll(scriptQueue, token.split(System.lineSeparator() + "+"));
-            while (!scriptQueue.isEmpty()) client.handle(scriptQueue.poll());
+            while (!scriptQueue.isEmpty()) client.handleInput(scriptQueue.poll(), request.credentials());
 
             runningScripts.remove(file.getAbsolutePath());
 

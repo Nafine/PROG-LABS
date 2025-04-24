@@ -1,6 +1,7 @@
 package se.ifmo.server.db;
 
 import se.ifmo.server.Server;
+import se.ifmo.shared.communication.Credentials;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,10 +21,8 @@ public class UserService {
         return instance == null ? instance = new UserService() : instance;
     }
 
-    public boolean addUser(String login, String password) {
-        try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(ADD_USER)) {
-            stmt.setString(1, login);
-            stmt.setString(2, password);
+    public boolean addUser(Credentials credentials) {
+        try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(ADD_USER, credentials.username(), credentials.password())) {
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -33,8 +32,7 @@ public class UserService {
     }
 
     public long getUserID(String login) {
-        try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(FIND_UID_BY_NAME)) {
-            stmt.setString(1, login);
+        try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(FIND_UID_BY_NAME, login)) {
             ResultSet set = stmt.executeQuery();
             if (set.next()) return set.getLong("uid");
             return -1;
@@ -44,14 +42,13 @@ public class UserService {
         }
     }
 
-    public boolean comparePassword(String login, String password) {
-        try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(FIND_PASSWORD_BY_LOGIN)) {
-            stmt.setString(1, login);
+    public boolean comparePassword(Credentials credentials) {
+        try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(FIND_PASSWORD_BY_LOGIN, credentials.username())) {
             ResultSet set = stmt.executeQuery();
-            if (set.next()) return set.getString("password").equals(password);
+            if (set.next()) return set.getString("password").equals(credentials.password());
             return false;
         } catch (SQLException e) {
-            Server.logger.log(Level.WARNING, "Cannot compare password for login " + login, e);
+            Server.logger.log(Level.WARNING, "Cannot compare password for login " + credentials.username(), e);
             return false;
         }
     }

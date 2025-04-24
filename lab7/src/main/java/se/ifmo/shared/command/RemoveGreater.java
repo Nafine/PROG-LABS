@@ -25,7 +25,7 @@ public class RemoveGreater extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException {
-        long uid = UserService.getInstance().getUserID(req.login());
+        long uid = UserService.getInstance().getUserID(req.credentials().username());
         Vehicle givenVehicle = VehicleDirector.constructAndGetVehicle(req.args(), uid);
 
         for (Vehicle collectionVehicle : CollectionManager.getInstance().getCollection())

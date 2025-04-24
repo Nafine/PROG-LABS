@@ -44,4 +44,24 @@ public record Callback(String message, List<Vehicle> vehicles) implements Serial
     public static Callback empty() {
         return new Callback(null);
     }
+
+    public static Callback serverDidNotRespond() {
+        return new Callback("Server did not respond");
+    }
+
+    public static Callback existingUser() {
+        return new Callback("Existing user");
+    }
+
+    public static Callback failedRegister() {
+        return new Callback("Failed register");
+    }
+
+    public static Callback wrongCredentials() {
+        return new Callback("Wrong credentials");
+    }
+
+    public static Callback successfulLogin() {
+        return new Callback("Successful login");
+    }
 }

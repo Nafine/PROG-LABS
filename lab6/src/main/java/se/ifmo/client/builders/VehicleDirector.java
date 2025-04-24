@@ -38,6 +38,7 @@ public class VehicleDirector {
             carFleet.add(vehicleBuilder.getResult());
             vehicleBuilder.build();
         }
+
         return carFleet;
     }
 

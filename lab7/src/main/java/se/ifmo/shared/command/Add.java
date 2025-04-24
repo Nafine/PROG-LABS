@@ -35,7 +35,7 @@ public class Add extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException {
-        long uid = UserService.getInstance().getUserID(req.login());
+        long uid = UserService.getInstance().getUserID(req.credentials().username());
         if (CollectionManager.getInstance().add(VehicleDirector.constructAndGetVehicle(req.args(), uid)))
             return new Callback("Successfully added new element to the collection");
         else
