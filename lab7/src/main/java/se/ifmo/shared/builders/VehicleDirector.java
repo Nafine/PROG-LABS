@@ -41,7 +41,7 @@ public class VehicleDirector {
         return vehicleBuilder.getResult();
     }
 
-    public static List<Vehicle> constructAndGetRandomVehicles(int amountToBuild) throws InvalidDataException {
+    public static List<Vehicle> constructAndGetRandomVehicles(int amountToBuild, long uid) {
         VehicleBuilder vehicleBuilder = new ConcreteVehicleBuilder();
         List<Vehicle> carFleet = new LinkedList<>();
 
@@ -58,6 +58,8 @@ public class VehicleDirector {
             vehicleBuilder.setCapacity(random.nextInt(1, Integer.MAX_VALUE));
             vehicleBuilder.setDistanceTravelled(random.nextFloat() * random.nextInt(0, Integer.MAX_VALUE));
             vehicleBuilder.setFuelType(FuelType.values()[random.nextInt(0, Integer.MAX_VALUE) % FuelType.values().length]);
+            vehicleBuilder.setOwnerId(uid);
+
             vehicleBuilder.getResult();
             carFleet.add(vehicleBuilder.getResult());
             vehicleBuilder.buildNew();
@@ -65,7 +67,7 @@ public class VehicleDirector {
         return carFleet;
     }
 
-    public static Vehicle constructAndGetVehicle(List<String> blueprint) throws InvalidDataException {
+    public static Vehicle constructAndGetVehicle(List<String> blueprint, long uid) throws InvalidDataException {
         VehicleBuilder vehicleBuilder = new ConcreteVehicleBuilder();
         vehicleBuilder.setName(blueprint.get(0));
 
@@ -83,6 +85,7 @@ public class VehicleDirector {
             throw new InvalidDataException(vehicleBuilder, e.getMessage());
         }
 
+        vehicleBuilder.setOwnerId(uid);
         vehicleBuilder.getResult().validate();
 
         return vehicleBuilder.getResult();

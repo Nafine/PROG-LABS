@@ -1,4 +1,4 @@
-package se.ifmo.client.io.console;
+package se.ifmo.shared.io.console;
 
 import se.ifmo.shared.io.IOHandler;
 

@@ -75,7 +75,7 @@ public class ConcreteVehicleBuilder implements VehicleBuilder {
     }
 
     @Override
-    public void buildNew() throws InvalidDataException {
+    public void buildNew() {
         vehicle = new Vehicle();
     }
 

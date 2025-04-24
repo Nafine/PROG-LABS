@@ -9,5 +9,5 @@ import java.util.List;
  * @param command name.
  * @param args List of String, command arguments.
 * */
-public record Request(String command, List<String> args) implements Serializable {
+public record Request(String command, List<String> args, String login, String password) implements Serializable {
 }

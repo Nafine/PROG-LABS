@@ -2,9 +2,9 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2025-04-22T21:11:24.472708100Z</date>
-  <millis>1745356284472</millis>
-  <nanos>708100</nanos>
+  <date>2025-04-23T12:50:45.613479Z</date>
+  <millis>1745412645613</millis>
+  <nanos>479000</nanos>
   <sequence>0</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>INFO</level>
@@ -14,9 +14,9 @@
   <message>Logger initialized</message>
 </record>
 <record>
-  <date>2025-04-22T21:11:25.073673500Z</date>
-  <millis>1745356285073</millis>
-  <nanos>673500</nanos>
+  <date>2025-04-23T12:50:45.916159Z</date>
+  <millis>1745412645916</millis>
+  <nanos>159000</nanos>
   <sequence>1</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>FINE</level>
@@ -26,72 +26,241 @@
   <message>Server launched, listening on port 8080</message>
 </record>
 <record>
-  <date>2025-04-22T21:11:33.927765700Z</date>
-  <millis>1745356293927</millis>
-  <nanos>765700</nanos>
+  <date>2025-04-23T12:50:48.232768Z</date>
+  <millis>1745412648232</millis>
+  <nanos>768000</nanos>
   <sequence>2</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>FINE</level>
   <class>se.ifmo.server.Server</class>
   <method>lambda$receiveRequest$1</method>
-  <thread>25</thread>
-  <message>Received message from 127.0.0.1:64183
+  <thread>22</thread>
+  <message>Received message from 127.0.0.1:63599
 Contains:
-Request[command=show, args=[]]</message>
+Request[command=, args=[], login=me, password=123]</message>
 </record>
 <record>
-  <date>2025-04-22T21:11:46.286769900Z</date>
-  <millis>1745356306286</millis>
-  <nanos>769900</nanos>
+  <date>2025-04-23T12:50:51.287880Z</date>
+  <millis>1745412651287</millis>
+  <nanos>880000</nanos>
   <sequence>3</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>FINE</level>
   <class>se.ifmo.server.Server</class>
   <method>lambda$receiveRequest$1</method>
-  <thread>31</thread>
-  <message>Received message from 127.0.0.1:64183
+  <thread>34</thread>
+  <message>Received message from 127.0.0.1:63599
 Contains:
-Request[command=show, args=[]]</message>
+Request[command=show, args=[], login=me, password=123]</message>
 </record>
 <record>
-  <date>2025-04-22T21:11:49.129123100Z</date>
-  <millis>1745356309129</millis>
-  <nanos>123100</nanos>
+  <date>2025-04-23T12:50:52.424582Z</date>
+  <millis>1745412652424</millis>
+  <nanos>582000</nanos>
   <sequence>4</sequence>
   <logger>se.ifmo.server.Server</logger>
-  <level>FINE</level>
-  <class>se.ifmo.server.Server</class>
-  <method>lambda$receiveRequest$1</method>
-  <thread>33</thread>
-  <message>Received message from 127.0.0.1:64183
-Contains:
-Request[command=12, args=[]]</message>
+  <level>INFO</level>
+  <class>se.ifmo.server.db.VehicleService</class>
+  <method>deleteById</method>
+  <thread>36</thread>
+  <message>Failed delete vehicle from database</message>
+  <exception>
+    <message>org.postgresql.util.PSQLException: Индекс колонки вне диапазона: 0. Допустимые значения: 1..1</message>
+    <frame>
+      <class>org.postgresql.core.v3.SimpleParameterList</class>
+      <method>bind</method>
+      <line>71</line>
+    </frame>
+    <frame>
+      <class>org.postgresql.core.v3.SimpleParameterList</class>
+      <method>setBinaryParameter</method>
+      <line>145</line>
+    </frame>
+    <frame>
+      <class>org.postgresql.jdbc.PgPreparedStatement</class>
+      <method>bindBytes</method>
+      <line>1101</line>
+    </frame>
+    <frame>
+      <class>org.postgresql.jdbc.PgPreparedStatement</class>
+      <method>setLong</method>
+      <line>344</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.db.VehicleService</class>
+      <method>deleteById</method>
+      <line>42</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.collection.CollectionManager</class>
+      <method>clearByUser</method>
+      <line>37</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.shared.command.Clear</class>
+      <method>execute</method>
+      <line>28</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.shared.communication.Router</class>
+      <method>route</method>
+      <line>46</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.Server</class>
+      <method>lambda$receiveRequest$1</method>
+      <line>153</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.ThreadPerTaskExecutor$TaskRunner</class>
+      <method>run</method>
+      <line>314</line>
+    </frame>
+    <frame>
+      <class>java.lang.VirtualThread</class>
+      <method>run</method>
+      <line>329</line>
+    </frame>
+  </exception>
 </record>
 <record>
-  <date>2025-04-22T21:11:51.986823200Z</date>
-  <millis>1745356311986</millis>
-  <nanos>823200</nanos>
+  <date>2025-04-23T12:50:52.426077Z</date>
+  <millis>1745412652426</millis>
+  <nanos>77000</nanos>
   <sequence>5</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>FINE</level>
   <class>se.ifmo.server.Server</class>
   <method>lambda$receiveRequest$1</method>
-  <thread>35</thread>
-  <message>Received message from 127.0.0.1:64183
+  <thread>36</thread>
+  <message>Received message from 127.0.0.1:63599
 Contains:
-Request[command=sshow, args=[]]</message>
+Request[command=clear, args=[], login=me, password=123]</message>
 </record>
 <record>
-  <date>2025-04-22T21:11:53.149682500Z</date>
-  <millis>1745356313149</millis>
-  <nanos>682500</nanos>
+  <date>2025-04-23T12:50:53.633681Z</date>
+  <millis>1745412653633</millis>
+  <nanos>681000</nanos>
   <sequence>6</sequence>
   <logger>se.ifmo.server.Server</logger>
   <level>FINE</level>
   <class>se.ifmo.server.Server</class>
   <method>lambda$receiveRequest$1</method>
-  <thread>37</thread>
-  <message>Received message from 127.0.0.1:64183
+  <thread>38</thread>
+  <message>Received message from 127.0.0.1:63599
 Contains:
-Request[command=show, args=[]]</message>
+Request[command=show, args=[], login=me, password=123]</message>
 </record>
+<record>
+  <date>2025-04-23T12:50:58.655023Z</date>
+  <millis>1745412658655</millis>
+  <nanos>23000</nanos>
+  <sequence>7</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>40</thread>
+  <message>Received message from 127.0.0.1:63599
+Contains:
+Request[command=add_random, args=[30], login=me, password=123]</message>
+</record>
+<record>
+  <date>2025-04-23T12:50:59.956823Z</date>
+  <millis>1745412659956</millis>
+  <nanos>823000</nanos>
+  <sequence>8</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>42</thread>
+  <message>Received message from 127.0.0.1:63599
+Contains:
+Request[command=show, args=[], login=me, password=123]</message>
+</record>
+<record>
+  <date>2025-04-23T12:51:03.051425Z</date>
+  <millis>1745412663051</millis>
+  <nanos>425000</nanos>
+  <sequence>9</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>INFO</level>
+  <class>se.ifmo.server.db.VehicleService</class>
+  <method>deleteById</method>
+  <thread>44</thread>
+  <message>Failed delete vehicle from database</message>
+  <exception>
+    <message>org.postgresql.util.PSQLException: Индекс колонки вне диапазона: 0. Допустимые значения: 1..1</message>
+    <frame>
+      <class>org.postgresql.core.v3.SimpleParameterList</class>
+      <method>bind</method>
+      <line>71</line>
+    </frame>
+    <frame>
+      <class>org.postgresql.core.v3.SimpleParameterList</class>
+      <method>setBinaryParameter</method>
+      <line>145</line>
+    </frame>
+    <frame>
+      <class>org.postgresql.jdbc.PgPreparedStatement</class>
+      <method>bindBytes</method>
+      <line>1101</line>
+    </frame>
+    <frame>
+      <class>org.postgresql.jdbc.PgPreparedStatement</class>
+      <method>setLong</method>
+      <line>344</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.db.VehicleService</class>
+      <method>deleteById</method>
+      <line>42</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.collection.CollectionManager</class>
+      <method>clearByUser</method>
+      <line>37</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.shared.command.Clear</class>
+      <method>execute</method>
+      <line>28</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.shared.communication.Router</class>
+      <method>route</method>
+      <line>46</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.Server</class>
+      <method>lambda$receiveRequest$1</method>
+      <line>153</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.ThreadPerTaskExecutor$TaskRunner</class>
+      <method>run</method>
+      <line>314</line>
+    </frame>
+    <frame>
+      <class>java.lang.VirtualThread</class>
+      <method>run</method>
+      <line>329</line>
+    </frame>
+  </exception>
+</record>
+<record>
+  <date>2025-04-23T12:51:03.052633Z</date>
+  <millis>1745412663052</millis>
+  <nanos>633000</nanos>
+  <sequence>10</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>lambda$receiveRequest$1</method>
+  <thread>44</thread>
+  <message>Received message from 127.0.0.1:63599
+Contains:
+Request[command=clear, args=[], login=me, password=123]</message>
+</record>
+</log>

@@ -1,5 +1,6 @@
 package se.ifmo.shared.command;
 
+import se.ifmo.server.db.UserService;
 import se.ifmo.shared.builders.VehicleDirector;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
@@ -22,15 +23,15 @@ public class AddRandom extends Command {
 
     /**
      * Creates n random {@link Vehicle} elements.
-     * Calls {@link VehicleDirector#constructAndGetRandomVehicles(int)}.
      * @param req {@link Request}
-     * @return
+     * @return {@link Callback}
      * @throws InvalidDataException
      */
     @Override
-    public Callback execute(Request req) throws InvalidDataException {
-        List<Vehicle> carFleet = VehicleDirector.constructAndGetRandomVehicles(Integer.parseInt(req.args().get(0)));
-        CollectionManager.getInstance().getCollection().addAll(carFleet);
+    public Callback execute(Request req) {
+        long uid = UserService.getInstance().getUserID(req.login());
+        List<Vehicle> carFleet = VehicleDirector.constructAndGetRandomVehicles(Integer.parseInt(req.args().get(0)), uid);
+        CollectionManager.getInstance().addAll(carFleet);
         return new Callback("Successfully added new " + req.args().get(0) + " elements to the collection");
     }
 }

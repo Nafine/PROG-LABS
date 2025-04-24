@@ -1,6 +1,5 @@
 package se.ifmo.server;
 
-import se.ifmo.server.collection.CollectionManager;
 import se.ifmo.server.util.EnvManager;
 
 import java.io.IOException;

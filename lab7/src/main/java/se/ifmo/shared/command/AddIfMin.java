@@ -1,11 +1,12 @@
 package se.ifmo.shared.command;
 
+import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.db.UserService;
 import se.ifmo.shared.builders.VehicleDirector;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.server.collection.CollectionManager;
-import se.ifmo.shared.model.Vehicle;
 import se.ifmo.shared.exceptions.InvalidDataException;
+import se.ifmo.shared.model.Vehicle;
 
 import java.util.Comparator;
 
@@ -31,13 +32,13 @@ public class AddIfMin extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException {
-        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args());
+        long uid = UserService.getInstance().getUserID(req.login());
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args(), uid);
 
         var minVehicle = CollectionManager.getInstance().getCollection().stream().min(Comparator.naturalOrder());
-        if (minVehicle.isPresent() && vehicle.compareTo(minVehicle.get()) < 0) {
-            CollectionManager.getInstance().getCollection().add(minVehicle.get());
+        if (minVehicle.isPresent() && vehicle.compareTo(minVehicle.get()) < 0 && CollectionManager.getInstance().add(minVehicle.get()))
             return new Callback("Successfully added new element to the collection");
-        }
+
         return new Callback("Failed to add new element to the collection, it's not the smallest element");
     }
 }

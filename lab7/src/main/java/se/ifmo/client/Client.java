@@ -2,13 +2,13 @@ package se.ifmo.client;
 
 import org.apache.commons.lang3.SerializationUtils;
 import se.ifmo.client.command.ClientSideCommands;
-import se.ifmo.client.io.console.Console;
 import se.ifmo.server.file.FileHandler;
 import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.command.ExecuteScript;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.communication.Router;
+import se.ifmo.shared.io.console.Console;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha1Hex;
 import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
 
 /**
@@ -32,10 +33,15 @@ import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
  * </ul>
  */
 public class Client implements AutoCloseable {
-    InetAddress host;
-    int serverPort;
-    DatagramSocket socket;
-    Console console;
+    private static final Callback SERVER_DID_NOT_RESPOND_CALLBACK = new Callback("Server did not respond");
+
+    private final String login;
+    private final String password;
+    private final InetAddress host;
+    private final int serverPort;
+    private final Console console;
+    private DatagramSocket socket;
+
 
     {
         try {
@@ -51,6 +57,26 @@ public class Client implements AutoCloseable {
         this.console = console;
         this.host = host;
         this.serverPort = serverPort;
+
+        String login, password;
+
+        while (true) {
+            login = console.read("Insert your login\n");
+            password = sha1Hex(console.read("Insert your password\n"));
+            try {
+                splitSendRequest(new Request("", Collections.emptyList(), login, password));
+                Callback callback = receiveCallback();
+                if (callback.equals(SERVER_DID_NOT_RESPOND_CALLBACK))
+                    console.writeln("Server did not respond, try again");
+                else if (callback.equals(PacketManager.WRONG_PASSWORD_CALLBACK))
+                    console.writeln("Wrong password");
+                else break;
+            } catch (IOException ignored) {
+            }
+        }
+
+        this.login = login;
+        this.password = password;
     }
 
     /**
@@ -105,7 +131,7 @@ public class Client implements AutoCloseable {
 
         List<String> args = parts.length > 1 ? Arrays.asList(parts[1].split("\\s+")) : Collections.emptyList();
 
-        return new Request(command, args);
+        return new Request(command, args, login, password);
     }
 
     private void printCallback(Callback callback) {
@@ -139,7 +165,7 @@ public class Client implements AutoCloseable {
                 }
             }
         } catch (SocketTimeoutException e) {
-            return new Callback("Server did not respond");
+            return SERVER_DID_NOT_RESPOND_CALLBACK;
         }
     }
 

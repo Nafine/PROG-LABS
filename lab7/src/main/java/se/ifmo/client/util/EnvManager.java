@@ -2,12 +2,8 @@ package se.ifmo.client.util;
 
 import lombok.Getter;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.file.Path;
 
 /**
  * Class which user for handling environment variables of the program.
@@ -23,14 +19,10 @@ public final class EnvManager {
 
     static {
         try {
-            host = InetAddress.getByName(System.getenv("HOST"));
+            host = InetAddress.getByName(System.getenv("SERVER_HOST"));
             port = Integer.parseInt(System.getenv("SERVER_PORT"));
-            Path errorFile = Path.of(System.getenv("ERROR_LOG"));
-            System.setErr(new PrintStream(new FileOutputStream(errorFile.toFile())));
         } catch (UnknownHostException e) {
             System.out.println("Host not found, check setup files.");
-        } catch (FileNotFoundException e) {
-            System.out.println("ERROR_LOG file was not found, error logging will be performed in the console.");
         } catch (NullPointerException e) {
             System.err.println("CHECK environment variables, some of them was not defined.");
             System.exit(1);

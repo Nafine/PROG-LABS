@@ -17,6 +17,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("commons-codec:commons-codec:1.15")
     implementation("io.vertx:vertx-core:4.5.3")
 
     implementation("org.postgresql:postgresql:42.7.5")

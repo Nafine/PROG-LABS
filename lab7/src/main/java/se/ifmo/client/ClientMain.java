@@ -1,8 +1,8 @@
 package se.ifmo.client;
 
 import se.ifmo.client.command.ClientSideCommands;
-import se.ifmo.client.io.console.Console;
-import se.ifmo.client.io.console.StandardConsole;
+import se.ifmo.shared.io.console.Console;
+import se.ifmo.shared.io.console.StandardConsole;
 import se.ifmo.client.util.EnvManager;
 import se.ifmo.shared.command.ExecuteScript;
 import se.ifmo.shared.command.Exit;

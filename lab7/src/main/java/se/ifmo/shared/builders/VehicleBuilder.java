@@ -86,7 +86,7 @@ public interface VehicleBuilder {
     /**
      * Clear state of a vehicle (creates new {@link Vehicle} object).
      */
-    void buildNew() throws InvalidDataException;
+    void buildNew();
 
     /**
      * Getter for built vehicle.

@@ -1,5 +1,6 @@
 package se.ifmo.shared.command;
 
+import se.ifmo.server.db.UserService;
 import se.ifmo.shared.builders.VehicleDirector;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
@@ -35,8 +36,9 @@ public class UpdateId extends Command {
     @Override
     public Callback execute(Request req) throws InvalidDataException {
         int id = Integer.parseInt(req.args().get(0));
+        long uid = UserService.getInstance().getUserID(req.login());
 
-        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args());
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args(), uid);
         vehicle.setId(id);
 
         LinkedHashSet<Vehicle> collection = CollectionManager.getInstance().getCollection();

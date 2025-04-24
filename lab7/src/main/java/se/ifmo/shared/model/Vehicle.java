@@ -43,6 +43,7 @@ public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
      * </p>
      */
     public Vehicle() {
+        id = 1;
         creationDate = new java.util.Date();
     }
 

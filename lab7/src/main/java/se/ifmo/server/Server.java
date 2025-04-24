@@ -1,14 +1,15 @@
 package se.ifmo.server;
 
 import org.apache.commons.lang3.SerializationUtils;
-import se.ifmo.client.io.console.Console;
-import se.ifmo.client.io.console.StandardConsole;
 import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.db.UserService;
 import se.ifmo.server.util.EnvManager;
 import se.ifmo.shared.PacketManager;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.communication.Router;
+import se.ifmo.shared.io.console.Console;
+import se.ifmo.shared.io.console.StandardConsole;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -42,16 +43,16 @@ public class Server implements AutoCloseable {
     private static FileHandler fh;
 
     static {
-        try {
-            fh = new FileHandler("ext/log.txt");
-        } catch (IOException e) {
-            System.out.println("Was not able to open log file. " + e.getMessage());
-        }
-
-        logger.setUseParentHandlers(false);
-        logger.addHandler(fh);
-        logger.setLevel(Level.ALL);
-        logger.info("Logger initialized");
+//        try {
+//            fh = new FileHandler("ext/log.txt");
+//        } catch (IOException e) {
+//            System.out.println("Was not able to open log file: " + e.getMessage());
+//        }
+//
+//        logger.setUseParentHandlers(false);
+//        logger.addHandler(fh);
+//        logger.setLevel(Level.ALL);
+//        logger.info("Logger initialized");
     }
 
     final int PORT = EnvManager.getPort();
@@ -122,7 +123,6 @@ public class Server implements AutoCloseable {
 
     private void receiveRequest() {
         executor.execute(() -> {
-
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
             InetSocketAddress clientAddress = null;
             try {
@@ -142,6 +142,14 @@ public class Server implements AutoCloseable {
             clientMessages.computeIfAbsent(clientAddress, k -> new HashMap<>()).put(packetId, data);
             if (clientMessages.get(clientAddress).size() == totalPackets) {
                 Request request = SerializationUtils.deserialize(PacketManager.assemblePackets(clientMessages.remove(clientAddress)));
+
+                long uid = UserService.getInstance().getUserID(request.login());
+                if (uid == -1) UserService.getInstance().addUser(request.login(), request.password());
+                else if (!UserService.getInstance().comparePassword(request.login(), request.password())) {
+                    splitSendCallback(PacketManager.WRONG_PASSWORD_CALLBACK, clientAddress);
+                    return;
+                }
+
                 Callback response = Router.getInstance().route(request);
                 splitSendCallback(response, clientAddress);
                 logger.fine(String.format("Received message from %s:%s\nContains:\n%s", clientAddress.getHostString(), clientAddress.getPort(), request));

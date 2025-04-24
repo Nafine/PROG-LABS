@@ -1,9 +1,10 @@
 package se.ifmo.shared.command;
 
+import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.db.UserService;
 import se.ifmo.shared.builders.VehicleDirector;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.server.collection.CollectionManager;
 import se.ifmo.shared.exceptions.InvalidDataException;
 
 /**
@@ -34,7 +35,10 @@ public class Add extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException {
-        CollectionManager.getInstance().getCollection().add(VehicleDirector.constructAndGetVehicle(req.args()));
-        return new Callback("Successfully added new element to the collection");
+        long uid = UserService.getInstance().getUserID(req.login());
+        if (CollectionManager.getInstance().add(VehicleDirector.constructAndGetVehicle(req.args(), uid)))
+            return new Callback("Successfully added new element to the collection");
+        else
+            return new Callback("Failed to add new element to the collection");
     }
 }

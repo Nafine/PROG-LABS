@@ -1,5 +1,7 @@
 package se.ifmo.shared;
 
+import se.ifmo.shared.communication.Callback;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -17,6 +19,7 @@ import java.util.Map;
 public class PacketManager {
     // Network buffer size optimized for Ethernet MTU (1500 bytes).
     public static final int BUFFER_SIZE = 1500;
+    public static final Callback WRONG_PASSWORD_CALLBACK = new Callback("Wrong password");
 
     /**
      * Assemble gathered packets.

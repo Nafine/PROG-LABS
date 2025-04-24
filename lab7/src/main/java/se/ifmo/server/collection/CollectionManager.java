@@ -6,6 +6,7 @@ import se.ifmo.shared.model.Vehicle;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * Singleton
@@ -28,8 +29,44 @@ public class CollectionManager {
      *
      * @return {@link CollectionManager}
      */
-    public static CollectionManager getInstance() {
+    public static synchronized CollectionManager getInstance() {
         return instance == null ? instance = new CollectionManager() : instance;
+    }
+
+    public void clearByUser(long uid){
+        VehicleService.getInstance().deleteByUser(uid);
+    }
+
+    public boolean removeById(long id) {
+        if (VehicleService.getInstance().deleteById(id)) {
+            collection.removeIf(vehicle -> vehicle.getId() == id);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Inserts new {@link Vehicle} into database.
+     *
+     * <p>
+     * If the insertion was not successful, the item will not be added to the collection
+     * </p>
+     *
+     * @param vehicle to add
+     */
+    public boolean add(Vehicle vehicle) {
+        long vehicleId = VehicleService.getInstance().add(vehicle);
+        if (vehicleId != -1) {
+            vehicle.setId(vehicleId);
+            collection.add(vehicle);
+            return true;
+        }
+        return false;
+    }
+
+    public void addAll(List<Vehicle> vehicles) {
+        for (Vehicle vehicle : vehicles)
+            add(vehicle);
     }
 
     /**

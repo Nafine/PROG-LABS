@@ -1,8 +1,9 @@
 package se.ifmo.shared.command;
 
+import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.db.UserService;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.server.collection.CollectionManager;
 
 /**
  * Clears whole collection.
@@ -17,12 +18,15 @@ public class Clear extends Command {
 
     /**
      * Call clear() method on collection.
+     *
      * @param req {@link Request}
      * @return {@link Callback}
      */
     @Override
     public Callback execute(Request req) {
-        CollectionManager.getInstance().getCollection().clear();
+        long uid = UserService.getInstance().getUserID(req.login());
+        CollectionManager.getInstance().clearByUser(uid);
+        CollectionManager.getInstance().getCollection().removeIf(vehicle -> vehicle.getOwnerId() == uid);
         return new Callback("Collection successfully cleared");
     }
 }
