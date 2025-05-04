@@ -1,0 +1,70 @@
+.root {
+    -fx-font-family: "JetBrains Mono";
+    -fx-font-size: 12px;
+    -fx-background-color: -main-color;
+}
+
+* {
+    -main-color: #EBBE9B;
+    -main-lighter-color: #EEC7AA;
+    -main-darker-color: #DD9055;
+    -pressed-color: #9C9BAB;
+    -border-color: #A47864;
+}
+
+.scroll-pane{
+    -fx-background-color: -main-color;
+}
+
+.scroll-pane .scroll-bar{
+    -fx-background-color: -main-darker-color;
+}
+
+.scroll-pane .box{
+    -fx-background-color: -main-color;
+}
+
+.table-view{
+    -fx-background-color: -main-color;
+}
+
+.button {
+    -fx-padding: 8 20 8 20;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: -border-color;
+    -fx-background-color: -main-color;
+}
+
+.button:hover{
+    -fx-background-color: -main-lighter-color;
+    -fx-cursor: hand;
+}
+
+.button:pressed{
+    -fx-background-color: -pressed-color;
+}
+
+.check-box .box{
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-color: -border-color;
+}
+
+.check-box:focused .box{
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: -border-color;
+}
+
+.text-field {
+    -fx-pref-width: 200px;
+    -fx-transition: all 0.3s;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.text-field:focused {
+    -fx-faint-focus-color: white;
+}
