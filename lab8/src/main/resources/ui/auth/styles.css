@@ -4,10 +4,11 @@
 }
 
 * {
-    -main-color: #EBBE9B;
-    -main-lighter-color: #EEC7AA;
+    -main-color: #DBA9CE;
+    -main-lighter-color: derive(-main-color, 45%);
+    -main-darker-color: derive(-main-color, -45%);
     -pressed-color: #9C9BAB;
-    -border-color: #A47864;
+    -border-color: #652A55;
 }
 
 .button {

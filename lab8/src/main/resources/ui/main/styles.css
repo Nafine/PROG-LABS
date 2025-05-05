@@ -1,31 +1,93 @@
 .root {
     -fx-font-family: "JetBrains Mono";
     -fx-font-size: 12px;
-    -fx-background-color: -main-color;
+    -fx-background-color: white;
 }
 
 * {
-    -main-color: #EBBE9B;
-    -main-lighter-color: #EEC7AA;
-    -main-darker-color: #DD9055;
+    -light-color: lightgray;
+    -main-color: #DBA9CE;
+    -main-lighter-color: derive(-main-color, 45%);
+    -main-darker-color: derive(-main-color, -45%);
     -pressed-color: #9C9BAB;
-    -border-color: #A47864;
-}
-
-.scroll-pane{
-    -fx-background-color: -main-color;
-}
-
-.scroll-pane .scroll-bar{
-    -fx-background-color: -main-darker-color;
-}
-
-.scroll-pane .box{
-    -fx-background-color: -main-color;
+    -border-color: #652A55;
 }
 
 .table-view{
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-border-color: -border-color;
+}
+
+.table-view .placeholder {
+    -fx-background-color: white;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -pressed-color;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button{
+    -fx-padding: 0 0 5 0;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-insets: 0 0 10 0; /* Обрезаем снизу на 10px */
+}
+
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: -main-darker-color;
+}
+
+.scroll-bar {
+    -fx-padding: 1 1 10 1;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .increment-button:hover,
+.scroll-bar .decrement-button:hover {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button:focused,
+.scroll-bar .decrement-button:focused {
+    -fx-background-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.scroll-bar .increment-arrow:hover,
+.scroll-bar .decrement-arrow:hover {
+    -fx-background-color: -pressed-color;
+}
+
+.scroll-pane .scroll-bar > .track {
+    -fx-background-color: -main-darker-color;
+}
+
+.scroll-pane .scroll-bar > .thumb {
     -fx-background-color: -main-color;
+}
+
+.scroll-pane .scroll-bar > .thumb:hover {
+    -fx-background-color: -pressed-color;
+}
+
+.scroll-pane > .corner{
+    -fx-background-color: -main-darker-color;
 }
 
 .button {
@@ -43,6 +105,12 @@
 
 .button:pressed{
     -fx-background-color: -pressed-color;
+}
+
+.even-button-box {
+    -fx-padding: 10;
+    -fx-spacing: 40;
+    -fx-alignment: CENTER;
 }
 
 .check-box .box{

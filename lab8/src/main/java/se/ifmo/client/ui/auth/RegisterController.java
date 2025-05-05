@@ -17,7 +17,7 @@ public class RegisterController {
     @FXML
     private Button registerButton;
     @FXML
-    private Hyperlink Login;
+    private Hyperlink loginLink;
     @FXML
     private Text messageText;
     @Setter
@@ -37,7 +37,7 @@ public class RegisterController {
             }
         });
 
-        Login.setOnAction(event -> {
+        loginLink.setOnAction(event -> {
             if (authController != null) {
                 authController.loadLogin();
             }

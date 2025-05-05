@@ -4,16 +4,28 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import se.ifmo.client.ui.MainController;
 
 import java.io.IOException;
 
 public class AuthController {
-
-    @FXML private StackPane authPane;
+    @FXML
+    private StackPane authPane;
 
     @FXML
     public void initialize() {
         loadLogin();
+    }
+
+    public void loadMain() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/main/main.fxml"));
+            Node node = loader.load();
+
+            MainController controller = loader.getController();
+            controller.setAuthController(this);
+        } catch (IOException e) {
+        }
     }
 
     public void loadLogin() {

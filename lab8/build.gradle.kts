@@ -9,6 +9,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.openjfx:javafx-controls:17.0.2")
+    implementation("org.openjfx:javafx-fxml:17.0.2")
     implementation("org.apache.commons:commons-lang3:3.17.0")
     implementation("commons-codec:commons-codec:1.15")
 }

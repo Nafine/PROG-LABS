@@ -31,7 +31,7 @@
 
     <Button fx:id="registerButton" contentDisplay="CENTER" defaultButton="true" text="Register" textAlignment="CENTER"/>
 
-    <Hyperlink fx:id="Login" text="Login"/>
+    <Hyperlink fx:id="loginLink" text="Login"/>
 
     <Text fx:id="messageText" fill="FIREBRICK"/>
 </VBox>
