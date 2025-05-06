@@ -62,7 +62,7 @@ public class VehicleService {
 
     public long add(Vehicle vehicle) {
         try (PreparedStatement stmt = DatabaseManager.getInstance().prepareStatement(ADD_VEHICLE)) {
-            setParams(stmt, vehicle.getName(), vehicle.getEnginePower(), vehicle.getCapacity(), vehicle.getDistanceTraveled(),
+            setParams(stmt, vehicle.getName(), vehicle.getEnginePower(), vehicle.getCapacity(), vehicle.getDistanceTravelled(),
                     vehicle.getFuelType().toString(), vehicle.getCoordinates().getX(), vehicle.getCoordinates().getY(), vehicle.getOwnerId());
             ResultSet set = stmt.executeQuery();
             if (set.next()) return set.getLong(1);

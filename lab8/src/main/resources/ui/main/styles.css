@@ -13,9 +13,9 @@
     -border-color: #652A55;
 }
 
-.table-view{
+.table-view {
     -fx-background-color: white;
-    -fx-border-color: transparent;
+    -fx-border-color: -border-color;
 }
 
 .table-view .column-header {
@@ -26,29 +26,18 @@
     -fx-background-color: white;
 }
 
-.table-row-cell:selected {
+.table-row-cell:filled:selected:focused,
+.table-cell:selected:focused {
     -fx-background-color: -pressed-color;
 }
 
-.scroll-pane {
-    -fx-background-color: transparent;
-}
-
-.scroll-bar .increment-button{
-    -fx-padding: 0 0 5 0;
-}
-
-.scroll-pane .scroll-bar:vertical {
-    -fx-background-insets: 0 0 10 0; /* Обрезаем снизу на 10px */
+.table-cell {
+    -fx-text-fill: black;
+    -fx-border-color: -light-color;
 }
 
 .scroll-bar:horizontal, .scroll-bar:vertical {
     -fx-background-color: -main-darker-color;
-}
-
-.scroll-bar {
-    -fx-padding: 1 1 10 1;
-    -fx-background-radius: 5;
 }
 
 .scroll-bar .increment-button,
@@ -74,20 +63,16 @@
     -fx-background-color: -pressed-color;
 }
 
-.scroll-pane .scroll-bar > .track {
+.scroll-bar > .track {
     -fx-background-color: -main-darker-color;
 }
 
-.scroll-pane .scroll-bar > .thumb {
+scroll-bar > .thumb {
     -fx-background-color: -main-color;
 }
 
-.scroll-pane .scroll-bar > .thumb:hover {
+.scroll-bar > .thumb:hover {
     -fx-background-color: -pressed-color;
-}
-
-.scroll-pane > .corner{
-    -fx-background-color: -main-darker-color;
 }
 
 .button {
@@ -98,12 +83,12 @@
     -fx-background-color: -main-color;
 }
 
-.button:hover{
+.button:hover {
     -fx-background-color: -main-lighter-color;
     -fx-cursor: hand;
 }
 
-.button:pressed{
+.button:pressed {
     -fx-background-color: -pressed-color;
 }
 
@@ -113,13 +98,13 @@
     -fx-alignment: CENTER;
 }
 
-.check-box .box{
+.check-box .box {
     -fx-border-radius: 5;
     -fx-background-radius: 5;
     -fx-border-color: -border-color;
 }
 
-.check-box:focused .box{
+.check-box:focused .box {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-border-color: -border-color;

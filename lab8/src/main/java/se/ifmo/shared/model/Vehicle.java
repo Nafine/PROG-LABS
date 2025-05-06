@@ -30,7 +30,7 @@ public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
 
     private int enginePower;
     private double capacity;
-    private Float distanceTraveled;
+    private Float distanceTravelled;
 
     @NonNull
     private FuelType fuelType;
@@ -54,17 +54,17 @@ public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
      * @param y                coordinate y
      * @param enginePower      of vehicle
      * @param capacity         of vehicle
-     * @param distanceTraveled of vehicle
+     * @param distanceTravelled of vehicle
      * @param fuelType         of vehicle
      * @throws InvalidDataException if some of the arguments were invalid
      */
-    public Vehicle(String name, long x, Double y, int enginePower, double capacity, Float distanceTraveled, FuelType fuelType) throws InvalidDataException {
+    public Vehicle(String name, long x, Double y, int enginePower, double capacity, Float distanceTravelled, FuelType fuelType) throws InvalidDataException {
         this();
         this.name = name;
         this.coordinates = new Coordinates(x, y);
         this.enginePower = enginePower;
         this.capacity = capacity;
-        this.distanceTraveled = distanceTraveled;
+        this.distanceTravelled = distanceTravelled;
         this.fuelType = fuelType;
         validate();
     }
@@ -87,6 +87,6 @@ public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
         if (this.getClass() != o.getClass()) throw new ClassCastException();
         if (this.equals(o)) return 0;
 
-        return distanceTraveled < o.distanceTraveled ? -1 : 1;
+        return distanceTravelled < o.distanceTravelled ? -1 : 1;
     }
 }

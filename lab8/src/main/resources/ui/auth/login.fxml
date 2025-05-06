@@ -35,5 +35,5 @@
 
     <Hyperlink fx:id="signupLink" text="Register"/>
 
-    <Text fx:id="messageText" fill="FIREBRICK"/>
+    <Text fx:id="messageText" fill="#652A55"/>
 </VBox>

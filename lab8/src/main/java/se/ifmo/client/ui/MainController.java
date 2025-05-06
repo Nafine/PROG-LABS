@@ -1,5 +1,8 @@
 package se.ifmo.client.ui;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,8 +13,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import lombok.Setter;
-import se.ifmo.client.ui.auth.AuthController;
 import se.ifmo.shared.builders.VehicleDirector;
 import se.ifmo.shared.model.Vehicle;
 
@@ -21,35 +22,45 @@ public class MainController {
     @FXML
     private TableView<Vehicle> tableView;
 
-    @Setter
-    private AuthController authController;
-
     @FXML
     private void initialize() {
         tableView.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
-                Stage stage = (Stage) newScene.getWindow();
+                newScene.windowProperty().addListener((wObs, oldWindow, newWindow) -> {
+                    if (newWindow instanceof Stage stage) {
+                        for (TableColumn<?, ?> column : tableView.getColumns()) {
+                            String headerText = column.getText();
+                            if (headerText != null && !headerText.isEmpty()) {
+                                double textWidth = computeTextWidth(Font.font(12), headerText);
+                                column.setMinWidth(textWidth + 5);
+                            }
+                        }
 
-                for (TableColumn<?, ?> column : tableView.getColumns()) {
-                    String headerText = column.getText();
-                    if (headerText != null && !headerText.isEmpty()) {
-                        double textWidth = computeTextWidth(Font.font(12), headerText);
-                        column.setMinWidth(textWidth + 5);
+                        tableView.setFixedCellSize(100);
+
+                        fillTable();
+
+                        double minWidth = calculateMinWidth();
+                        stage.setMinWidth(minWidth);
+                        stage.setWidth(minWidth);
                     }
-                }
+                });
+            }
+        });
 
-                tableView.setFixedCellSize(100);
-
-                fillTable();
-
-                double minWidth = calculateMinWidth();
-                stage.setMinWidth(minWidth);
-                stage.setWidth(minWidth);
+        tableView.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnMouseClicked(event -> {
+                    if (!tableView.getBoundsInParent().contains(event.getX(), event.getY())) {
+                        tableView.getSelectionModel().clearSelection();
+                        tableView.getFocusModel().focus(-1);
+                    }
+                });
             }
         });
     }
 
-    private void setValueFactory(TableColumn<Vehicle, ?> column) {
+    private <T> void setValueFactory(TableColumn<Vehicle, T> column) {
         switch (column.getText()) {
             case "ID":
                 column.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -57,11 +68,16 @@ public class MainController {
             case "Owner ID":
                 column.setCellValueFactory(new PropertyValueFactory<>("ownerId"));
                 break;
+            case "Name":
+                column.setCellValueFactory(new PropertyValueFactory<>("name"));
+                break;
             case "Coord X":
-                column.setCellValueFactory(new PropertyValueFactory<>("coordinates.x"));
+                column.setCellValueFactory(cellData ->
+                        (ObservableValue<T>) new SimpleLongProperty(cellData.getValue().getCoordinates().getX()).asObject());
                 break;
             case "Coord Y":
-                column.setCellValueFactory(new PropertyValueFactory<>("coordinates.y"));
+                column.setCellValueFactory(cellData ->
+                        (ObservableValue<T>) new SimpleDoubleProperty(cellData.getValue().getCoordinates().getY()).asObject());
                 break;
             case "Creation date":
                 column.setCellValueFactory(new PropertyValueFactory<>("creationDate"));
@@ -78,6 +94,8 @@ public class MainController {
             case "Fuel type":
                 column.setCellValueFactory(new PropertyValueFactory<>("fuelType"));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + column.getText());
         }
     }
 
@@ -87,8 +105,7 @@ public class MainController {
 
         ObservableList<Vehicle> data = FXCollections.observableArrayList();
 
-        for (int i = 0; i < 10_000; i++)
-            data.add(VehicleDirector.constructAndGetRandomVehicles(1, 0).getFirst());
+        data.addAll(VehicleDirector.constructAndGetRandomVehicles(1000, 0));
 
         tableView.setItems(data);
     }

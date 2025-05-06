@@ -20,7 +20,7 @@ application {
 }
 
 javafx{
-    version = "21"
+    version = "23.0.1"
     modules("javafx.controls", "javafx.fxml")
 }
 

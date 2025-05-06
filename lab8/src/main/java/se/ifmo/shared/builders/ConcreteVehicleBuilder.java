@@ -1,7 +1,6 @@
 package se.ifmo.shared.builders;
 
 import se.ifmo.shared.enums.FuelType;
-import se.ifmo.shared.exceptions.InvalidDataException;
 import se.ifmo.shared.model.Coordinates;
 import se.ifmo.shared.model.Vehicle;
 
@@ -64,7 +63,7 @@ public class ConcreteVehicleBuilder implements VehicleBuilder {
 
     @Override
     public VehicleBuilder setDistanceTravelled(Float distanceTravelled) {
-        vehicle.setDistanceTraveled(distanceTravelled);
+        vehicle.setDistanceTravelled(distanceTravelled);
         return this;
     }
 
