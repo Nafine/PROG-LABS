@@ -56,7 +56,3 @@
     -fx-text-fill: black;
     -fx-border-color: transparent;
 }
-
-#messageText {
-    -fx-font-size: 12px;
-}

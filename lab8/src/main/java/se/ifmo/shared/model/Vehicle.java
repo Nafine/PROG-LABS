@@ -7,7 +7,9 @@ import lombok.ToString;
 import se.ifmo.shared.enums.FuelType;
 import se.ifmo.shared.exceptions.InvalidDataException;
 
+import java.io.Serial;
 import java.io.Serializable;
+
 
 /**
  * Collection element.
@@ -16,6 +18,9 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
+    @Serial
+    private static final long serialVersionUID = 5874551785209763956L;
+
     private long id;
     private long ownerId;
 
@@ -49,13 +54,13 @@ public class Vehicle implements Comparable<Vehicle>, Serializable, Validatable {
     /**
      * Constructs a new {@link Vehicle} class.
      *
-     * @param name             of vehicle
-     * @param x                coordinate x
-     * @param y                coordinate y
-     * @param enginePower      of vehicle
-     * @param capacity         of vehicle
+     * @param name              of vehicle
+     * @param x                 coordinate x
+     * @param y                 coordinate y
+     * @param enginePower       of vehicle
+     * @param capacity          of vehicle
      * @param distanceTravelled of vehicle
-     * @param fuelType         of vehicle
+     * @param fuelType          of vehicle
      * @throws InvalidDataException if some of the arguments were invalid
      */
     public Vehicle(String name, long x, Double y, int enginePower, double capacity, Float distanceTravelled, FuelType fuelType) throws InvalidDataException {

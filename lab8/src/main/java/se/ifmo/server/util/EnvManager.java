@@ -31,6 +31,7 @@ public final class EnvManager {
             System.out.println("Check setup files, given config file paths are not valid.");
         } catch (NumberFormatException e) {
             System.out.println("Damaged SERVER_PORT environment, variable is not a number.");
+            System.out.println(e.getMessage());
         } catch (NullPointerException e) {
             System.out.println("Check setup files, some of them are damaged or don't exist.");
             System.exit(1);

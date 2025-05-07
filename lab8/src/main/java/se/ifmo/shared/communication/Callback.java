@@ -2,6 +2,7 @@ package se.ifmo.shared.communication;
 
 import se.ifmo.shared.model.Vehicle;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
  * @param vehicles List of {@link Vehicle} if command interacts with collection.
  */
 public record Callback(String message, List<Vehicle> vehicles) implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 5874551785209763956L;
 
     /**
      * Constructs a new {@link Callback} record.
@@ -64,4 +67,6 @@ public record Callback(String message, List<Vehicle> vehicles) implements Serial
     public static Callback successfulLogin() {
         return new Callback("Successful login");
     }
+
+    public static Callback damagedPackets() {return new Callback("Packets are damaged");}
 }

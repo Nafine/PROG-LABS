@@ -20,20 +20,15 @@ public class RegisteredCommands {
         RegisteredCommands.registerCommand(new AddIfMin());
         RegisteredCommands.registerCommand(new AddRandom());
         RegisteredCommands.registerCommand(new Clear());
-        RegisteredCommands.registerCommand(new ExecuteScript());
-        RegisteredCommands.registerCommand(new Exit());
-        RegisteredCommands.registerCommand(new FilterLessThanFuelType());
-        RegisteredCommands.registerCommand(new Help());
-        RegisteredCommands.registerCommand(new History());
         RegisteredCommands.registerCommand(new Info());
         RegisteredCommands.registerCommand(new Login());
-        RegisteredCommands.registerCommand(new MinByCreationDate());
         RegisteredCommands.registerCommand(new Register());
         RegisteredCommands.registerCommand(new RemoveById());
         RegisteredCommands.registerCommand(new RemoveGreater());
         RegisteredCommands.registerCommand(new Show());
         RegisteredCommands.registerCommand(new SumOfEnginePower());
         RegisteredCommands.registerCommand(new UpdateId());
+        RegisteredCommands.registerCommand(new GetUID());
     }
 
     private RegisteredCommands() {

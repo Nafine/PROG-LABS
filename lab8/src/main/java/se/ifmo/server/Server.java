@@ -22,7 +22,6 @@ import java.nio.channels.Selector;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.FileHandler;
@@ -68,19 +67,6 @@ public class Server implements AutoCloseable {
 
     {
         try {
-            Thread.startVirtualThread(() -> {
-                System.out.println(123);
-            });
-
-            var future = executor.submit(() -> {
-            });
-
-            try {
-                future.get();
-                future.cancel(true);
-            } catch (InterruptedException | ExecutionException ignored) {
-            }
-
             channel = DatagramChannel.open();
             channel.configureBlocking(false);
             channel.bind(new InetSocketAddress(PORT));
@@ -174,6 +160,7 @@ public class Server implements AutoCloseable {
     }
 
     private void splitSendCallback(Callback callback, InetSocketAddress clientAddress) {
+        System.out.println(callback.message() + " " + callback.vehicles().size());
         executor.execute(() -> {
             for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(callback))) {
                 try {

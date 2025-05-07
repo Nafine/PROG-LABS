@@ -32,8 +32,14 @@
 }
 
 .table-cell {
+    -fx-alignment: center;
     -fx-text-fill: black;
     -fx-border-color: -light-color;
+}
+
+.scroll-bar {
+    -fx-padding: 1 1 1 1;
+    -fx-background-radius: 5;
 }
 
 .scroll-bar:horizontal, .scroll-bar:vertical {
@@ -76,7 +82,7 @@ scroll-bar > .thumb {
 }
 
 .button {
-    -fx-padding: 8 20 8 20;
+    -fx-padding: 6 15 6 15;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-color: -border-color;
@@ -120,4 +126,41 @@ scroll-bar > .thumb {
 
 .text-field:focused {
     -fx-faint-focus-color: white;
+}
+
+.root-container {
+    -fx-padding: 30;
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+    -fx-max-width: 400;
+}
+
+.circle .stroke{
+    -fx-background-color: -main-color;
+}
+
+.info-container {
+    -fx-padding: 20;
+    -fx-background-radius: 8;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+}
+
+.title-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-min-width: 80;
+}
+
+
+.action-button {
+    -fx-padding: 8 15;
+    -fx-background-radius: 5;
 }

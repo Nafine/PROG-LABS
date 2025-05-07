@@ -1,25 +1,25 @@
 package se.ifmo.client;
 
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
-import se.ifmo.client.command.ClientSideCommands;
-import se.ifmo.shared.file.FileHandler;
+import se.ifmo.client.util.EnvManager;
 import se.ifmo.shared.PacketManager;
-import se.ifmo.shared.command.ExecuteScript;
-import se.ifmo.shared.command.Login;
-import se.ifmo.shared.command.Register;
+import se.ifmo.shared.command.*;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Credentials;
 import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.communication.Router;
-import se.ifmo.shared.io.console.Console;
+import se.ifmo.shared.model.Vehicle;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
 
@@ -34,128 +34,129 @@ import static se.ifmo.shared.PacketManager.BUFFER_SIZE;
  *   <li>Thread-safe packet reassembly</li>
  * </ul>
  */
-public class Client implements AutoCloseable, Runnable {
-
+public class Client implements AutoCloseable {
+    private static Client instance;
     private final InetAddress host;
     private final int serverPort;
-    private final Console console;
+    private Credentials credentials;
     private DatagramSocket socket;
-
 
     {
         try {
             socket = new DatagramSocket();
-            socket.setSoTimeout(4500);
+            socket.setSoTimeout(2500);
         } catch (SocketException e) {
             System.out.println("Unable to initiate client:");
             System.out.println(e.getMessage());
         }
     }
 
-    public Client(Console console, InetAddress host, int serverPort) {
-        this.console = console;
-        this.host = host;
-        this.serverPort = serverPort;
+    private Client() {
+        this.host = EnvManager.getHost();
+        this.serverPort = EnvManager.getPort();
     }
 
-    private Credentials login() {
-        Credentials credentials = new Credentials(console.read("Insert your login\n"), console.read("Insert your password\n"));
+    public static Client getInstance() {
+        return instance == null ? instance = new Client() : instance;
+    }
+
+    public boolean login(String login, String password) {
+        Credentials credentials = new Credentials(login, password);
 
         try {
             Callback callback = handleRequest(new Request(new Login(), Collections.emptyList(), credentials));
-            printCallback(callback);
-            if (callback.equals(Callback.successfulLogin())) return credentials;
-            return Credentials.empty();
+            if (callback.equals(Callback.successfulLogin())) {
+                this.credentials = credentials;
+                return true;
+            }
+
+            this.credentials = Credentials.empty();
+            return false;
         } catch (IOException e) {
-            return Credentials.empty();
+            this.credentials = Credentials.empty();
+            return false;
         }
     }
 
-    private Credentials register() {
-        Credentials credentials = new Credentials(console.read("Insert your login\n"), console.read("Insert your password\n"));
+    public boolean register(String login, String password) {
+        Credentials credentials = new Credentials(login, password);
 
         try {
             Callback callback = handleRequest(new Request(new Register(), Collections.emptyList(), credentials));
-            printCallback(callback);
-            if (callback.equals(Callback.successfulLogin())) return credentials;
-            return Credentials.empty();
+            if (callback.equals(Callback.successfulLogin())) {
+                this.credentials = credentials;
+                return true;
+            }
+            this.credentials = Credentials.empty();
+            return false;
         } catch (IOException e) {
-            return Credentials.empty();
+            this.credentials = Credentials.empty();
+            return false;
         }
     }
 
-    private Credentials initUser() {
-        return switch (console.read("Enter 'login' if you have account or 'register' otherwise:\n")) {
-            case "login" -> login();
-            case "register" -> register();
-            default -> Credentials.empty();
-        };
+    public String getUsername() {
+        return credentials.username();
     }
 
-    /**
-     * Starts the client's event processing loop.
-     * <p>
-     * Infinite input handling loop.
-     * </p>
-     */
-    @Override
-    public void run() {
-        Credentials credentials;
-        while ((credentials = initUser()).equals(Credentials.empty())) ;
-
-        String input;
-
-        while ((input = console.read("> ")) != null) handleInput(input.trim(), credentials);
+    public void removeByID(long id) {
+        forwardCommand(new RemoveById(), List.of(String.valueOf(id)));
     }
 
+    public void updateByID(long id, Vehicle newVehicle) {
+        forwardCommand(new UpdateId(), Stream.of(id, newVehicle.getName(), newVehicle.getCoordinates().getX(),
+                        newVehicle.getCoordinates().getY(), newVehicle.getEnginePower(),
+                        newVehicle.getCapacity(), newVehicle.getDistanceTravelled(),
+                        newVehicle.getFuelType())
+                .map(t -> t == null ? "null" : t.toString())
+                .collect(Collectors.toList()));
+    }
 
-    /**
-     * First of all checks {@code input}: immediately returns if input.isBlank() or input == null.
-     *
-     * <p>
-     * Parses input, calls method to handle parsed user input and prints callback from serve.
-     * Handles IOExceptions if needed.
-     * </p>
-     *
-     * @param input user's prompt to console
-     */
-    protected void handleInput(String input, Credentials credentials) {
-        if (input == null || input.isBlank()) return;
+    public long getUID() {
+        return Long.parseLong(forwardCommand(new GetUID()).message());
+    }
 
+    public Callback forwardUntilSuccess(Command command) {
+        return forwardUntilSuccess(command, Collections.emptyList());
+    }
+
+    public Callback forwardUntilSuccess(Command command, List<String> args) {
+        Callback callback;
+        while ((callback = forwardWhileBad(command, args)).equals(Callback.serverDidNotRespond())) ;
+        return callback;
+    }
+
+    public Callback forwardWhileBad(Command command) {
+        return forwardWhileBad(command, Collections.emptyList());
+    }
+
+    public Callback forwardWhileBad(Command command, List<String> args) {
+        Callback callback;
+        while ((callback = forwardCommand(command, args)).equals(Callback.damagedPackets())) ;
+        return callback;
+    }
+
+    public Callback forwardCommand(Command command) {
+        return forwardCommand(command, Collections.emptyList());
+    }
+
+    public Callback forwardCommand(Command command, List<String> args) {
         try {
-            printCallback(handleRequest(makeRequest(input, credentials)));
+            return handleRequest(new Request(command, args, credentials));
         } catch (IOException e) {
-            System.err.println("Error during handling request:\n" + e.getMessage());
+            return new Callback("Error during handling request: "
+                    + command + " with arguments " + String.join(" ", args));
         }
     }
 
     private Callback handleRequest(Request request) throws IOException {
-        if (new ExecuteScript().getName().equals(request.command()))
-            return (new ScriptHandler(this)).handleScript(request);
-
-        else if (ClientSideCommands.MAP.containsKey(request.command())) return Router.getInstance().route(request);
-
         splitSendRequest(request);
         return receiveCallback();
     }
 
-    private Request makeRequest(String prompt, Credentials credentials) {
-        String[] parts = prompt.split("\\s+", 2);
-
-        String command = parts[0];
-
-        List<String> args = parts.length > 1 ? Arrays.asList(parts[1].split("\\s+")) : Collections.emptyList();
-
-        return new Request(command, args, credentials);
-    }
-
-    private void printCallback(Callback callback) {
-        if (callback.message() != null && !callback.message().isBlank()) console.writeln(callback.message());
-        if (callback.vehicles() != null && !callback.vehicles().isEmpty())
-            callback.vehicles().forEach(vehicle -> console.writeln(vehicle.toString()));
-    }
-
     private void splitSendRequest(Request request) throws IOException {
+        System.out.println("Sent: " + request.command());
+        System.out.println("With args: " + String.join(" ", request.args()));
         for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(request)))
             socket.send(new DatagramPacket(packet, packet.length, host, serverPort));
     }
@@ -176,57 +177,23 @@ public class Client implements AutoCloseable, Runnable {
                 receivedPackets.put(seqNum, data);
                 if (receivedPackets.size() == totalPackets) {
                     receivedData = PacketManager.assemblePackets(receivedPackets);
-                    return SerializationUtils.deserialize(receivedData);
+                    System.out.println(totalPackets);
+                    Callback callback = SerializationUtils.deserialize(receivedData);
+                    System.out.println(callback.message() + " " + callback.vehicles().size());
+                    return callback;
                 }
             }
         } catch (SocketTimeoutException e) {
+            System.out.println("Server did not respond");
             return Callback.serverDidNotRespond();
+        } catch (SerializationException e) {
+            System.out.println("Packets damaged");
+            return Callback.damagedPackets();
         }
     }
 
     @Override
     public void close() {
         socket.close();
-    }
-}
-
-class ScriptHandler {
-    private final static HashSet<String> runningScripts = new HashSet<>();
-    private final Client client;
-
-    protected ScriptHandler(Client client) {
-        this.client = client;
-    }
-
-    protected Callback handleScript(Request request) {
-        File file;
-        try {
-            file = Path.of(request.args().getFirst()).toFile();
-        } catch (InvalidPathException e) {
-            return new Callback("String is not a path.");
-        }
-
-        if (!file.exists()) return new Callback("File not found.");
-        if (!file.isFile()) return new Callback("Path is not a file.");
-        if (!file.canRead()) return new Callback("Not enough rights to read file.");
-
-        if (runningScripts.contains(file.getAbsolutePath())) return new Callback("Script already running.");
-        runningScripts.add(file.getAbsolutePath());
-
-        try (FileHandler fileHandler = new FileHandler(file.toPath())) {
-            Queue<String> scriptQueue = new LinkedList<>();
-            String token;
-            while (!(token = fileHandler.read()).isEmpty())
-                Collections.addAll(scriptQueue, token.split(System.lineSeparator() + "+"));
-            while (!scriptQueue.isEmpty()) client.handleInput(scriptQueue.poll(), request.credentials());
-
-            runningScripts.remove(file.getAbsolutePath());
-
-            return Router.getInstance().route(request);
-        } catch (IOException e) {
-            runningScripts.remove(file.getAbsolutePath());
-            System.err.println("Error closing file: " + e.getMessage());
-            return new Callback("Can't close file");
-        }
     }
 }

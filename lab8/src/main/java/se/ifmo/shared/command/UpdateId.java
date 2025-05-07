@@ -1,12 +1,12 @@
 package se.ifmo.shared.command;
 
+import se.ifmo.server.collection.CollectionManager;
 import se.ifmo.server.db.UserService;
 import se.ifmo.shared.builders.VehicleDirector;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.server.collection.CollectionManager;
-import se.ifmo.shared.model.Vehicle;
 import se.ifmo.shared.exceptions.InvalidDataException;
+import se.ifmo.shared.model.Vehicle;
 
 import java.util.LinkedHashSet;
 
@@ -19,7 +19,7 @@ public class UpdateId extends Command {
      * Constructs a new {@link RemoveById} command.
      */
     public UpdateId() {
-        super("update_id", new String[]{"name", "coordinate_x", "coordinate_y", "engine_power", "capacity", "distance_traveled", "fuel_type"}, "Update the value of the collection item whose id is equal to the given one");
+        super("update_id", new String[]{"id", "name", "coordinate_x", "coordinate_y", "engine_power", "capacity", "distance_traveled", "fuel_type"}, "Update the value of the collection item whose id is equal to the given one");
     }
 
     /**
@@ -35,10 +35,10 @@ public class UpdateId extends Command {
      */
     @Override
     public Callback execute(Request req) throws InvalidDataException {
-        int id = Integer.parseInt(req.args().get(0));
+        int id = Integer.parseInt(req.args().getFirst());
         long uid = UserService.getInstance().getUserID(req.credentials().username());
 
-        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args(), uid);
+        Vehicle vehicle = VehicleDirector.constructAndGetVehicle(req.args().subList(1, req.args().size()), uid);
         vehicle.setId(id);
 
         LinkedHashSet<Vehicle> collection = CollectionManager.getInstance().getCollection();

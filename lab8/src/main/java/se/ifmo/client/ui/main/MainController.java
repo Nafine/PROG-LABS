@@ -1,0 +1,235 @@
+package se.ifmo.client.ui.main;
+
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import se.ifmo.client.Client;
+import se.ifmo.client.ui.main.button.bar.AddController;
+import se.ifmo.client.ui.main.button.bar.FilterController;
+import se.ifmo.client.ui.main.button.bar.ProfileController;
+import se.ifmo.client.ui.scene.SceneManager;
+import se.ifmo.shared.annotations.Nested;
+import se.ifmo.shared.command.Clear;
+import se.ifmo.shared.command.Show;
+import se.ifmo.shared.communication.Callback;
+import se.ifmo.shared.model.Vehicle;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+public class MainController {
+    private final ObservableList<Vehicle> originalList = FXCollections.observableArrayList();
+    @FXML
+    private TableView<Vehicle> tableView;
+    @FXML
+    private Button profileButton;
+    @FXML
+    private Button filterButton;
+    @FXML
+    private Button addButton;
+    @FXML
+    private Button clearButton;
+    @FXML
+    private ContextMenu contextMenu;
+    @FXML
+    private MenuItem editItem;
+    @FXML
+    private MenuItem deleteItem;
+
+    @FXML
+    private void initialize() {
+        tableView.sceneProperty().addListener((obs, oldScene, newScene) -> initTable(newScene));
+        tableView.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnMouseClicked(event -> {
+                    if (!tableView.getBoundsInParent().contains(event.getX(), event.getY())) {
+                        tableView.getSelectionModel().clearSelection();
+                        tableView.getFocusModel().focus(-1);
+                    }
+                });
+            }
+        });
+
+        tableView.setRowFactory(tv -> {
+            TableRow<Vehicle> row = new TableRow<>();
+
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && !row.isEmpty()) {
+                    Vehicle rowData = row.getItem();
+                    openEditor(rowData, item -> {
+                        Client.getInstance().updateByID(item.getId(), item);
+                        refreshTable();
+                    });
+                }
+
+                if (event.getButton() == MouseButton.SECONDARY && !row.isEmpty()) {
+                    if (row.getItem().getOwnerId() != Client.getInstance().getUID())
+                        return;
+                    contextMenu.show(row, event.getScreenX(), event.getScreenY());
+                }
+            });
+
+            return row;
+        });
+
+        editItem.setOnAction(event -> {
+            Vehicle selectedRow = tableView.getSelectionModel().getSelectedItem();
+            openEditor(selectedRow, item -> {
+                Client.getInstance().updateByID(item.getId(), item);
+                refreshTable();
+            });
+        });
+
+        deleteItem.setOnAction(event -> {
+            Vehicle selectedRow = tableView.getSelectionModel().getSelectedItem();
+            Client.getInstance().removeByID(selectedRow.getId());
+            refreshTable();
+        });
+
+        profileButton.setOnAction(event -> showProfile());
+        filterButton.setOnAction(event -> showFilter());
+        addButton.setOnAction(event -> handleAdd());
+        clearButton.setOnAction(event -> {
+            Client.getInstance().forwardCommand(new Clear());
+            refreshTable();
+        });
+    }
+
+    private void initTable(Scene newScene) {
+        if (newScene != null) {
+            newScene.windowProperty().addListener((wObs, oldWindow, newWindow) -> {
+                if (newWindow instanceof Stage stage) {
+                    getFields(Vehicle.class).forEach(field -> {
+                        TableColumn<Vehicle, String> column = new TableColumn<>(field);
+                        column.setReorderable(false);
+                        column.setCellValueFactory(data ->
+                                new ReadOnlyStringWrapper(getFieldValue(data.getValue(), field)));
+                        tableView.getColumns().add(column);
+                    });
+
+                    setMinWidthByText(stage);
+                    tableView.setFixedCellSize(25);
+                    tableView.setItems(FXCollections.observableArrayList(Client.getInstance().forwardUntilSuccess(new Show()).vehicles()));
+                    originalList.addAll(tableView.getItems());
+                }
+            });
+        }
+    }
+
+    private void showProfile() {
+        try {
+            ((ProfileController) SceneManager.getInstance().setPopup("profile", "/ui/main/buttonBar/profile.fxml")).init();
+        } catch (IOException ignored) {
+        }
+    }
+
+    private void showFilter() {
+        try {
+            ((FilterController) SceneManager.getInstance().setPopup("filter", "/ui/main/buttonBar/filter.fxml")).setMainController(this);
+        } catch (IOException ignored) {
+        }
+    }
+
+    private void handleAdd() {
+        try {
+            ((AddController) SceneManager.getInstance().setPopup("add", "/ui/main/buttonBar/add.fxml")).setMainController(this);
+        } catch (IOException ignored) {
+        }
+    }
+    public void refreshTable() {
+        tableView.setItems(FXCollections.observableArrayList(Client.getInstance().forwardCommand(new Show()).vehicles()));
+    }
+
+    public void filterTable(Predicate<Vehicle> predicate) {
+        tableView.setItems(new FilteredList<>(originalList, predicate));
+    }
+
+
+    private void openEditor(Vehicle vehicle, Consumer<Vehicle> onComplete) {
+        try {
+            EditController controller = SceneManager.getInstance().setPopup(
+                    "edit",
+                    "/ui/main/editor.fxml"
+            );
+            controller.setItem(vehicle);
+            controller.setReadOnly(vehicle != null && Client.getInstance().getUID() != vehicle.getOwnerId());
+            controller.setOnComplete(onComplete);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private String getFieldValue(Object object, String fieldPath) {
+        Objects.requireNonNull(object);
+        try {
+            for (String fieldName : fieldPath.split("\\.")) {
+                Field field = object.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+                object = field.get(object);
+            }
+            return object.toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<String> getFields(Class<?> aClass) {
+        List<String> fieldNames = new ArrayList<>();
+        if (aClass == null) return fieldNames;
+
+        Arrays.stream(aClass.getDeclaredFields()).forEach(field -> {
+            if (field.isAnnotationPresent(Nested.class)) {
+                List<String> nestedFields = getFields(field.getType());
+                nestedFields.forEach(f -> fieldNames.add(field.getName() + "." + f));
+            } else if (!Modifier.isStatic(field.getModifiers())) {
+                fieldNames.add(field.getName());
+            }
+        });
+
+        return fieldNames;
+    }
+
+    private void setMinWidthByText(Stage stage) {
+        for (var column : tableView.getColumns()) {
+            String headerText = column.getText();
+            if (headerText != null && !headerText.isEmpty()) {
+                double textWidth = computeTextWidth(Font.font(12), headerText);
+                column.setMinWidth(textWidth + 16);
+                column.setPrefWidth(column.getMinWidth());
+            }
+        }
+
+        double minWidth = calculateMinWidth();
+        stage.setMinWidth(minWidth);
+        stage.setWidth(minWidth * 1.5);
+    }
+
+    private double computeTextWidth(Font font, String text) {
+        Text textNode = new Text(text);
+        textNode.setFont(font);
+        return textNode.getLayoutBounds().getWidth();
+    }
+
+    private double calculateMinWidth() {
+        double totalColumnWidth = 0;
+        for (var column : tableView.getColumns()) {
+            totalColumnWidth += column.getWidth();
+        }
+        return totalColumnWidth + 50;
+    }
+}

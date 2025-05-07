@@ -56,7 +56,7 @@ public class VehicleDirector {
 
             vehicleBuilder.setEnginePower(random.nextInt(1, Integer.MAX_VALUE));
             vehicleBuilder.setCapacity(random.nextInt(1, Integer.MAX_VALUE));
-            vehicleBuilder.setDistanceTravelled(random.nextFloat() * random.nextInt(0, Integer.MAX_VALUE));
+            vehicleBuilder.setDistanceTravelled(random.nextFloat() * random.nextInt(1, Integer.MAX_VALUE));
             vehicleBuilder.setFuelType(FuelType.values()[random.nextInt(0, Integer.MAX_VALUE) % FuelType.values().length]);
             vehicleBuilder.setOwnerId(uid);
 
@@ -73,13 +73,13 @@ public class VehicleDirector {
 
         CoordinatesBuilder coordinatesBuilder = new ConcreteCoordinatesBuilder();
         try {
-            coordinatesBuilder.setX(Long.parseLong(blueprint.get(1)));
+            if (!blueprint.get(1).equals("null")) coordinatesBuilder.setX(Long.parseLong(blueprint.get(1)));
             coordinatesBuilder.setY(Double.valueOf(blueprint.get(2)));
             vehicleBuilder.setCoordinates(coordinatesBuilder.getResult());
 
-            vehicleBuilder.setEnginePower(Integer.parseInt(blueprint.get(3)));
-            vehicleBuilder.setCapacity(Integer.parseInt(blueprint.get(4)));
-            vehicleBuilder.setDistanceTravelled(Float.valueOf(blueprint.get(5)));
+            if (!blueprint.get(3).equals("null")) vehicleBuilder.setEnginePower(Integer.parseInt(blueprint.get(3)));
+            if (!blueprint.get(4).equals("null")) vehicleBuilder.setCapacity(Double.parseDouble(blueprint.get(4)));
+            if (!blueprint.get(5).equals("null")) vehicleBuilder.setDistanceTravelled(Float.valueOf(blueprint.get(5)));
             vehicleBuilder.setFuelType(FuelType.valueOf(blueprint.get(6)));
         } catch (IllegalArgumentException e) {
             throw new InvalidDataException(vehicleBuilder, e.getMessage());

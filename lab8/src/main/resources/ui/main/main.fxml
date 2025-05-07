@@ -5,28 +5,26 @@
 <?import javafx.scene.layout.VBox?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.ifmo.client.ui.MainController">
-    <HBox fx:id="buttons" spacing="10" styleClass="even-button-box">
-        <Button text="Settings"/>
-        <Button text="Filter"/>
-        <Button text="Add"/>
-        <Button text="Delete"/>
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.ifmo.client.ui.main.MainController">
+    <HBox spacing="10" styleClass="even-button-box">
+        <Button fx:id="profileButton" text="Profile"/>
+        <Button fx:id="filterButton" text="Filter"/>
+        <Button fx:id="addButton" text="Add"/>
+        <Button fx:id="clearButton" text="Clear collection"/>
     </HBox>
     <TableView fx:id="tableView" cache="true" fixedCellSize="0.0" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn text="ID"/>
-            <TableColumn text="Owner ID"/>
-            <TableColumn text="Name"/>
-            <TableColumn text="Coord X"/>
-            <TableColumn text="Coord Y"/>
-            <TableColumn text="Creation date"/>
-            <TableColumn text="Engine power"/>
-            <TableColumn text="Capacity"/>
-            <TableColumn text="Distance travelled"/>
-            <TableColumn text="Fuel type"/>
         </columns>
         <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
         </columnResizePolicy>
+        <fx:define>
+            <ContextMenu fx:id="contextMenu">
+                <items>
+                    <MenuItem fx:id="editItem" text="Редактировать"/>
+                    <MenuItem fx:id="deleteItem" text="Удалить"/>
+                </items>
+            </ContextMenu>
+        </fx:define>
     </TableView>
 </VBox>

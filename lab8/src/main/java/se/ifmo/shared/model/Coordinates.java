@@ -3,6 +3,7 @@ package se.ifmo.shared.model;
 import lombok.*;
 import se.ifmo.shared.command.Add;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,6 +17,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @ToString
 public class Coordinates implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 345543445343L;
     private long x;
 
     @NonNull

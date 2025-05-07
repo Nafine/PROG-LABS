@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+      stylesheets="@styles.css"
+      fx:controller="se.ifmo.client.ui.main.EditController">
+
+    <VBox VBox.vgrow="ALWAYS">
+        <VBox>
+            <Label text="Name"/>
+            <TextField fx:id="nameField"/>
+        </VBox>
+        <VBox>
+            <Label text="Coord X"/>
+            <TextField fx:id="coordinateXField"/>
+        </VBox>
+        <VBox>
+            <Label text="Coord Y"/>
+            <TextField fx:id="coordinateYField"/>
+        </VBox>
+        <VBox>
+            <Label text="Engine power"/>
+            <TextField fx:id="enginePowerField"/>
+        </VBox>
+        <VBox>
+            <Label text="Capacity"/>
+            <TextField fx:id="capacityField"/>
+        </VBox>
+        <VBox>
+            <Label text="Distance travelled"/>
+            <TextField fx:id="distanceTravelledField"/>
+        </VBox>
+        <VBox>
+            <Label text="Fuel type"/>
+            <ChoiceBox fx:id="fuelTypeBox"/>
+        </VBox>
+    </VBox>
+    <Button fx:id="editButton" text="Edit"/>
+</VBox>

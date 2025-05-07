@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../styles.css"
+            fx:controller="se.ifmo.client.ui.main.button.bar.ProfileController">
+    <center>
+        <VBox alignment="CENTER" spacing="20" styleClass="root-container">
+            <StackPane>
+                <ImageView fx:id="avatarImage" fitWidth="120" fitHeight="120">
+                    <clip>
+                        <Circle radius="60" centerX="60" centerY="60"/>
+                    </clip>
+                </ImageView>
+                <Circle radius="60" fill="transparent" strokeWidth="3"/>
+            </StackPane>
+
+            <VBox alignment="CENTER_LEFT" spacing="8" styleClass="info-container">
+                <Label text="Профиль пользователя" styleClass="title-label"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="ID:" styleClass="field-label"/>
+                    <Label fx:id="userIdLabel"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Имя:" styleClass="field-label"/>
+                    <Label fx:id="userNameLabel"/>
+                </HBox>
+            </VBox>
+            <Label text="Коллекция:" styleClass="field-label"/>
+            <Label fx:id="collectionInfoLabel"/>
+        </VBox>
+    </center>
+</BorderPane>
