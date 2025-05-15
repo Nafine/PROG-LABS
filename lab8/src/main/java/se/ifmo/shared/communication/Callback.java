@@ -56,6 +56,10 @@ public record Callback(String message, List<Vehicle> vehicles) implements Serial
         return new Callback("Existing user");
     }
 
+    public static Callback successfulLogin() {
+        return new Callback("Successful login");
+    }
+
     public static Callback failedRegister() {
         return new Callback("Failed register");
     }
@@ -64,9 +68,11 @@ public record Callback(String message, List<Vehicle> vehicles) implements Serial
         return new Callback("Wrong credentials");
     }
 
-    public static Callback successfulLogin() {
-        return new Callback("Successful login");
+    public static Callback damagedPackets() {
+        return new Callback("Packets are damaged");
     }
 
-    public static Callback damagedPackets() {return new Callback("Packets are damaged");}
+    public static Callback serverSideError() {
+        return new Callback("Serve side error");
+    }
 }

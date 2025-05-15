@@ -2,6 +2,7 @@ package se.ifmo.server;
 
 import org.apache.commons.lang3.SerializationUtils;
 import se.ifmo.server.collection.CollectionManager;
+import se.ifmo.server.communication.Router;
 import se.ifmo.server.db.UserService;
 import se.ifmo.server.util.EnvManager;
 import se.ifmo.shared.PacketManager;
@@ -9,7 +10,6 @@ import se.ifmo.shared.command.Login;
 import se.ifmo.shared.command.Register;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.shared.communication.Router;
 import se.ifmo.shared.io.console.Console;
 import se.ifmo.shared.io.console.StandardConsole;
 
@@ -118,58 +118,58 @@ public class Server implements AutoCloseable {
             keyIterator.remove();
 
             if (key.isReadable()) {
-                receiveRequest();
+                executor.execute(this::receiveRequest);
             }
         }
     }
 
     private void receiveRequest() {
-        executor.execute(() -> {
-            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-            InetSocketAddress clientAddress = null;
-            try {
-                clientAddress = (InetSocketAddress) channel.receive(buffer);
-            } catch (IOException e) {
-                logger.log(Level.WARNING, "Error receiving request", e);
+        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        InetSocketAddress clientAddress = null;
+        try {
+            clientAddress = (InetSocketAddress) channel.receive(buffer);
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "Error receiving request", e);
+        }
+
+        if (clientAddress == null) return;
+
+        buffer.flip();
+        int packetId = buffer.getInt();
+        int totalPackets = buffer.getInt();
+        byte[] data = new byte[buffer.remaining()];
+        buffer.get(data);
+
+        clientMessages.computeIfAbsent(clientAddress, k -> new HashMap<>()).put(packetId, data);
+        if (clientMessages.get(clientAddress).size() == totalPackets) {
+            Request request = SerializationUtils.deserialize(PacketManager.assemblePackets(clientMessages.remove(clientAddress)));
+
+            if (request.command().equals(new Login().getName()) && request.command().equals(new Register().getName())
+                    && !UserService.getInstance().comparePassword(request.credentials())) {
+                splitSendCallback(Callback.wrongCredentials(), clientAddress);
+                logger.info(String.format("Wrong credentials from: %s:%s\ncredentials: [%s, %s]", clientAddress.getHostString(), clientAddress.getPort(),
+                        request.credentials().username(), request.credentials().password()));
+            } else {
+                Callback response = Router.getInstance().route(request);
+                splitSendCallback(response, clientAddress);
+                logger.fine(String.format("Received message from %s:%s\nContains:\n%s", clientAddress.getHostString(), clientAddress.getPort(), request));
             }
-
-            if (clientAddress == null) return;
-
-            buffer.flip();
-            int packetId = buffer.getInt();
-            int totalPackets = buffer.getInt();
-            byte[] data = new byte[buffer.remaining()];
-            buffer.get(data);
-
-            clientMessages.computeIfAbsent(clientAddress, k -> new HashMap<>()).put(packetId, data);
-            if (clientMessages.get(clientAddress).size() == totalPackets) {
-                Request request = SerializationUtils.deserialize(PacketManager.assemblePackets(clientMessages.remove(clientAddress)));
-
-                if (request.command().equals(new Login().getName()) && request.command().equals(new Register().getName())
-                        && !UserService.getInstance().comparePassword(request.credentials())) {
-                    splitSendCallback(Callback.wrongCredentials(), clientAddress);
-                    logger.info(String.format("Wrong credentials from: %s:%s\ncredentials: [%s, %s]", clientAddress.getHostString(), clientAddress.getPort(),
-                            request.credentials().username(), request.credentials().password()));
-                } else {
-                    Callback response = Router.getInstance().route(request);
-                    splitSendCallback(response, clientAddress);
-                    logger.fine(String.format("Received message from %s:%s\nContains:\n%s", clientAddress.getHostString(), clientAddress.getPort(), request));
-                }
-            }
-        });
+        }
     }
 
     private void splitSendCallback(Callback callback, InetSocketAddress clientAddress) {
-        System.out.println(callback.message() + " " + callback.vehicles().size());
-        executor.execute(() -> {
-            for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(callback))) {
-                try {
-                    channel.send(ByteBuffer.wrap(packet), clientAddress);
-                } catch (IOException e) {
-                    logger.log(Level.WARNING, "Error sending packet", e);
-                }
+        int i = 0;
+        for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(callback))) {
+            try {
+                i++;
+                channel.send(ByteBuffer.wrap(packet), clientAddress);
+                Thread.sleep(0, 300_000);
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Error sending packet", e);
+            } catch (InterruptedException e) {
+                logger.log(Level.WARNING, "Thread has been interrupted", e);
             }
-        });
+        }
     }
 
     @Override

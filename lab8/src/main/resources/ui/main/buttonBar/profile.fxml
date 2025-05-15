@@ -7,7 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../styles.css"
             fx:controller="se.ifmo.client.ui.main.button.bar.ProfileController">
     <center>
-        <VBox alignment="CENTER" spacing="20" styleClass="root-container">
+        <VBox alignment="CENTER" spacing="20" styleClass="popup-window">
             <StackPane>
                 <ImageView fx:id="avatarImage" fitWidth="120" fitHeight="120">
                     <clip>

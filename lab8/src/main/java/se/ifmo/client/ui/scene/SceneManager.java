@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.Setter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ public class SceneManager {
 
     private final HashMap<String, Scene> scenes = new HashMap<>();
 
+    @Setter
     private Stage primaryStage;
     private String currentScene;
 
@@ -24,14 +26,28 @@ public class SceneManager {
         return instance == null ? instance = new SceneManager() : instance;
     }
 
-    public void setStage(Stage stage) {
-        primaryStage = stage;
-    }
-
     public void reloadCurrentScene() {
         if (currentScene != null) {
             setScene(currentScene);
         }
+    }
+
+    public <T> T setPopup(String name, String path, Stage ownerStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root);
+
+        Stage newStage = new Stage();
+        newStage.setTitle(name);
+        newStage.setScene(scene);
+
+        newStage.initModality(Modality.WINDOW_MODAL);
+        newStage.initOwner(ownerStage);
+        newStage.show();
+        newStage.setResizable(false);
+
+        return loader.getController();
     }
 
     public <T> T setPopup(String name, String path) throws IOException {

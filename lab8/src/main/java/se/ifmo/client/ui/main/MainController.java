@@ -1,9 +1,11 @@
 package se.ifmo.client.ui.main;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,6 +13,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import se.ifmo.client.Client;
 import se.ifmo.client.ui.main.button.bar.AddController;
 import se.ifmo.client.ui.main.button.bar.FilterController;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class MainController {
     private final ObservableList<Vehicle> originalList = FXCollections.observableArrayList();
@@ -45,6 +49,9 @@ public class MainController {
     @FXML
     private Button clearButton;
     @FXML
+    private Button visualizeButton;
+
+    @FXML
     private ContextMenu contextMenu;
     @FXML
     private MenuItem editItem;
@@ -52,7 +59,13 @@ public class MainController {
     private MenuItem deleteItem;
 
     @FXML
+    private Label conErr;
+
+    private Timeline timeline;
+
+    @FXML
     private void initialize() {
+        conErr.setVisible(false);
         tableView.sceneProperty().addListener((obs, oldScene, newScene) -> initTable(newScene));
         tableView.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
@@ -87,18 +100,24 @@ public class MainController {
             return row;
         });
 
+        timeline = new Timeline(
+                new KeyFrame(Duration.seconds(5), event -> {
+                    refreshTable();
+                })
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+
         editItem.setOnAction(event -> {
-            Vehicle selectedRow = tableView.getSelectionModel().getSelectedItem();
-            openEditor(selectedRow, item -> {
+            Vehicle selectedItem = tableView.getSelectionModel().getSelectedItem();
+            openEditor(selectedItem, item -> {
                 Client.getInstance().updateByID(item.getId(), item);
-                refreshTable();
             });
         });
 
         deleteItem.setOnAction(event -> {
             Vehicle selectedRow = tableView.getSelectionModel().getSelectedItem();
             Client.getInstance().removeByID(selectedRow.getId());
-            refreshTable();
         });
 
         profileButton.setOnAction(event -> showProfile());
@@ -106,7 +125,12 @@ public class MainController {
         addButton.setOnAction(event -> handleAdd());
         clearButton.setOnAction(event -> {
             Client.getInstance().forwardCommand(new Clear());
-            refreshTable();
+        });
+        visualizeButton.setOnAction(event -> {
+            timeline.pause();
+            long uid = Client.getInstance().getUID();
+            CollectionVisualizer.visualize(originalList.filtered(v -> v.getOwnerId() == uid), this);
+            //timeline.play();
         });
     }
 
@@ -124,10 +148,35 @@ public class MainController {
 
                     setMinWidthByText(stage);
                     tableView.setFixedCellSize(25);
-                    tableView.setItems(FXCollections.observableArrayList(Client.getInstance().forwardUntilSuccess(new Show()).vehicles()));
+                    tableView.setItems(FXCollections.observableArrayList(Client.getInstance().forwardCommand(new Show()).vehicles()));
                     originalList.addAll(tableView.getItems());
                 }
             });
+        }
+    }
+
+    public void pauseRefresh(){
+        timeline.pause();
+    }
+
+    public void resumeRefresh(){
+        timeline.play();
+    }
+
+    public void refreshTable() {
+        Client.getInstance().forwardCommandAsync(new Show())
+                .thenAccept(callback -> {
+                    Platform.runLater(() -> handleUpdate(callback));
+                });
+    }
+
+    private void handleUpdate(Callback callback) {
+        if (callback.equals(Callback.serverDidNotRespond()))
+            conErr.setVisible(true);
+        else if (!callback.equals(Callback.serverSideError())) {
+            tableView.setItems(FXCollections.observableArrayList(callback.vehicles()));
+            originalList.setAll(tableView.getItems());
+            if (conErr.isVisible()) conErr.setVisible(false);
         }
     }
 
@@ -151,14 +200,10 @@ public class MainController {
         } catch (IOException ignored) {
         }
     }
-    public void refreshTable() {
-        tableView.setItems(FXCollections.observableArrayList(Client.getInstance().forwardCommand(new Show()).vehicles()));
-    }
 
     public void filterTable(Predicate<Vehicle> predicate) {
-        tableView.setItems(new FilteredList<>(originalList, predicate));
+        tableView.setItems(FXCollections.observableArrayList(originalList.stream().filter(predicate).collect(Collectors.toList())));
     }
-
 
     private void openEditor(Vehicle vehicle, Consumer<Vehicle> onComplete) {
         try {

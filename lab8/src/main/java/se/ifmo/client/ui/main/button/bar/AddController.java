@@ -67,10 +67,6 @@ public class AddController {
         );
     }
 
-//    private void addRandomItem() {
-//        textMessage.setText(Client.getInstance().forwardCommand(new AddRandom(), List.of("1")).message());
-//    }
-
     private void addItem() {
         try {
             String name = validateNonNull(nameField.getText(), "Name");
@@ -93,14 +89,16 @@ public class AddController {
     private void addRandomItem() {
         TextInputDialog dialog = new TextInputDialog("1");
         dialog.initStyle(StageStyle.UTILITY);
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/ui/main/styles.css").toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("styles");
         dialog.setTitle("Добавить случайные элементы");
         dialog.setHeaderText("Введите количество элементов");
         dialog.setContentText("Количество:");
+        dialog.setGraphic(null);
 
-        // Устанавливаем валидатор для ввода (только цифры)
         dialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
-                dialog.getEditor().setText(newValue.replaceAll("[^\\d]", ""));
+                dialog.getEditor().setText(newValue.replaceAll("\\D", ""));
             }
         });
 

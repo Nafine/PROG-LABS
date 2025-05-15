@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2025-04-23T11:36:10.959003Z</date>
+  <millis>1745408170959</millis>
+  <nanos>3000</nanos>
+  <sequence>0</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>INFO</level>
+  <class>se.ifmo.server.Server</class>
+  <method>&lt;clinit&gt;</method>
+  <thread>1</thread>
+  <message>Logger initialized</message>
+</record>
+<record>
+  <date>2025-04-23T11:36:10.988954Z</date>
+  <millis>1745408170988</millis>
+  <nanos>954000</nanos>
+  <sequence>1</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>SEVERE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Could not initialize server</message>
+  <exception>
+    <message>java.net.BindException: Address already in use</message>
+    <frame>
+      <class>sun.nio.ch.Net</class>
+      <method>bind0</method>
+    </frame>
+    <frame>
+      <class>sun.nio.ch.Net</class>
+      <method>bind</method>
+      <line>565</line>
+    </frame>
+    <frame>
+      <class>sun.nio.ch.DatagramChannelImpl</class>
+      <method>bindInternal</method>
+      <line>1329</line>
+    </frame>
+    <frame>
+      <class>sun.nio.ch.DatagramChannelImpl</class>
+      <method>bind</method>
+      <line>1299</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.Server</class>
+      <method>&lt;init&gt;</method>
+      <line>70</line>
+    </frame>
+    <frame>
+      <class>se.ifmo.server.ServerMain</class>
+      <method>main</method>
+      <line>13</line>
+    </frame>
+  </exception>
+</record>
+<record>
+  <date>2025-04-23T11:36:11.002950Z</date>
+  <millis>1745408171002</millis>
+  <nanos>950000</nanos>
+  <sequence>2</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Server launched, listening on port 8080</message>
+</record>
+<record>
+  <date>2025-04-23T11:36:11.003688Z</date>
+  <millis>1745408171003</millis>
+  <nanos>688000</nanos>
+  <sequence>3</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>close</method>
+  <thread>1</thread>
+  <message>Closing server</message>
+</record>
+<record>
+  <date>2025-04-23T11:36:11.004679Z</date>
+  <millis>1745408171004</millis>
+  <nanos>679000</nanos>
+  <sequence>4</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>close</method>
+  <thread>1</thread>
+  <message>Closing server</message>
+</record>
+</log>

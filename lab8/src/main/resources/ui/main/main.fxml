@@ -11,6 +11,8 @@
         <Button fx:id="filterButton" text="Filter"/>
         <Button fx:id="addButton" text="Add"/>
         <Button fx:id="clearButton" text="Clear collection"/>
+        <Button fx:id="visualizeButton" text="Visualize"/>
+        <Label fx:id="conErr" text="CONNECTION ERROR!" textFill="red"/>
     </HBox>
     <TableView fx:id="tableView" cache="true" fixedCellSize="0.0" VBox.vgrow="ALWAYS">
         <columns>

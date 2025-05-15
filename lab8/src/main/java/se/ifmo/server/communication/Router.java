@@ -1,7 +1,9 @@
-package se.ifmo.shared.communication;
+package se.ifmo.server.communication;
 
 import se.ifmo.shared.command.Command;
 import se.ifmo.shared.command.RegisteredCommands;
+import se.ifmo.shared.communication.Callback;
+import se.ifmo.shared.communication.Request;
 import se.ifmo.shared.exceptions.InvalidDataException;
 
 import java.util.Objects;
@@ -52,9 +54,9 @@ public class Router {
                     return new Callback("Wrong arguments: " + e.getMessage());
                 }
             }
-            return new Callback("command not found, type 'help' for help");
+            return new Callback("Command not found");
         } catch (Exception e) {
-            return new Callback("Something went wrong");
+            return Callback.serverSideError();
         }
     }
 }

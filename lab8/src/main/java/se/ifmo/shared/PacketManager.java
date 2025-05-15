@@ -1,7 +1,5 @@
 package se.ifmo.shared;
 
-import se.ifmo.shared.communication.Callback;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -12,13 +10,14 @@ import java.util.Map;
 /**
  * Class which standardizes packet handling between multiple hosts.
  * <p>
- *     Defines some methods to work with packets.
- *     Contains information about packets structure.
+ * Defines some methods to work with packets.
+ * Contains information about packets structure.
  * </p>
  */
 public class PacketManager {
     // Network buffer size optimized for Ethernet MTU (1500 bytes).
-    public static final int BUFFER_SIZE = 1500;
+    public static final int BUFFER_SIZE = 500;
+    public static final int USEFUL_DATA = BUFFER_SIZE - Integer.BYTES * 2;
 
     /**
      * Assemble gathered packets.
@@ -54,16 +53,13 @@ public class PacketManager {
      * The elements lie in the order of creation: first element -> first packet, last element -> last packet.
      */
     public static List<byte[]> splitMessage(byte[] data) {
-        int packetSize = BUFFER_SIZE - 2 * Integer.BYTES;
-        int numPackets = (int) Math.ceil((double) data.length / (BUFFER_SIZE + 1));
-
+        int numPackets = Math.ceilDiv(data.length, USEFUL_DATA);
         List<byte[]> packets = new ArrayList<>(numPackets);
-
         for (int i = 0; i < numPackets; i++) {
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
             buffer.putInt(i);
             buffer.putInt(numPackets);
-            buffer.put(data, i * packetSize, Math.min(packetSize, data.length - i * packetSize));
+            buffer.put(data, i * USEFUL_DATA, Math.min(USEFUL_DATA, data.length - i * USEFUL_DATA));
             packets.add(buffer.array());
         }
 

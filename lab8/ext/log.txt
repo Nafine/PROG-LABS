@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2025-05-10T11:44:05.887254700Z</date>
+  <millis>1746877445887</millis>
+  <nanos>254700</nanos>
+  <sequence>0</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>INFO</level>
+  <class>se.ifmo.server.Server</class>
+  <method>&lt;clinit&gt;</method>
+  <thread>1</thread>
+  <message>Logger initialized</message>
+</record>
+<record>
+  <date>2025-05-10T11:44:07.229793800Z</date>
+  <millis>1746877447229</millis>
+  <nanos>793800</nanos>
+  <sequence>1</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Server launched, listening on port 8080</message>
+</record>
+<record>
+  <date>2025-05-10T11:45:26.664038400Z</date>
+  <millis>1746877526664</millis>
+  <nanos>38400</nanos>
+  <sequence>2</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>receiveRequest</method>
+  <thread>25</thread>
+  <message>Received message from 127.0.0.1:65298
+Contains:
+Request[command=login, args=[], credentials=Credentials[username=me, password=9adcb29710e807607b683f62e555c22dc5659713]]</message>
+</record>
+<record>
+  <date>2025-05-10T11:45:26.944158300Z</date>
+  <millis>1746877526944</millis>
+  <nanos>158300</nanos>
+  <sequence>3</sequence>
+  <logger>se.ifmo.server.Server</logger>
+  <level>FINE</level>
+  <class>se.ifmo.server.Server</class>
+  <method>receiveRequest</method>
+  <thread>34</thread>
+  <message>Received message from 127.0.0.1:65298
+Contains:
+Request[command=show, args=[], credentials=Credentials[username=me, password=9adcb29710e807607b683f62e555c22dc5659713]]</message>
+</record>

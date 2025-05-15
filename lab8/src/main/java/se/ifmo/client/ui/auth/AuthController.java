@@ -25,7 +25,7 @@ public class AuthController {
             controller.setAuthController(this);
 
             authPane.getChildren().setAll(node);
-        } catch (IOException e) {
+        } catch (IOException ignore) {
         }
     }
 
@@ -38,7 +38,7 @@ public class AuthController {
             controller.setAuthController(this);
 
             authPane.getChildren().setAll(node);
-        } catch (IOException e) {
+        } catch (IOException ignore) {
         }
     }
 }

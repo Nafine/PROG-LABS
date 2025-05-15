@@ -6,14 +6,13 @@ import javafx.scene.text.Text;
 import lombok.Setter;
 import se.ifmo.client.Client;
 import se.ifmo.client.ui.scene.SceneManager;
+import se.ifmo.shared.communication.Callback;
 
 public class LoginController {
     @FXML
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
-    @FXML
-    private CheckBox rememberCheckbox;
     @FXML
     private Button loginButton;
     @FXML
@@ -31,10 +30,12 @@ public class LoginController {
 
             if (username.isEmpty() || password.isEmpty()) {
                 messageText.setText("Please fill up all the fields.");
-            } else if (!Client.getInstance().login(username, password))
-                messageText.setText("Invalid username or password.");
-            else
-                SceneManager.getInstance().setScene("main");
+            } else {
+                Callback callback = Client.getInstance().login(username, password);
+                messageText.setText(callback.message());
+                if (callback.equals(Callback.successfulLogin()))
+                    SceneManager.getInstance().setScene("main");
+            }
         });
 
         signupLink.setOnAction(event -> {

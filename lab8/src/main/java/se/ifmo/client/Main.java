@@ -15,7 +15,7 @@ public class Main extends Application {
         Client.getInstance();
 
         SceneManager sceneManager = SceneManager.getInstance();
-        sceneManager.setStage(primaryStage);
+        sceneManager.setPrimaryStage(primaryStage);
 
         sceneManager.loadScene("auth", "/ui/auth/auth.fxml");
         sceneManager.loadScene("main", "/ui/main/main.fxml");

@@ -8,7 +8,7 @@ import se.ifmo.shared.command.*;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.communication.Credentials;
 import se.ifmo.shared.communication.Request;
-import se.ifmo.shared.communication.Router;
+import se.ifmo.server.communication.Router;
 import se.ifmo.shared.model.Vehicle;
 
 import java.io.IOException;
@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,13 +40,13 @@ public class Client implements AutoCloseable {
     private static Client instance;
     private final InetAddress host;
     private final int serverPort;
-    private Credentials credentials;
+    private Credentials credentials = Credentials.empty();
     private DatagramSocket socket;
 
     {
         try {
             socket = new DatagramSocket();
-            socket.setSoTimeout(2500);
+            socket.setSoTimeout(5000);
         } catch (SocketException e) {
             System.out.println("Unable to initiate client:");
             System.out.println(e.getMessage());
@@ -60,39 +62,27 @@ public class Client implements AutoCloseable {
         return instance == null ? instance = new Client() : instance;
     }
 
-    public boolean login(String login, String password) {
+    public Callback login(String login, String password) {
         Credentials credentials = new Credentials(login, password);
 
-        try {
-            Callback callback = handleRequest(new Request(new Login(), Collections.emptyList(), credentials));
-            if (callback.equals(Callback.successfulLogin())) {
-                this.credentials = credentials;
-                return true;
-            }
-
-            this.credentials = Credentials.empty();
-            return false;
-        } catch (IOException e) {
-            this.credentials = Credentials.empty();
-            return false;
+        Callback callback = handleRequest(new Request(new Login(), Collections.emptyList(), credentials));
+        if (callback.equals(Callback.successfulLogin())) {
+            this.credentials = credentials;
         }
+
+        return callback;
     }
 
-    public boolean register(String login, String password) {
+    public Callback register(String login, String password) {
         Credentials credentials = new Credentials(login, password);
 
-        try {
-            Callback callback = handleRequest(new Request(new Register(), Collections.emptyList(), credentials));
-            if (callback.equals(Callback.successfulLogin())) {
-                this.credentials = credentials;
-                return true;
-            }
-            this.credentials = Credentials.empty();
-            return false;
-        } catch (IOException e) {
-            this.credentials = Credentials.empty();
-            return false;
+
+        Callback callback = handleRequest(new Request(new Register(), Collections.emptyList(), credentials));
+        if (callback.equals(Callback.successfulLogin())) {
+            this.credentials = credentials;
         }
+
+        return callback;
     }
 
     public String getUsername() {
@@ -116,24 +106,14 @@ public class Client implements AutoCloseable {
         return Long.parseLong(forwardCommand(new GetUID()).message());
     }
 
-    public Callback forwardUntilSuccess(Command command) {
-        return forwardUntilSuccess(command, Collections.emptyList());
-    }
-
-    public Callback forwardUntilSuccess(Command command, List<String> args) {
-        Callback callback;
-        while ((callback = forwardWhileBad(command, args)).equals(Callback.serverDidNotRespond())) ;
-        return callback;
-    }
-
-    public Callback forwardWhileBad(Command command) {
-        return forwardWhileBad(command, Collections.emptyList());
-    }
-
-    public Callback forwardWhileBad(Command command, List<String> args) {
-        Callback callback;
-        while ((callback = forwardCommand(command, args)).equals(Callback.damagedPackets())) ;
-        return callback;
+    public CompletableFuture<Callback> forwardCommandAsync(Command command) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return forwardCommand(command);
+            } catch (Exception e) {
+                throw new CompletionException(e);
+            }
+        });
     }
 
     public Callback forwardCommand(Command command) {
@@ -141,22 +121,20 @@ public class Client implements AutoCloseable {
     }
 
     public Callback forwardCommand(Command command, List<String> args) {
+        return handleRequest(new Request(command, args, credentials));
+    }
+
+    private Callback handleRequest(Request request) {
         try {
-            return handleRequest(new Request(command, args, credentials));
+            splitSendRequest(request);
+            return receiveCallback();
         } catch (IOException e) {
             return new Callback("Error during handling request: "
-                    + command + " with arguments " + String.join(" ", args));
+                    + request.command() + " with arguments " + String.join(" ", request.args()));
         }
     }
 
-    private Callback handleRequest(Request request) throws IOException {
-        splitSendRequest(request);
-        return receiveCallback();
-    }
-
     private void splitSendRequest(Request request) throws IOException {
-        System.out.println("Sent: " + request.command());
-        System.out.println("With args: " + String.join(" ", request.args()));
         for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(request)))
             socket.send(new DatagramPacket(packet, packet.length, host, serverPort));
     }
@@ -164,7 +142,6 @@ public class Client implements AutoCloseable {
     private Callback receiveCallback() throws IOException {
         Map<Integer, byte[]> receivedPackets = new HashMap<>();
         byte[] receivedData;
-
         try {
             while (true) {
                 ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
@@ -177,17 +154,12 @@ public class Client implements AutoCloseable {
                 receivedPackets.put(seqNum, data);
                 if (receivedPackets.size() == totalPackets) {
                     receivedData = PacketManager.assemblePackets(receivedPackets);
-                    System.out.println(totalPackets);
-                    Callback callback = SerializationUtils.deserialize(receivedData);
-                    System.out.println(callback.message() + " " + callback.vehicles().size());
-                    return callback;
+                    return SerializationUtils.deserialize(receivedData);
                 }
             }
         } catch (SocketTimeoutException e) {
-            System.out.println("Server did not respond");
             return Callback.serverDidNotRespond();
         } catch (SerializationException e) {
-            System.out.println("Packets damaged");
             return Callback.damagedPackets();
         }
     }

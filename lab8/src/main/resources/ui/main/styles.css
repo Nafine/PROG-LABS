@@ -2,6 +2,9 @@
     -fx-font-family: "JetBrains Mono";
     -fx-font-size: 12px;
     -fx-background-color: white;
+    -fx-border-color: -border-color;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
 }
 
 * {
@@ -60,8 +63,6 @@
 .scroll-bar .increment-button:focused,
 .scroll-bar .decrement-button:focused {
     -fx-background-color: transparent;
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
 }
 
 .scroll-bar .increment-arrow:hover,
@@ -85,8 +86,8 @@ scroll-bar > .thumb {
     -fx-padding: 6 15 6 15;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
-    -fx-border-color: -border-color;
     -fx-background-color: -main-color;
+    -fx-border-color: -border-color;
 }
 
 .button:hover {
@@ -107,13 +108,6 @@ scroll-bar > .thumb {
 .check-box .box {
     -fx-border-radius: 5;
     -fx-background-radius: 5;
-    -fx-border-color: -border-color;
-}
-
-.check-box:focused .box {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-color: -border-color;
 }
 
 .text-field {
@@ -128,17 +122,17 @@ scroll-bar > .thumb {
     -fx-faint-focus-color: white;
 }
 
-.root-container {
-    -fx-padding: 30;
+.circle .stroke{
+    -fx-background-color: -main-color;
+}
+
+.popup-window {
+    -fx-padding: 20;
     -fx-background-color: white;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
     -fx-max-width: 400;
-}
-
-.circle .stroke{
-    -fx-background-color: -main-color;
 }
 
 .info-container {
@@ -158,7 +152,6 @@ scroll-bar > .thumb {
     -fx-font-weight: bold;
     -fx-min-width: 80;
 }
-
 
 .action-button {
     -fx-padding: 8 15;
