@@ -1,13 +1,11 @@
 package se.ifmo.client.ui.auth;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import lombok.Setter;
 import se.ifmo.client.Client;
+import se.ifmo.client.ui.locale.LocaleManager;
 import se.ifmo.client.ui.scene.SceneManager;
 import se.ifmo.shared.communication.Callback;
 
@@ -17,6 +15,10 @@ public class RegisterController {
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label passwordLabel;
     @FXML
     private Button registerButton;
     @FXML
@@ -33,7 +35,7 @@ public class RegisterController {
             String password = passwordField.getText();
 
             if (username.isEmpty() || password.isEmpty()) {
-                messageText.setText("Please fill up all the fields.");
+                messageText.setText(LocaleManager.getString("field.empty"));
             } else {
                 Callback callback = Client.getInstance().register(username, password);
                 messageText.setText(callback.message());
@@ -46,5 +48,20 @@ public class RegisterController {
                 authController.loadLogin();
             }
         });
+
+        initLocale();
+    }
+
+    private void initLocale(){
+        updateUI();
+        LocaleManager.addLocaleChangeListener(this::updateUI);
+    }
+
+    private void updateUI(){
+        usernameLabel.setText(LocaleManager.getString("username"));
+        passwordLabel.setText(LocaleManager.getString("password"));
+
+        registerButton.setText(LocaleManager.getString("register"));
+        loginLink.setText(LocaleManager.getString("login"));
     }
 }

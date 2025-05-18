@@ -7,18 +7,36 @@ import javafx.scene.text.Text;
 import javafx.stage.StageStyle;
 import lombok.Setter;
 import se.ifmo.client.Client;
+import se.ifmo.client.ui.locale.LocaleManager;
 import se.ifmo.client.ui.main.MainController;
 import se.ifmo.shared.command.Add;
 import se.ifmo.shared.command.AddRandom;
 import se.ifmo.shared.enums.FuelType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static se.ifmo.client.ui.util.TextFieldManager.*;
 
 public class AddController {
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private Label coordinateXLabel;
+    @FXML
+    private Label coordinateYLabel;
+    @FXML
+    private Label enginePowerLabel;
+    @FXML
+    private Label capacityLabel;
+    @FXML
+    private Label distanceTravelledLabel;
+    @FXML
+    private Label fuelTypeLabel;
+
+
     @FXML
     private TextField nameField;
     @FXML
@@ -43,17 +61,49 @@ public class AddController {
     private MainController mainController;
 
     @FXML
+    private Label header;
+
+    @FXML
     public void initialize() {
+        fuelTypeBox.setItems(FXCollections.observableArrayList(FuelType.values()));
+        fuelTypeBox.setEditable(false);
+
+        restrictFields();
+        initButtons();
+
+        initLocale();
+    }
+
+    private void initLocale() {
+        updateUI();
+        LocaleManager.addLocaleChangeListener(this::updateUI);
+    }
+
+    private void updateUI() {
+        nameLabel.setText(LocaleManager.getString("name"));
+        coordinateXLabel.setText(LocaleManager.getString("coordinateX"));
+        coordinateYLabel.setText(LocaleManager.getString("coordinateY"));
+        enginePowerLabel.setText(LocaleManager.getString("enginePower"));
+        capacityLabel.setText(LocaleManager.getString("capacity"));
+        distanceTravelledLabel.setText(LocaleManager.getString("distanceTravelled"));
+        fuelTypeLabel.setText(LocaleManager.getString("fuelType"));
+
+        addButton.setText(LocaleManager.getString("add"));
+        addRandomButton.setText(LocaleManager.getString("add.random"));
+
+        header.setText(LocaleManager.getString("add.header"));
+    }
+
+    private void restrictFields() {
         restrictToInteger(enginePowerField);
         restrictToInteger(coordinateXField);
 
         restrictToFloat(capacityField);
         restrictToFloat(distanceTravelledField);
         restrictToFloat(coordinateYField);
+    }
 
-        fuelTypeBox.setItems(FXCollections.observableArrayList(FuelType.values()));
-        fuelTypeBox.setEditable(false);
-
+    private void initButtons() {
         addButton.setOnAction(e -> {
                     addItem();
                     mainController.refreshTable();
@@ -82,19 +132,12 @@ public class AddController {
                             .collect(Collectors.toList()))
                     .message());
         } catch (IllegalArgumentException e) {
-            showAlert("Ошибка: " + e.getMessage());
+            showAlert(e.getMessage());
         }
     }
 
     private void addRandomItem() {
-        TextInputDialog dialog = new TextInputDialog("1");
-        dialog.initStyle(StageStyle.UTILITY);
-        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/ui/main/styles.css").toExternalForm());
-        dialog.getDialogPane().getStyleClass().add("styles");
-        dialog.setTitle("Добавить случайные элементы");
-        dialog.setHeaderText("Введите количество элементов");
-        dialog.setContentText("Количество:");
-        dialog.setGraphic(null);
+        TextInputDialog dialog = initDialog();
 
         dialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*")) {
@@ -102,30 +145,44 @@ public class AddController {
             }
         });
 
-        dialog.showAndWait().ifPresent(count -> {
-            if (count.isEmpty()) {
-                showAlert("Количество не может быть пустым");
-            } else {
-                try {
-                    int num = Integer.parseInt(count);
-                    if (num <= 0) {
-                        showAlert("Количество должно быть положительным числом");
-                    } else if (num > 10000) {
-                        showAlert("Максимальное количество - 10000");
-                    } else {
-                        textMessage.setText(Client.getInstance().forwardCommand(
-                                new AddRandom(), List.of(count)).message());
-                    }
-                } catch (NumberFormatException e) {
-                    showAlert("Некорректное число");
+        dialog.showAndWait().ifPresent(this::handleDialogInput);
+    }
+
+    private void handleDialogInput(String count) {
+        if (count.isEmpty()) {
+            showAlert(LocaleManager.getString("add.dialog.empty"));
+        } else {
+            try {
+                int num = Integer.parseInt(count);
+                if (num <= 0) {
+                    showAlert(LocaleManager.getString("add.dialog.amount.positive"));
+                } else if (num > 10000) {
+                    showAlert(LocaleManager.getString("add.dialog.amount.negative"));
+                } else {
+                    textMessage.setText(Client.getInstance().forwardCommand(
+                            new AddRandom(), List.of(count)).message());
                 }
+            } catch (NumberFormatException e) {
+                showAlert("add.dialog.amount.invalid");
             }
-        });
+        }
+    }
+
+    private TextInputDialog initDialog() {
+        TextInputDialog dialog = new TextInputDialog("1");
+        dialog.initStyle(StageStyle.UTILITY);
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/ui/main/styles.css")).toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("styles");
+        dialog.setTitle(LocaleManager.getString("add.dialog.title"));
+        dialog.setHeaderText(LocaleManager.getString("add.dialog.header"));
+        dialog.setContentText(LocaleManager.getString("add.dialog.content"));
+        dialog.setGraphic(null);
+        return dialog;
     }
 
     private <T> T validateNonNull(T value, String fieldName) {
         if (value == null || (value instanceof String && ((String) value).trim().isEmpty())) {
-            throw new IllegalArgumentException(fieldName + " не может быть пустым.");
+            throw new IllegalArgumentException(fieldName + " cannot be null or empty");
         }
         return value;
     }

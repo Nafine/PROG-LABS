@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import lombok.Setter;
+import se.ifmo.client.ui.locale.LocaleManager;
 import se.ifmo.client.ui.main.MainController;
 import se.ifmo.shared.enums.FuelType;
 
@@ -14,6 +15,27 @@ import java.util.Date;
 import static se.ifmo.client.ui.util.TextFieldManager.*;
 
 public class FilterController {
+    @FXML
+    private Label idLabel;
+    @FXML
+    private Label ownerIdLabel;
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private Label coordinateXLabel;
+    @FXML
+    private Label coordinateYLabel;
+    @FXML
+    private Label creationDateLabel;
+    @FXML
+    private Label enginePowerLabel;
+    @FXML
+    private Label capacityLabel;
+    @FXML
+    private Label distanceTravelledLabel;
+    @FXML
+    private Label fuelTypeLabel;
+
     @FXML
     private TextField idField;
     @FXML
@@ -60,6 +82,29 @@ public class FilterController {
 
         applyButton.setOnAction(e -> applyFilters());
         resetButton.setOnAction(e -> resetFields());
+
+        initLocale();
+    }
+
+    private void initLocale(){
+        updateUI();
+        LocaleManager.addLocaleChangeListener(this::updateUI);
+    }
+
+    private void updateUI(){
+        idLabel.setText(LocaleManager.getString("id"));
+        ownerIdLabel.setText(LocaleManager.getString("ownerId"));
+        nameLabel.setText(LocaleManager.getString("name"));
+        coordinateXLabel.setText(LocaleManager.getString("coordinateX"));
+        coordinateYLabel.setText(LocaleManager.getString("coordinateY"));
+        creationDateLabel.setText(LocaleManager.getString("creationDate"));
+        enginePowerLabel.setText(LocaleManager.getString("enginePower"));
+        capacityLabel.setText(LocaleManager.getString("capacity"));
+        distanceTravelledLabel.setText(LocaleManager.getString("distanceTravelled"));
+        fuelTypeLabel.setText(LocaleManager.getString("fuelType"));
+
+        applyButton.setText(LocaleManager.getString("filter.apply"));
+        resetButton.setText(LocaleManager.getString("filter.reset"));
     }
 
     private void applyFilters() {
@@ -83,8 +128,7 @@ public class FilterController {
                             && (enginePower == null || vehicle.getEnginePower() == enginePower) && (capacity == null || vehicle.getCapacity() == capacity)
                             && (distance == null || vehicle.getDistanceTravelled().equals(distance)) && (fuel == null || vehicle.getFuelType().equals(fuel))
             );
-        } catch (Exception e) {
-            showAlert("Ошибка при применении фильтров: " + e.getMessage());
+        } catch (Exception ignored) {
         }
     }
 
@@ -99,12 +143,5 @@ public class FilterController {
         capacityField.clear();
         distanceTravelledField.clear();
         fuelTypeBox.setValue(null);
-    }
-
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

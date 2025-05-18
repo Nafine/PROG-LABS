@@ -6,23 +6,38 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lombok.Setter;
+import se.ifmo.client.ui.locale.LocaleManager;
 import se.ifmo.shared.enums.FuelType;
 import se.ifmo.shared.model.Coordinates;
 import se.ifmo.shared.model.Vehicle;
 
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 public class EditController implements Initializable {
     private final ObjectProperty<Vehicle> item = new SimpleObjectProperty<>();
     private final BooleanProperty readOnly = new SimpleBooleanProperty(false);
+
+    @FXML
+    private Label nameLabel;
+    @FXML
+    private Label coordinateXLabel;
+    @FXML
+    private Label coordinateYLabel;
+    @FXML
+    private Label enginePowerLabel;
+    @FXML
+    private Label capacityLabel;
+    @FXML
+    private Label distanceTravelledLabel;
+    @FXML
+    private Label fuelTypeLabel;
+
     @FXML
     private TextField nameField;
     @FXML
@@ -41,6 +56,9 @@ public class EditController implements Initializable {
     private Button editButton;
     @Setter
     private Consumer<Vehicle> onComplete;
+
+    @FXML
+    private Label header;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -72,6 +90,8 @@ public class EditController implements Initializable {
         });
 
         editButton.setOnAction(event -> applyChanges());
+
+        initLocale();
     }
 
     public void setItem(Vehicle item) {
@@ -98,5 +118,23 @@ public class EditController implements Initializable {
 
         Stage stage = (Stage) editButton.getScene().getWindow();
         stage.close();
+    }
+
+    private void initLocale(){
+        updateUI();
+        LocaleManager.addLocaleChangeListener(this::updateUI);
+    }
+
+    private void updateUI(){
+        nameLabel.setText(LocaleManager.getString("name"));
+        coordinateXLabel.setText(LocaleManager.getString("coordinateX"));
+        coordinateYLabel.setText(LocaleManager.getString("coordinateY"));
+        enginePowerLabel.setText(LocaleManager.getString("enginePower"));
+        capacityLabel.setText(LocaleManager.getString("capacity"));
+        distanceTravelledLabel.setText(LocaleManager.getString("distanceTravelled"));
+        fuelTypeLabel.setText(LocaleManager.getString("fuelType"));
+
+        editButton.setText(LocaleManager.getString("edit"));
+        header.setText(LocaleManager.getString("edit.header"));
     }
 }

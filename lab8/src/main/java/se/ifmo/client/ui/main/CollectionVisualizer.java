@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import se.ifmo.client.Client;
+import se.ifmo.client.ui.locale.LocaleManager;
 import se.ifmo.client.ui.scene.SceneManager;
 import se.ifmo.shared.model.Vehicle;
 
@@ -49,7 +50,7 @@ public class CollectionVisualizer {
         Pane root = createVisualizationPane(itemsToShow);
 
         stage.setScene(new Scene(root, WIDTH, HEIGHT));
-        stage.setTitle("Визуализация коллекции");
+        stage.setTitle(LocaleManager.getString("visualize.title"));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
         stage.setOnCloseRequest(event -> {mainController.resumeRefresh();});
@@ -99,7 +100,7 @@ public class CollectionVisualizer {
     private void positionRandomly(Node node) {
         node.setLayoutX(random.nextInt(WIDTH - 100) + 50);
         node.setLayoutY(random.nextInt(HEIGHT - 100) + 50);
-        node.setOpacity(0); // Начально невидим
+        node.setOpacity(0);
         node.setScaleX(0.5);
         node.setScaleY(0.5);
     }
@@ -124,7 +125,6 @@ public class CollectionVisualizer {
     }
 
     private void makeInteractive(Node node, Vehicle item) {
-        // Эффект при наведении
         node.setOnMouseEntered(e -> {
             node.setEffect(new javafx.scene.effect.Glow(0.5));
             ((Circle) ((Group) node).getChildren().getFirst()).setStroke(Color.GOLD);
@@ -135,7 +135,6 @@ public class CollectionVisualizer {
             ((Circle) ((Group) node).getChildren().getFirst()).setStroke(Color.WHITE);
         });
 
-        // Обработка клика
         node.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) { // Двойной клик
                 showDetailWindow(item);

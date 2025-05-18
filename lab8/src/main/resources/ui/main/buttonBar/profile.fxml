@@ -18,19 +18,19 @@
             </StackPane>
 
             <VBox alignment="CENTER_LEFT" spacing="8" styleClass="info-container">
-                <Label text="Профиль пользователя" styleClass="title-label"/>
+                <Label fx:id="titleLabel" styleClass="title-label"/>
 
                 <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="ID:" styleClass="field-label"/>
-                    <Label fx:id="userIdLabel"/>
+                    <Label fx:id="userIdLabel" styleClass="field-label"/>
+                    <Label fx:id="userId"/>
                 </HBox>
 
                 <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="Имя:" styleClass="field-label"/>
-                    <Label fx:id="userNameLabel"/>
+                    <Label fx:id="usernameLabel" styleClass="field-label"/>
+                    <Label fx:id="username"/>
                 </HBox>
             </VBox>
-            <Label text="Коллекция:" styleClass="field-label"/>
+            <Label styleClass="field-label"/>
             <Label fx:id="collectionInfoLabel"/>
         </VBox>
     </center>

@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <VBox alignment="CENTER" spacing="10" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.14-internal"
-      xmlns:fx="http://javafx.com/fxml/1"  fx:controller="se.ifmo.client.ui.auth.LoginController">
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.ifmo.client.ui.auth.LoginController">
     <padding>
         <Insets bottom="25" left="25" right="25" top="25"/>
     </padding>
@@ -16,10 +16,10 @@
             <ColumnConstraints hgrow="ALWAYS"/>
         </columnConstraints>
 
-        <Label text="Username:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="usernameLabel" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <TextField fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="passwordLabel" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
         <rowConstraints>
@@ -30,9 +30,9 @@
         </rowConstraints>
     </GridPane>
 
-    <Button fx:id="loginButton" contentDisplay="CENTER" defaultButton="true" text="Login" textAlignment="CENTER"/>
+    <Button fx:id="loginButton" contentDisplay="CENTER" defaultButton="true" textAlignment="CENTER"/>
 
-    <Hyperlink fx:id="signupLink" text="Register"/>
+    <Hyperlink fx:id="signupLink"/>
 
     <Text fx:id="messageText"/>
 </VBox>

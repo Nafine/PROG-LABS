@@ -6,13 +6,14 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.ifmo.client.ui.main.MainController">
+    <ChoiceBox fx:id="languageChoiceBox"/>
     <HBox spacing="10" styleClass="even-button-box">
-        <Button fx:id="profileButton" text="Profile"/>
-        <Button fx:id="filterButton" text="Filter"/>
-        <Button fx:id="addButton" text="Add"/>
-        <Button fx:id="clearButton" text="Clear collection"/>
-        <Button fx:id="visualizeButton" text="Visualize"/>
-        <Label fx:id="conErr" text="CONNECTION ERROR!" textFill="red"/>
+        <Button fx:id="profileButton"/>
+        <Button fx:id="filterButton"/>
+        <Button fx:id="addButton"/>
+        <Button fx:id="clearButton"/>
+        <Button fx:id="visualizeButton"/>
+        <Label fx:id="conErr"/>
     </HBox>
     <TableView fx:id="tableView" cache="true" fixedCellSize="0.0" VBox.vgrow="ALWAYS">
         <columns>
@@ -23,8 +24,8 @@
         <fx:define>
             <ContextMenu fx:id="contextMenu">
                 <items>
-                    <MenuItem fx:id="editItem" text="Редактировать"/>
-                    <MenuItem fx:id="deleteItem" text="Удалить"/>
+                    <MenuItem fx:id="editItem"/>
+                    <MenuItem fx:id="deleteItem"/>
                 </items>
             </ContextMenu>
         </fx:define>

@@ -1,7 +1,6 @@
 package se.ifmo.client.ui.scene;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,38 +32,21 @@ public class SceneManager {
     }
 
     public <T> T setPopup(String name, String path, Stage ownerStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-        Parent root = loader.load();
+        Scene scene = loadFXML(path);
 
-        Scene scene = new Scene(root);
-
-        Stage newStage = new Stage();
-        newStage.setTitle(name);
-        newStage.setScene(scene);
-
-        newStage.initModality(Modality.WINDOW_MODAL);
+        Stage newStage = initModalStage(name, scene);
         newStage.initOwner(ownerStage);
         newStage.show();
-        newStage.setResizable(false);
 
-        return loader.getController();
+        return (T) scene.getUserData();
     }
 
     public <T> T setPopup(String name, String path) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-        Parent root = loader.load();
+        Scene scene = loadFXML(path);
 
-        Scene scene = new Scene(root);
+        initModalStage(name, scene).show();
 
-        Stage newStage = new Stage();
-        newStage.setTitle(name);
-        newStage.setScene(scene);
-
-        newStage.initModality(Modality.WINDOW_MODAL);
-        newStage.show();
-        newStage.setResizable(false);
-
-        return loader.getController();
+        return (T) scene.getUserData();
     }
 
     public void setScene(String name) {
@@ -82,8 +64,22 @@ public class SceneManager {
         scenes.put(name, loadFXML(path));
     }
 
+    private Stage initModalStage(String name, Scene scene) {
+        Stage newStage = new Stage();
+        newStage.setTitle(name);
+        newStage.setScene(scene);
+
+        newStage.initModality(Modality.WINDOW_MODAL);
+        newStage.setResizable(false);
+
+        return newStage;
+    }
+
     private Scene loadFXML(String path) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-        return new Scene(loader.load());
+        Scene scene = new Scene(loader.load());
+        scene.setUserData(loader.getController());
+
+        return scene;
     }
 }
