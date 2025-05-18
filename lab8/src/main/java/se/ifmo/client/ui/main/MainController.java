@@ -155,11 +155,11 @@ public class MainController {
         }
     }
 
-    public void pauseRefresh(){
+    public void pauseRefresh() {
         timeline.pause();
     }
 
-    public void resumeRefresh(){
+    public void resumeRefresh() {
         timeline.play();
     }
 
