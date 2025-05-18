@@ -4,11 +4,15 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane stylesheets="@../styles.css" xmlns:fx="http://javafx.com/fxml"
             fx:controller="se.ifmo.client.ui.main.button.bar.FilterController">
-    <VBox spacing="10" alignment="TOP_CENTER" AnchorPane.topAnchor="10" AnchorPane.leftAnchor="10"
-          AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10">
-        <Label text="Filter Table" styleClass="header-label"/>
+    <VBox spacing="10" alignment="TOP_CENTER"
+          AnchorPane.topAnchor="10"
+          AnchorPane.leftAnchor="10"
+          AnchorPane.rightAnchor="10"
+          AnchorPane.bottomAnchor="20">
 
-        <GridPane hgap="10" vgap="10">
+        <Label text="Filter Table"/>
+
+        <GridPane hgap="10" vgap="10" styleClass="popup-window">
             <columnConstraints>
                 <ColumnConstraints halignment="RIGHT"/>
                 <ColumnConstraints hgrow="ALWAYS"/>
@@ -45,9 +49,7 @@
             <ComboBox fx:id="fuelTypeBox" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
         </GridPane>
 
-        <HBox spacing="10" alignment="CENTER">
-            <Button text="Apply Filter" fx:id="applyButton" styleClass="filter-button"/>
-            <Button text="Reset" fx:id="resetButton" styleClass="filter-button"/>
-        </HBox>
+        <Button text="Apply Filter" fx:id="applyButton"/>
+        <Button text="Reset" fx:id="resetButton"/>
     </VBox>
 </AnchorPane>
