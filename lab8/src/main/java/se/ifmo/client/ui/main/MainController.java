@@ -126,11 +126,10 @@ public class MainController {
         clearButton.setOnAction(event -> {
             Client.getInstance().forwardCommand(new Clear());
         });
+
         visualizeButton.setOnAction(event -> {
-            timeline.pause();
             long uid = Client.getInstance().getUID();
             CollectionVisualizer.visualize(originalList.filtered(v -> v.getOwnerId() == uid), this);
-            //timeline.play();
         });
     }
 
@@ -155,11 +154,11 @@ public class MainController {
         }
     }
 
-    public void pauseRefresh(){
+    public void pauseRefresh() {
         timeline.pause();
     }
 
-    public void resumeRefresh(){
+    public void resumeRefresh() {
         timeline.play();
     }
 
