@@ -13,6 +13,7 @@
         <Button fx:id="addButton"/>
         <Button fx:id="clearButton"/>
         <Button fx:id="visualizeButton"/>
+        <Button fx:id="sumOfEnginePowerButton"/>
         <Label fx:id="conErr"/>
     </HBox>
     <TableView fx:id="tableView" cache="true" fixedCellSize="0.0" VBox.vgrow="ALWAYS">
@@ -24,8 +25,8 @@
         <fx:define>
             <ContextMenu fx:id="contextMenu">
                 <items>
-                    <MenuItem fx:id="editItem"/>
                     <MenuItem fx:id="deleteItem"/>
+                    <MenuItem fx:id="deleteItemsIfGreater"/>
                 </items>
             </ContextMenu>
         </fx:define>

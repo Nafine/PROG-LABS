@@ -6,7 +6,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lombok.Setter;
 import se.ifmo.client.ui.locale.LocaleManager;
@@ -15,9 +18,11 @@ import se.ifmo.shared.model.Coordinates;
 import se.ifmo.shared.model.Vehicle;
 
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+
+import static se.ifmo.client.ui.util.Notify.showAlert;
+import static se.ifmo.client.ui.util.TextFieldManager.*;
 
 public class EditController implements Initializable {
     private final ObjectProperty<Vehicle> item = new SimpleObjectProperty<>();
@@ -107,25 +112,30 @@ public class EditController implements Initializable {
                 ? this.item.get()
                 : new Vehicle();
 
-        item.setName(nameField.getText());
-        item.setCoordinates(new Coordinates(Long.parseLong(coordinateXField.getText()), Double.parseDouble(coordinateYField.getText())));
-        item.setEnginePower(Integer.parseInt(enginePowerField.getText()));
-        item.setCapacity(Double.parseDouble(capacityField.getText()));
-        item.setDistanceTravelled(Float.parseFloat(distanceTravelledField.getText()));
-        item.setFuelType(fuelTypeBox.getValue());
+        try {
+            item.setName(validateNonNull(nameField.getText(), LocaleManager.getString("name")));
+            item.setCoordinates(new Coordinates(Long.parseLong(validateNonNull(coordinateXField.getText(), LocaleManager.getString("coordinateX"))),
+                    validateNonNull(parseDoubleOrNull(coordinateYField.getText()), LocaleManager.getString("coordinateY"))));
+            item.setEnginePower(validateNonNull(parseIntOrNull(enginePowerField.getText()), LocaleManager.getString("enginePower")));
+            item.setCapacity(validateNonNull(parseDoubleOrNull(capacityField.getText()), LocaleManager.getString("capacity")));
+            item.setDistanceTravelled(parseFloatOrNull(distanceTravelledField.getText()));
+            item.setFuelType(validateNonNull(fuelTypeBox.getValue(), LocaleManager.getString("fuelType")));
 
-        if (onComplete != null) onComplete.accept(item);
+            if (onComplete != null) onComplete.accept(item);
 
-        Stage stage = (Stage) editButton.getScene().getWindow();
-        stage.close();
+            Stage stage = (Stage) editButton.getScene().getWindow();
+            stage.close();
+        } catch (IllegalArgumentException e) {
+            showAlert(e.getMessage());
+        }
     }
 
-    private void initLocale(){
+    private void initLocale() {
         updateUI();
         LocaleManager.addLocaleChangeListener(this::updateUI);
     }
 
-    private void updateUI(){
+    private void updateUI() {
         nameLabel.setText(LocaleManager.getString("name"));
         coordinateXLabel.setText(LocaleManager.getString("coordinateX"));
         coordinateYLabel.setText(LocaleManager.getString("coordinateY"));

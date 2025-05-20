@@ -66,14 +66,22 @@ public class LocaleManager {
         enResources.put("add.dialog.content", "Input here.");
 
         enResources.put("clear", "Clear collection");
+
         enResources.put("visualize", "Visualize");
         enResources.put("visualize.title", "Visualize elements");
+
+        enResources.put("sumOfEnginePower", "Sum of engine power");
 
         enResources.put("collection", "Collection");
 
         enResources.put("edit", "Edit");
         enResources.put("edit.header", "Edit element");
+
         enResources.put("delete", "Delete");
+        enResources.put("deleteIfGreater", "Delete if greater");
+
+        //notifications
+        enResources.put("error.null", "cannot be null or empty");
 
         // collection
         ruResources.put("id", "ID");
@@ -121,14 +129,22 @@ public class LocaleManager {
         ruResources.put("add.dialog.content", "Введите здесь.");
 
         ruResources.put("clear", "Очистить коллекцию");
+
         ruResources.put("visualize", "Визуализировать");
         ruResources.put("visualize.title", "Визуализация элементов");
+
+        ruResources.put("sumOfEnginePower", "Суммарная мощность двигателей");
 
         ruResources.put("collection", "Коллекция");
 
         ruResources.put("edit", "Редактировать");
         ruResources.put("edit.header", "Редактировать элемент");
+
         ruResources.put("delete", "Удалить");
+        ruResources.put("deleteIfGreater", "Удалить, если больше");
+
+        //notifications
+        ruResources.put("error.null", "не может быть null или пустым");
 
         // collection
         skResources.put("id", "ID");
@@ -176,14 +192,22 @@ public class LocaleManager {
         skResources.put("add.dialog.content", "Zadajte sem.");
 
         skResources.put("clear", "Vyčistiť kolekciu");
+
         skResources.put("visualize", "Vizualizovať");
         skResources.put("visualize.title", "Vizualizácia prvkov");
+
+        skResources.put("sumOfEnginePower", "Súčet výkonov motorov");
 
         skResources.put("collection", "Kolekcia");
 
         skResources.put("edit", "Upraviť");
         skResources.put("edit.header", "Upraviť prvok");
+
         skResources.put("delete", "Vymazať");
+        skResources.put("deleteIfGreater", "Vymazať ak je väčší");
+
+        //notifications
+        skResources.put("error.null", "nesmie byť null alebo prázdne");
 
         // collection
         lvResources.put("id", "ID");
@@ -231,14 +255,21 @@ public class LocaleManager {
         lvResources.put("add.dialog.content", "Ievadiet šeit.");
 
         lvResources.put("clear", "Notīrīt kolekciju");
+
         lvResources.put("visualize", "Vizualizēt");
         lvResources.put("visualize.title", "Elementu vizualizācija");
+        lvResources.put("sumOfEnginePower", "Dzinēja jaudas summa");
 
         lvResources.put("collection", "Kolekcija");
 
         lvResources.put("edit", "Rediģēt");
         lvResources.put("edit.header", "Rediģēt elementu");
+
         lvResources.put("delete", "Dzēst");
+        lvResources.put("deleteIfGreater", "Dzēst, ja lielāks");
+
+        //notifications
+        lvResources.put("error.null", "nedrīkst būt tukšs vai null");
 
         RESOURCES.put(Locale.UK, enResources);
         RESOURCES.put(Locale.of("ru", "RU"), ruResources);

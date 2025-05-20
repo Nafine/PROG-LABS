@@ -20,9 +20,12 @@ import se.ifmo.client.ui.main.button.bar.AddController;
 import se.ifmo.client.ui.main.button.bar.FilterController;
 import se.ifmo.client.ui.main.button.bar.ProfileController;
 import se.ifmo.client.ui.scene.SceneManager;
+import se.ifmo.client.ui.util.Notify;
 import se.ifmo.shared.annotations.Nested;
 import se.ifmo.shared.command.Clear;
+import se.ifmo.shared.command.RemoveGreater;
 import se.ifmo.shared.command.Show;
+import se.ifmo.shared.command.SumOfEnginePower;
 import se.ifmo.shared.communication.Callback;
 import se.ifmo.shared.model.Vehicle;
 
@@ -33,6 +36,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MainController {
     private final ObservableList<Vehicle> originalList = FXCollections.observableArrayList();
@@ -50,13 +54,15 @@ public class MainController {
     @FXML
     private Button visualizeButton;
     @FXML
+    private Button sumOfEnginePowerButton;
+    @FXML
     private ChoiceBox<Locale> languageChoiceBox;
     @FXML
     private ContextMenu contextMenu;
     @FXML
-    private MenuItem editItem;
-    @FXML
     private MenuItem deleteItem;
+    @FXML
+    private MenuItem deleteItemsIfGreater;
     @FXML
     private Label conErr;
 
@@ -117,30 +123,41 @@ public class MainController {
         addButton.setText(LocaleManager.getString("add"));
         clearButton.setText(LocaleManager.getString("clear"));
         visualizeButton.setText(LocaleManager.getString("visualize"));
+        sumOfEnginePowerButton.setText(LocaleManager.getString("sumOfEnginePower"));
 
-        editItem.setText(LocaleManager.getString("edit"));
         deleteItem.setText(LocaleManager.getString("delete"));
+        deleteItemsIfGreater.setText(LocaleManager.getString("deleteIfGreater"));
     }
 
     private void initButtonBar() {
         profileButton.setOnAction(event -> handleProfile());
         filterButton.setOnAction(event -> handleFilter());
         addButton.setOnAction(event -> handleAdd());
-        clearButton.setOnAction(event -> Client.getInstance().forwardCommand(new Clear()));
+        clearButton.setOnAction(event -> Client.getInstance().forwardCommandAsync(new Clear()));
         visualizeButton.setOnAction(event -> handleVisualize());
+        sumOfEnginePowerButton.setOnAction(event -> Notify.showInfo(Client.getInstance().forwardCommand(new SumOfEnginePower()).message()));
     }
 
     private void initContextMenu() {
-        editItem.setOnAction(event -> {
-            Vehicle selectedItem = tableView.getSelectionModel().getSelectedItem();
-            openEditor(selectedItem, item -> {
-                Client.getInstance().updateByID(item.getId(), item);
-            });
-        });
-
         deleteItem.setOnAction(event -> {
             Vehicle selectedRow = tableView.getSelectionModel().getSelectedItem();
             Client.getInstance().removeByID(selectedRow.getId());
+            refreshTable();
+        });
+
+        deleteItemsIfGreater.setOnAction(event -> {
+            Vehicle selectedRow = tableView.getSelectionModel().getSelectedItem();
+            Client.getInstance().forwardCommand(new RemoveGreater(), Stream.of(
+                            selectedRow.getName(),
+                            selectedRow.getCoordinates().getX(),
+                            selectedRow.getCoordinates().getY(),
+                            selectedRow.getEnginePower(),
+                            selectedRow.getCapacity(),
+                            selectedRow.getDistanceTravelled(),
+                            selectedRow.getFuelType())
+                    .map(t -> t == null ? "null" : t.toString())
+                    .toList());
+            refreshTable();
         });
     }
 

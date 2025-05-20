@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static se.ifmo.client.ui.util.Notify.showAlert;
 import static se.ifmo.client.ui.util.TextFieldManager.*;
 
 public class AddController {
@@ -135,14 +136,13 @@ public class AddController {
 
     private void forwardWithVehicleFields(Command command) {
         try {
-            String name = validateNonNull(nameField.getText(), "Name");
+            String name = validateNonNull(nameField.getText(), LocaleManager.getString("name"));
             Long coordX = parseLongOrNull(coordinateXField.getText());
-            Double coordY = validateNonNull(parseDoubleOrNull(coordinateYField.getText()), "Coord Y");
-            Integer enginePower = validateNonNull(parseIntOrNull(enginePowerField.getText()), "Engine Power");
-            Double capacity = validateNonNull(parseDoubleOrNull(capacityField.getText()), "Capacity");
+            Double coordY = validateNonNull(parseDoubleOrNull(coordinateYField.getText()), LocaleManager.getString("coordinateY"));
+            Integer enginePower = validateNonNull(parseIntOrNull(enginePowerField.getText()), LocaleManager.getString("enginePower"));
+            Double capacity = validateNonNull(parseDoubleOrNull(capacityField.getText()), LocaleManager.getString("capacity"));
             Float distance = parseFloatOrNull(distanceTravelledField.getText());
-            FuelType fuelType = validateNonNull(fuelTypeBox.getValue(), "Fuel type");
-
+            FuelType fuelType = validateNonNull(fuelTypeBox.getValue(), LocaleManager.getString("fuelType"));
 
             textMessage.setText(Client.getInstance().forwardCommand(command, Stream.of(name, coordX, coordY, enginePower, capacity, distance, fuelType)
                             .map(t -> t == null ? "null" : t.toString())
@@ -183,19 +183,5 @@ public class AddController {
         dialog.setContentText(LocaleManager.getString("add.dialog.content"));
         dialog.setGraphic(null);
         return dialog;
-    }
-
-    private <T> T validateNonNull(T value, String fieldName) {
-        if (value == null || (value instanceof String && ((String) value).trim().isEmpty())) {
-            throw new IllegalArgumentException(fieldName + " cannot be null or empty");
-        }
-        return value;
-    }
-
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
