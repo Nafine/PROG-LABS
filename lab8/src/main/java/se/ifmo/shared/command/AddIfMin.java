@@ -39,6 +39,6 @@ public class AddIfMin extends Command {
         if (minVehicle.isPresent() && vehicle.compareTo(minVehicle.get()) < 0 && CollectionManager.getInstance().add(minVehicle.get()))
             return new Callback("Successfully added new element to the collection");
 
-        return new Callback("Failed to add new element to the collection, it's not the smallest element");
+        return new Callback("Failed to add, it's not the smallest element");
     }
 }

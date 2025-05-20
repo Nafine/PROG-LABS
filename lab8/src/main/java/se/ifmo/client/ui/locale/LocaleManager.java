@@ -52,6 +52,7 @@ public class LocaleManager {
         enResources.put("add", "Add");
         enResources.put("add.new", "Add new");
         enResources.put("add.random", "Add random");
+        enResources.put("add.min", "Add if min");
         enResources.put("add.header", "Add an element");
         enResources.put("amount", "Amount");
         enResources.put("cancel", "Cancel");
@@ -106,6 +107,7 @@ public class LocaleManager {
         ruResources.put("add", "Добавить");
         ruResources.put("add.new", "Добавить новый");
         ruResources.put("add.random", "Добавить случайный");
+        ruResources.put("add.min", "Добавить если меньше");
         ruResources.put("add.header", "Добавить элемент");
         ruResources.put("amount", "Количество");
         ruResources.put("cancel", "Отмена");
@@ -160,6 +162,7 @@ public class LocaleManager {
         skResources.put("add", "Pridať");
         skResources.put("add.new", "Pridať nový");
         skResources.put("add.random", "Pridať náhodný");
+        skResources.put("add.min", "Pridať, ak min.");
         skResources.put("add.header", "Pridanie prvku");
         skResources.put("amount", "Množstvo");
         skResources.put("cancel", "Zrušiť");
@@ -214,6 +217,7 @@ public class LocaleManager {
         lvResources.put("add", "Pievienot");
         lvResources.put("add.new", "Pievienot jaunu");
         lvResources.put("add.random", "Pievienot nejaušu");
+        lvResources.put("add.min", "Pievienot, ja min");
         lvResources.put("add.header", "Pievienot elementu");
         lvResources.put("amount", "Daudzums");
         lvResources.put("cancel", "Atcelt");

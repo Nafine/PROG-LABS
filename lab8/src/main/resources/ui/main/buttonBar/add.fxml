@@ -43,6 +43,7 @@
 
         <Button  fx:id="addButton"/>
         <Button  fx:id="addRandomButton"/>
+        <Button  fx:id="addIfMinButton"/>
         <Text fx:id="textMessage"/>
     </VBox>
 </AnchorPane>

@@ -10,7 +10,9 @@ import se.ifmo.client.Client;
 import se.ifmo.client.ui.locale.LocaleManager;
 import se.ifmo.client.ui.main.MainController;
 import se.ifmo.shared.command.Add;
+import se.ifmo.shared.command.AddIfMin;
 import se.ifmo.shared.command.AddRandom;
+import se.ifmo.shared.command.Command;
 import se.ifmo.shared.enums.FuelType;
 
 import java.util.List;
@@ -56,6 +58,8 @@ public class AddController {
     @FXML
     private Button addRandomButton;
     @FXML
+    private Button addIfMinButton;
+    @FXML
     private Text textMessage;
     @Setter
     private MainController mainController;
@@ -90,6 +94,7 @@ public class AddController {
 
         addButton.setText(LocaleManager.getString("add"));
         addRandomButton.setText(LocaleManager.getString("add.random"));
+        addIfMinButton.setText(LocaleManager.getString("add.min"));
 
         header.setText(LocaleManager.getString("add.header"));
     }
@@ -104,36 +109,16 @@ public class AddController {
     }
 
     private void initButtons() {
-        addButton.setOnAction(e -> {
-                    addItem();
-                    mainController.refreshTable();
-                }
+        addButton.setOnAction(e ->
+                forwardWithVehicleFields(new Add()));
+
+        addRandomButton.setOnAction(e ->
+                addRandomItem()
         );
 
-        addRandomButton.setOnAction(e -> {
-                    addRandomItem();
-                    mainController.refreshTable();
-                }
+        addIfMinButton.setOnAction(e ->
+                forwardWithVehicleFields(new AddIfMin())
         );
-    }
-
-    private void addItem() {
-        try {
-            String name = validateNonNull(nameField.getText(), "Name");
-            Long coordX = parseLongOrNull(coordinateXField.getText());
-            Double coordY = validateNonNull(parseDoubleOrNull(coordinateYField.getText()), "Coord Y");
-            Integer enginePower = validateNonNull(parseIntOrNull(enginePowerField.getText()), "Engine Power");
-            Double capacity = validateNonNull(parseDoubleOrNull(capacityField.getText()), "Capacity");
-            Float distance = parseFloatOrNull(distanceTravelledField.getText());
-            FuelType fuelType = validateNonNull(fuelTypeBox.getValue(), "Fuel type");
-
-            textMessage.setText(Client.getInstance().forwardCommand(new Add(), Stream.of(name, coordX, coordY, enginePower, capacity, distance, fuelType)
-                            .map(t -> t == null ? "null" : t.toString())
-                            .collect(Collectors.toList()))
-                    .message());
-        } catch (IllegalArgumentException e) {
-            showAlert(e.getMessage());
-        }
     }
 
     private void addRandomItem() {
@@ -148,6 +133,26 @@ public class AddController {
         dialog.showAndWait().ifPresent(this::handleDialogInput);
     }
 
+    private void forwardWithVehicleFields(Command command) {
+        try {
+            String name = validateNonNull(nameField.getText(), "Name");
+            Long coordX = parseLongOrNull(coordinateXField.getText());
+            Double coordY = validateNonNull(parseDoubleOrNull(coordinateYField.getText()), "Coord Y");
+            Integer enginePower = validateNonNull(parseIntOrNull(enginePowerField.getText()), "Engine Power");
+            Double capacity = validateNonNull(parseDoubleOrNull(capacityField.getText()), "Capacity");
+            Float distance = parseFloatOrNull(distanceTravelledField.getText());
+            FuelType fuelType = validateNonNull(fuelTypeBox.getValue(), "Fuel type");
+
+
+            textMessage.setText(Client.getInstance().forwardCommand(command, Stream.of(name, coordX, coordY, enginePower, capacity, distance, fuelType)
+                            .map(t -> t == null ? "null" : t.toString())
+                            .collect(Collectors.toList()))
+                    .message());
+        } catch (IllegalArgumentException e) {
+            showAlert(e.getMessage());
+        }
+    }
+
     private void handleDialogInput(String count) {
         if (count.isEmpty()) {
             showAlert(LocaleManager.getString("add.dialog.empty"));
@@ -157,7 +162,7 @@ public class AddController {
                 if (num <= 0) {
                     showAlert(LocaleManager.getString("add.dialog.amount.positive"));
                 } else if (num > 10000) {
-                    showAlert(LocaleManager.getString("add.dialog.amount.negative"));
+                    showAlert(LocaleManager.getString("add.dialog.amount.max"));
                 } else {
                     textMessage.setText(Client.getInstance().forwardCommand(
                             new AddRandom(), List.of(count)).message());

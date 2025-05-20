@@ -158,10 +158,8 @@ public class Server implements AutoCloseable {
     }
 
     private void splitSendCallback(Callback callback, InetSocketAddress clientAddress) {
-        int i = 0;
         for (byte[] packet : PacketManager.splitMessage(SerializationUtils.serialize(callback))) {
             try {
-                i++;
                 channel.send(ByteBuffer.wrap(packet), clientAddress);
                 Thread.sleep(0, 300_000);
             } catch (IOException e) {
